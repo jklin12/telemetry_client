@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FlowController;
 use App\Http\Controllers\RainfallController;
 use App\Http\Controllers\StationController;
 use App\Http\Controllers\WaterLevelController;
@@ -27,7 +28,10 @@ Route::get('/station',[StationController::class,'index'])->name('station.index')
 
 Route::get('/rainfall/byStation',[RainfallController::class,'byStation'])->name('rainfall.byStation');
 Route::get('/rainfall/daily',[RainfallController::class,'daily'])->name('rainfall.daily');
+Route::get('/rainfall/current',[RainfallController::class,'current'])->name('rainfall.current');
 
 Route::get('/water_level/daily',[WaterLevelController::class,'daily'])->name('water_level.daily');
 
 Route::get('/wire_vibration/daily',[WireVibrationController::class,'daily'])->name('wire_vibration.daily');
+
+Route::get('/flow/daily',[FlowController::class,'daily'])->name('flow.daily');

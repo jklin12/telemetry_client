@@ -9,15 +9,39 @@ use App\Models\StationModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use PHPHtmlParser\Dom;
+use PHPHtmlParser\Options;
 
 class RainfallController extends Controller
 {
+    public function current(Request $request)
+    {
+        
+        
+        $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
+
+        $title = 'Current Rainfall';
+        $subTitle = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
+
+        $response = Http::get('http://202.169.224.46:5000/curentRainfall');
+
+
+        $load['title'] = $title;
+        $load['subTitle'] = $subTitle;
+        $load['filterDate'] = $filterDate;
+        $load['datas'] = $response->object();
+        $load['arr_field'] = $this->arrField();
+
+        return view('pages/rainfall/current', $load);
+    }
+
     public function byStation(Request $request)
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
         $filterStation = $request->has('station') ? $request->get('station') : 1;
         $title = 'Rainfall Report ';
-        $subTitle = 'by station '.Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
+        $subTitle = 'by station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
 
         $load['title'] = $title;
@@ -25,15 +49,14 @@ class RainfallController extends Controller
         //dd(route('rainfall'));
 
 
-        $rainfall = RainfallModel::
-            leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
+        $rainfall = RainfallModel::leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
             ->where('rain_fall_date', $filterDate)
             ->where('station', $filterStation)
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('rain_fall_time')
             ->get()->toArray();
-        $susunData=[];
+        $susunData = [];
         foreach ($rainfall as $key => $value) {
             $susunData[$key] = $value;
             $susunData[$key]['rain_fall_date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D MMMM YYYY');;;

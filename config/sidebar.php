@@ -34,6 +34,12 @@ return [
       'caret' => true,
       'sub_menu' => [
         [
+          'title' => 'Curent Rainfall',
+          //'label' => 'NEW',
+          'url' => '/rainfall/current',
+          'route-name' => 'rainfall.current'
+        ],
+        [
           'title' => 'Rainfall By Station',
           //'label' => 'NEW',
           'url' => '/rainfall/byStation',
@@ -62,6 +68,13 @@ return [
       'label' => '',
       'url' => '/wire_vibration/daily',
       'route-name' => 'wire_vibration.daily'
+    ],
+    [
+      'icon' => 'fas fa-wifi',
+      'title' => 'Flow Daily Report',
+      'label' => '',
+      'url' => '/flow/daily',
+      'route-name' => 'flow.daily'
     ],
 
   ]
