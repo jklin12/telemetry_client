@@ -1,5 +1,6 @@
 <?php
- 
+
+use App\Http\Controllers\Api\DataController;
 use App\Http\Controllers\Api\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,8 +25,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('stationList',[App\Http\Controllers\API\DataController::class,'stationList']);
-    Route::get('curentRainFall',[App\Http\Controllers\API\DataController::class,'curentRainFall']);
-    Route::get('rainfallByStation',[App\Http\Controllers\API\DataController::class,'rainfallByStation']);
-    Route::get('dailyRainFall',[App\Http\Controllers\API\DataController::class,'dailyRainFall']);
+    Route::get('stationList',[DataController::class,'stationList']);
+    Route::get('curentRainFall',[DataController::class,'curentRainFall']);
+    Route::get('rainfallByStation',[DataController::class,'rainfallByStation']);
+    Route::get('dailyRainFall',[DataController::class,'dailyRainFall']);
 });
