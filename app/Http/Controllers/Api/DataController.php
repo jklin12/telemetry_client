@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers\API;
  
-use App\Http\Controllers\Controller;
-use App\Models\RainfallModel;
+ use App\Models\RainfallModel;
 use App\Models\StationModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
