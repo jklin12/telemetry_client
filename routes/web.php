@@ -23,6 +23,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('pages/login');
 });
+Route::get('login', function () {
+    return view('pages/login');
+});
 Route::post('login', [LoginController::class,'authenticate'])->name('login');
 Route::get('logout', [LoginController::class,'logout'])->name('logout');
 
