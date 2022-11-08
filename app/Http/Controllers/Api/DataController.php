@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\API;
- 
- use App\Models\RainfallModel;
+
+use App\Models\RainfallModel;
 use App\Models\StationModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -46,7 +46,7 @@ class DataController extends BaseController
             ->orderBy('rain_fall_time')
             ->get()->toArray();
         $susunData = [];
-        
+
         foreach ($rainfall as $key => $value) {
             $susunData[$key] = $value;
             $susunData[$key]['rain_fall_date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D MMMM YYYY');;;
