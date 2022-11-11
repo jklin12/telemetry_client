@@ -29,4 +29,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('curentRainFall',[DataController::class,'curentRainFall']);
     Route::get('rainfallByStation',[DataController::class,'rainfallByStation']);
     Route::get('dailyRainFall',[DataController::class,'dailyRainFall']);
+    Route::get('waterLevel',[DataController::class,'waterLevel']);
+    Route::get('flow',[DataController::class,'flow']);
+    Route::get('wireVibration',[DataController::class,'wireVibration']);
 });
