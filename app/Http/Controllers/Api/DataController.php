@@ -31,7 +31,10 @@ class DataController extends BaseController
         $title = 'Current Rainfall';
         $response = Http::get('http://202.169.224.46:5000/curentRainfall');
 
-        return $this->sendResponse($response->object(), $title . ' data found');
+        $load['datas'] = $response->object();
+        $load['date'] = date('Y-m-d');
+
+        return $this->sendResponse($load, $title . ' data found');
     }
 
     public function rainfallByStation(Request $request)
@@ -112,13 +115,15 @@ class DataController extends BaseController
             ->get()->toArray();
 
         $susunData = [];
-
+        $station = [];
+        $datasss = [];
+        
         $arrDataByStation = [];
         foreach ($waterlevel as $key => $value) {
-            $susunData['station'][$value['station']]['station_id'] = $value['station_id'];
-            $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
-            $susunData['data'][$value['water_level_time']]['date_time'] = Carbon::parse($value['water_level_time'])->isoFormat('HH::mm');
-            $susunData['data'][$value['water_level_time']]['datas'][] = $value;
+            $station[$value['station']]['station_id'] = $value['station_id'];
+            $station[$value['station']]['station_name'] = $value['station_name'];
+            $datasss[$value['water_level_time']]['date_time'] = Carbon::parse($value['water_level_time'])->isoFormat('HH::mm');
+            $datasss[$value['water_level_time']]['datas'][] = $value;
 
             $arrDataByStation[$value['station']][] =  $value['water_level_hight'];
         }
@@ -132,10 +137,11 @@ class DataController extends BaseController
             }
         }
         //print_r($max);die;
-        $summaryData['average'] = $avergae;
-        $summaryData['max'] = $max;
+        $summaryData['average'] = array_values($avergae);
+        $summaryData['max'] = array_values($max);
 
-
+        $susunData['station'] = array_values($station);
+        $susunData['datas'] = array_values($datasss);
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
@@ -171,14 +177,19 @@ class DataController extends BaseController
 
 
         $susunData = [];
+        $station = [];
+        $datasss = [];
 
         foreach ($wireVibration as $key => $value) {
             //$susunData[$value['date_time']]['date_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');
             //$susunData[$value['date_time']]['station_name'] = $value['station_name'];
-            $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
-            $susunData['data'][$value['wire_vibration_time']]['date_time'] = Carbon::parse($value['wire_vibration_time'])->isoFormat('HH::mm');
-            $susunData['data'][$value['wire_vibration_time']]['datas'][] = $value;
+            $station[$value['station']]['station_name'] = $value['station_name'];
+            $datasss[$value['wire_vibration_time']]['date_time'] = Carbon::parse($value['wire_vibration_time'])->isoFormat('HH::mm');
+            $datasss[$value['wire_vibration_time']]['datas'][] = $value;
         }
+
+        $susunData['station'] = array_values($station);
+        $susunData['datas'] = array_values($datasss);
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
@@ -204,13 +215,15 @@ class DataController extends BaseController
             ->get()->toArray();
 
         $susunData = [];
+        $station = [];
+        $datasss = [];
 
         $arrDataByStation = [];
         foreach ($waterlevel as $key => $value) {
-            $susunData['station'][$value['station']]['station_id'] = $value['station_id'];
-            $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
-            $susunData['data'][$value['flow_time']]['date_time'] = Carbon::parse($value['flow_time'])->isoFormat('HH::mm');
-            $susunData['data'][$value['flow_time']]['datas'][] = $value;
+            $station[$value['station']]['station_id'] = $value['station_id'];
+            $station[$value['station']]['station_name'] = $value['station_name'];
+            $datasss[$value['flow_time']]['date_time'] = Carbon::parse($value['flow_time'])->isoFormat('HH::mm');
+            $datasss[$value['flow_time']]['datas'][] = $value;
 
             $arrDataByStation[$value['station']][] =  $value['flow'];
         }
@@ -226,9 +239,11 @@ class DataController extends BaseController
             }
         }
         //print_r($max);die;
-        $summaryData['average'] = $avergae;
-        $summaryData['max'] = $max;
+        $summaryData['average'] = array_values($avergae);
+        $summaryData['max'] = array_values($max);
 
+        $susunData['station'] = array_values($station);
+        $susunData['datas'] = array_values($datasss);
 
 
         $load['title'] = $title;
