@@ -38,7 +38,7 @@
                     <div class="form-group row">
                         <label class="col-form-label col-md-3">Date : </label>
                         <div class="col-md-9">
-                            <a href="#" class="btn  btn-pink mr-2 text-truncate" id="datepicker">
+                            <a href="#" class="btn  btn-indigo mr-2 text-truncate" id="datepicker">
                                 <i class="fa fa-calendar fa-fw text-white-transparent-5 ml-n1"></i>
                                 <span>{{ $filterDate }}</span>
                                 <b class="caret"></b>

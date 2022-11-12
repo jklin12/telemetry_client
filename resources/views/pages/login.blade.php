@@ -11,15 +11,13 @@
 <!-- end login-cover -->
 
 <!-- begin login -->
-<div class="login login-v2" data-pageload-addclass="animated fadeIn">
+<div class="login login-v2" data-pageload-addclass="animated fadeIn" style="width: 450px;">
     <!-- begin brand -->
     <div class="login-header">
         <div class="brand">
-            <span class="logo"></span> <b>Color</b> Admin
+            <span class="logo"></span> <b>Mt. Merapi</b> Telemetry System
         </div>
-        <div class="icon">
-            <i class="fa fa-lock"></i>
-        </div>
+        
     </div>
     <!-- end brand -->
 

@@ -18,7 +18,7 @@
     <div class="panel-body">
         <form action="" method="get" id="filter-form">
             <div class="d-sm-flex align-items-center mb-3">
-                <a href="#" class="btn btn-inverse btn-pink mr-2 text-truncate" id="datepicker">
+                <a href="#" class="btn btn-inverse btn-indigo mr-2 text-truncate" id="datepicker">
                     <i class="fa fa-calendar fa-fw text-white-transparent-5 ml-n1"></i>
                     <span>{{ $filterDate }}</span>
                     <b class="caret"></b>
