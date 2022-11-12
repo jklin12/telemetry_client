@@ -41,7 +41,7 @@ class DataController extends BaseController
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
         $filterStation = $request->has('station') ? $request->get('station') : 1;
-        $title = 'Rainfall Report ';
+        $title = 'Rainfall By Station ';
         $subTitle = 'by station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
         $rainfall = RainfallModel::leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
@@ -70,7 +70,7 @@ class DataController extends BaseController
     {
 
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
-        $title = 'Daily Rainfall Report ';
+        $title = 'Daily Rainfall All Station';
         $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;
 
         $rainfall = RainfallModel::select('station', 'rain_fall_date', 'rain_fall_time', 'station_name', 'rain_fall_1_hour', 'rain_fall_continuous')
@@ -102,7 +102,7 @@ class DataController extends BaseController
     {
 
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
-        $title = 'Water Level Daily Report ';
+        $title = 'Daily Water Level ';
         $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;
 
 
@@ -155,7 +155,7 @@ class DataController extends BaseController
     public function wireVibration(Request $request)
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
-        $title = 'Wire & Vibration Daily Report ';
+        $title = 'Daily Wire & Vibration ';
         $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;
 
 
@@ -202,7 +202,7 @@ class DataController extends BaseController
     public function flow(Request $request)
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
-        $title = 'Water Level Daily Report ';
+        $title = 'Daily Flow';
         $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;
 
 
