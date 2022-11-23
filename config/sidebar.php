@@ -21,6 +21,13 @@ return [
       'route-name' => 'dashboard.index'
     ],
     [
+      'icon' => 'fa fa-table',
+      'title' => 'Monitoring',
+      'label' => '',
+      'url' => '/dashboard/monitoring',
+      'route-name' => 'dashboard.monitoring'
+    ],
+    [
       'icon' => 'fa fa-map-pin',
       'title' => 'Station List',
       'label' => '',
