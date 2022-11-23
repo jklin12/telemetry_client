@@ -14,7 +14,18 @@
 <!-- begin page-header -->
 <h1 class="page-header">{{ $title }} <small></small></h1>
 <!-- end page-header -->
+<form action="" method="get" id="filter-form">
+                <div class="d-sm-flex align-items-center mb-3">
+                    <a href="#" class="btn btn-inverse btn-indigo mr-2 text-truncate" id="datepicker">
+                        <i class="fa fa-calendar fa-fw text-white-transparent-5 ml-n1"></i>
+                        <span>{{ $filterDate }}</span>
+                        <b class="caret"></b>
+                        <input id="reservationDate" type="hidden" name="date" />
+                    </a>
 
+                    <!--<div class="text-muted f-w-600 mt-2 mt-sm-0">compared to <span id="daterange-prev-date">24 Mar-30 Apr 2020</span></div>-->
+                </div>
+            </form>
 
 <div class="row">
     <div class="col-xl-4 ui-sortable">
@@ -31,6 +42,7 @@
                 </div>
             </div>
             <!-- end panel-heading -->
+           
             <!-- begin panel-body -->
             <div class="panel-body">
                 <div class="table-responsive table-striped">
