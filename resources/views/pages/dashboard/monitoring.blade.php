@@ -15,20 +15,20 @@
 <h1 class="page-header">{{ $title }} <small></small></h1>
 <!-- end page-header -->
 <form action="" method="get" id="filter-form">
-                <div class="d-sm-flex align-items-center mb-3">
-                    <a href="#" class="btn btn-inverse btn-indigo mr-2 text-truncate" id="datepicker">
-                        <i class="fa fa-calendar fa-fw text-white-transparent-5 ml-n1"></i>
-                        <span>{{ $filterDate }}</span>
-                        <b class="caret"></b>
-                        <input id="reservationDate" type="hidden" name="date" />
-                    </a>
+    <div class="d-sm-flex align-items-center mb-3">
+        <a href="#" class="btn btn-inverse btn-indigo mr-2 text-truncate" id="datepicker">
+            <i class="fa fa-calendar fa-fw text-white-transparent-5 ml-n1"></i>
+            <span>{{ $filterDate }}</span>
+            <b class="caret"></b>
+            <input id="reservationDate" type="hidden" name="date" />
+        </a>
 
-                    <!--<div class="text-muted f-w-600 mt-2 mt-sm-0">compared to <span id="daterange-prev-date">24 Mar-30 Apr 2020</span></div>-->
-                </div>
-            </form>
+        <!--<div class="text-muted f-w-600 mt-2 mt-sm-0">compared to <span id="daterange-prev-date">24 Mar-30 Apr 2020</span></div>-->
+    </div>
+</form>
 
 <div class="row">
-    <div class="col-xl-4 ui-sortable">
+    <div class="col-xl-3 ui-sortable">
         <!-- begin panel -->
         <div class="panel panel-inverse" data-sortable-id="ui-buttons-1">
             <!-- begin panel-heading -->
@@ -42,7 +42,7 @@
                 </div>
             </div>
             <!-- end panel-heading -->
-           
+
             <!-- begin panel-body -->
             <div class="panel-body">
                 <div class="table-responsive table-striped">
@@ -104,7 +104,7 @@
         </div>
         <!-- end panel -->
     </div>
-    <div class="col-xl-4 ui-sortable">
+    <div class="col-xl-3 ui-sortable">
         <!-- begin panel -->
         <div class="panel panel-inverse" data-sortable-id="ui-buttons-1">
             <!-- begin panel-heading -->
@@ -173,7 +173,7 @@
         </div>
         <!-- end panel -->
     </div>
-    <div class="col-xl-4 ui-sortable">
+    <div class="col-xl-3 ui-sortable">
         <!-- begin panel -->
         <div class="panel panel-inverse" data-sortable-id="ui-buttons-1">
             <!-- begin panel-heading -->
@@ -239,6 +239,72 @@
                         </div>
                         @endif
 
+                    </div>
+                </div>
+                <!-- end panel-body -->
+
+            </div>
+            <!-- end panel -->
+        </div>
+    </div>
+    <div class="col-xl-3 ui-sortable">
+        <!-- begin panel -->
+        <div class="panel panel-inverse" data-sortable-id="ui-buttons-1">
+            <!-- begin panel-heading -->
+            <div class="panel-heading ui-sortable-handle" style="background: #37474f;">
+                <h4 class="panel-title">{{$flow['title']}} </h4>
+                <div class="panel-heading-btn">
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-success" data-click="panel-reload"><i class="fa fa-redo"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
+                    <a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-danger" data-click="panel-remove"><i class="fa fa-times"></i></a>
+                </div>
+            </div>
+            <!-- end panel-heading -->
+            <!-- begin panel-body -->
+            <div class="panel-body">
+                <div class="table-responsive table-striped">
+                    <div class="dataTables_wrapper dt-bootstrap4 no-footer">
+                        @if($flow['data'])
+                        <table id="table-onu" class="table dataTable no-footer">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Date Time</th>
+                                    @foreach($flow['data']['station'] as $key => $value)
+                                    <th class="text-center">{{$value['station_name']}}</th>
+                                    @endforeach
+                                </tr>
+
+                            </thead>
+                            <tbody>
+                                @forelse($flow['data']['data'] as $key => $value)
+                                <tr>
+                                    <td>{{ $loop->iteration  }}</td>
+                                    <td>{{ $value['date_time']}}</td>
+                                    @foreach($value['datas'] as $kdata => $vdata)
+                                    <td>{{ $vdata['flow']}}</td>
+                                    @endforeach
+
+                                </tr>
+                                @empty
+                                <div class="col-md-4">
+                                    <div class="alert alert-warning fade show m-b-10">
+                                        <span class="close" data-dismiss="alert">×</span>
+                                        Maaf! Data tidak ditemua.
+                                    </div>
+                                </div>
+                                @endforelse
+                            </tbody>
+                        </table>
+                        @else
+                        <div class="">
+                            <div class="alert alert-warning fade show m-b-10">
+                                <span class="close" data-dismiss="alert">×</span>
+                                Maaf! Data tidak ditemua.
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
                 <!-- end panel-body -->

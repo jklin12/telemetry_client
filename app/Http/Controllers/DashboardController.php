@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FlowModel;
 use App\Models\StationModel;
 use App\Models\WaterLevelModel;
 use App\Models\WireVibrationModel;
@@ -122,11 +123,30 @@ class DashboardController extends Controller
 
         $wireVibration['data'] = $wireVibrationData;
 
+        $flow['title'] = 'Flow Daily Report ';
+        $flowQuer = FlowModel::select('station_id', 'station', 'station_name', 'flow_date', 'flow_time', 'flow')
+            ->leftJoin('sch_data_station', 'sch_data_flow.station', '=', 'sch_data_station.station_id')
+            ->where('flow_date', $filterDate)
+            //->groupBy('station')
+            ->orderBy(DB::raw('sch_data_station.station_id'))
+            ->orderBy('flow_time')
+            ->get()->toArray();
+
+        $flowData = [];
+        foreach ($flowQuer as $key => $value) {
+            $flowData['station'][$value['station']]['station_id'] = $value['station_id'];
+            $flowData['station'][$value['station']]['station_name'] = $value['station_name'];
+            $flowData['data'][$value['flow_time']]['date_time'] = Carbon::parse($value['flow_time'])->isoFormat('HH::mm');
+            $flowData['data'][$value['flow_time']]['datas'][] = $value;
+        }
+        $flow['data'] = $flowData;
+
         $load['title'] = $title;
         $load['filterDate'] = $filterDate;
         $load['curentRainFall'] = $curentRainfall;
         $load['waterLevel'] = $waterLevel;
         $load['wireVibration'] = $wireVibration;
+        $load['flow'] = $flow;
         //dd($load);
 
         return view('pages/dashboard/monitoring', $load);

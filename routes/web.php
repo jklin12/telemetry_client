@@ -31,7 +31,7 @@ Route::get('logout', [LoginController::class,'logout'])->name('logout');
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
-    Route::get('/dashboard/monitoring', [DashboardController::class, 'monitoring'])->name('dashboard.monitoring');
+    Route::get('/dashboard/portal', [DashboardController::class, 'monitoring'])->name('dashboard.portal');
     Route::get('/station', [StationController::class, 'index'])->name('station.index');
 
     Route::get('/rainfall/byStation', [RainfallController::class, 'byStation'])->name('rainfall.byStation');

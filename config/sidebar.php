@@ -21,11 +21,11 @@ return [
       'route-name' => 'dashboard.index'
     ],
     [
-      'icon' => 'fa fa-table',
-      'title' => 'Monitoring',
+      'icon' => 'fa fa-torii-gate',
+      'title' => 'Portal Data',
       'label' => '',
-      'url' => '/dashboard/monitoring',
-      'route-name' => 'dashboard.monitoring'
+      'url' => '/dashboard/portal',
+      'route-name' => 'dashboard.portal'
     ],
     [
       'icon' => 'fa fa-map-pin',

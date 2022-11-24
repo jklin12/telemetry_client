@@ -13,7 +13,7 @@ class FlowController extends Controller
     {
 
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
-        $title = 'Water Level Daily Report ';
+        $title = 'Flow Daily Report ';
         $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;
 
 
