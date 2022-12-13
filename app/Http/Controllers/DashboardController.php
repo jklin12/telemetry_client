@@ -141,12 +141,30 @@ class DashboardController extends Controller
         }
         $flow['data'] = $flowData;
 
+        $station = StationModel::get();
+
+        $stationData = [];
+        foreach ($station as $key => $value) {
+
+            $stationData[$key]['type'] = 'Feature';
+            $stationData[$key]['properties']['description'] = '<strong>' . $value->station_name . '</strong><p>' . $value->station_station_river . '<br>' . $value->station_equipment . '<br>' . $value->station_authority . '<br>' . $value->station_guardsman . '</p>';
+            $susunData[$key]['properties']['icon'] = 'mountain-11';
+            //$susunData[$key]['properties']['icon'] = $value->station_icon;
+            $stationData[$key]['geometry']['type'] = 'Point';
+            $stationData[$key]['geometry']['coordinates'][] = $this->dms_to_dec($value->station_long);
+            $stationData[$key]['geometry']['coordinates'][] = doubleval('-' . $this->dms_to_dec($value->station_lat));
+        }
+
+        //dd($susunData);
+        
+
         $load['title'] = $title;
         $load['filterDate'] = $filterDate;
         $load['curentRainFall'] = $curentRainfall;
         $load['waterLevel'] = $waterLevel;
         $load['wireVibration'] = $wireVibration;
         $load['flow'] = $flow;
+        $load['station'] = json_encode($stationData);
         //dd($load);
 
         return view('pages/dashboard/monitoring', $load);

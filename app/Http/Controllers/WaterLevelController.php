@@ -31,7 +31,7 @@ class WaterLevelController extends Controller
         foreach ($waterlevel as $key => $value) {
             $susunData['station'][$value['station']]['station_id'] = $value['station_id'];
             $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
-            $susunData['data'][$value['water_level_time']]['date_time'] = Carbon::parse($value['water_level_time'])->isoFormat('HH::mm');
+            $susunData['data'][$value['water_level_time']]['date_time'] = Carbon::parse($value['water_level_time'])->isoFormat('HH:mm');
             $susunData['data'][$value['water_level_time']]['datas'][] = $value;
 
             $arrDataByStation[$value['station']][] =  $value['water_level_hight'];

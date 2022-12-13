@@ -21,9 +21,9 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group row">
-                        <label class="col-form-label col-md-3">Station :</label>
-                        <div class="col-md-9">
-                            <select class="default-select2 form-control border border-danger" id="station" name="station" required>
+                        <label class="col-form-label col-md-4">Station :</label>
+                        <div class="col-md-7">
+                            <select class="default-select2 form-control " id="station" name="station" required>
                                 <option value="">-- Pilih Profile --</option>
                                 @forelse($station_list as $key => $value)
                                 <option value="{{$value['station_id']}}">{{$value['station_name']}}</option>
@@ -36,14 +36,21 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-group row">
-                        <label class="col-form-label col-md-3">Date : </label>
-                        <div class="col-md-9">
-                            <a href="#" class="btn  btn-indigo mr-2 text-truncate" id="datepicker">
-                                <i class="fa fa-calendar fa-fw text-white-transparent-5 ml-n1"></i>
-                                <span>{{ $filterDate }}</span>
-                                <b class="caret"></b>
-                                <input id="reservationDate" type="hidden" name="date" value="{{ $filterDate }}"/>
-                            </a>
+                        <label class="col-form-label col-md-4">Display Interval :</label>
+                        <div class="col-md-7">
+                            <select class="form-control " id="interval" name="interval" required>
+                                <option value="10">10 Minutes</option>
+                                <option value="30">30 Minutes</option>
+                                <option value="60">1 Hour</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-4">Date : </label>
+                        <div class="col-md-7">
+                            <input id="reservationDate" type="text" name="date" class="form-control datepicker" value="{{ $filterDate }}" />
                         </div>
                     </div>
                 </div>
@@ -55,10 +62,10 @@
         <div class="table-responsive table-striped">
             <div class="dataTables_wrapper dt-bootstrap4 no-footer">
                 @if($datas)
-                <table id="table-data" class="table dataTable no-footer">
+                <table id="table-data" class="dataTable display compact">
                     <thead>
                         <tr>
-                            <th>No.</th>
+                            <!--<th>No.</th>-->
                             @foreach($arr_field as $key => $value)
                             <th class="text-center">{{$value['label']}}</th>
                             @endforeach
@@ -68,9 +75,9 @@
                     <tbody>
                         @forelse($datas as $key => $value)
                         <tr>
-                            <td>{{ $loop->iteration  }}</td>
+                            <!--<td class="text-center">{{ $loop->iteration  }}</td>-->
                             @foreach($arr_field as $kf => $vf )
-                            <td>{{$value[$kf]}}</td>
+                            <td class="text-center">{{$value[$kf]}}</td>
                             @endforeach
                         </tr>
                         @empty
@@ -114,12 +121,16 @@
     $(".default-select2").select2().on('select2:select', function(e) {
         var data = e.params.data;
         $('#filter-form').submit();
-    }).select2('val', '<?php echo $filterStation?>');
-    $("#datepicker").datepicker({
+    }).select2('val', '<?php echo $filterStation ?>');
+
+    $(".datepicker").datepicker({
         format: 'yyyy-mm-dd',
         defaultDate: '<?php echo $filterDate ?>'
     }).on('changeDate', function(ev) {
 
+        $('#filter-form').submit();
+    });
+    $('#interval').on('change', function(ev) {
         $('#filter-form').submit();
     });
 </script>

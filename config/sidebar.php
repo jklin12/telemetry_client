@@ -35,6 +35,32 @@ return [
       'route-name' => 'station.index'
     ],
     [
+      'icon' => 'fas fa-chart-line',
+      'title' => 'Grafik',
+      'url' => 'javascript:;',
+      'caret' => true,
+      'sub_menu' => [
+        [
+          'title' => 'Judment Graph',
+          //'label' => 'NEW',
+          'url' => '/grafik/judment',
+          'route-name' => 'grafik.judment'
+        ],
+        [
+          'title' => 'Hydrograph',
+          //'label' => 'NEW',
+          'url' => '/grafik/hydrograph',
+          'route-name' => 'grafik.hydrograph'
+        ],
+        [
+          'title' => 'Hytrograph',
+          //'label' => 'NEW',
+          'url' => '/grafik/hytrograph',
+          'route-name' => 'grafik.hytrograph'
+        ],
+      ]
+    ],
+    [
       'icon' => 'fas fa-cloud-rain',
       'title' => 'Data Rainfall',
       'url' => 'javascript:;',

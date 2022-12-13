@@ -36,7 +36,7 @@
         <form method="POST" action="{{ route('login')}}" class="margin-bottom-0">
             @csrf
             <div class="form-group m-b-20">
-                <input type="text" class="form-control form-control-lg" placeholder="Email Address" name="email" required />
+                <input type="text" class="form-control form-control-lg" placeholder="Username" name="name" required />
             </div>
             <div class="form-group m-b-20">
                 <input type="password" class="form-control form-control-lg" placeholder="Password" name="password" required />

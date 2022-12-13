@@ -40,6 +40,7 @@ class RainfallController extends Controller
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
         $filterStation = $request->has('station') ? $request->get('station') : 1;
+        $interval = $request->has('interval') ? $request->get('interval') : 10;
         $title = 'Rainfall Report ';
         $subTitle = 'by station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
@@ -56,13 +57,16 @@ class RainfallController extends Controller
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('rain_fall_time')
             ->get()->toArray();
+
         $susunData = [];
         foreach ($rainfall as $key => $value) {
-            $susunData[$key] = $value;
+            if ($interval == 10) {
+                $susunData[$key] = $value;
+            }
             $susunData[$key]['rain_fall_date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D MMMM YYYY');;;
-            $susunData[$key]['rain_fall_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');;
+            $susunData[$key]['rain_fall_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH:mm');;
         }
-
+        //dd($susunData);
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
         $load['datas'] = $susunData;
@@ -123,7 +127,7 @@ class RainfallController extends Controller
     protected function arrField()
     {
         return [
-            'station_name' => [
+            /*'station_name' => [
                 'label' => 'Station',
                 'orderable' => true,
                 'searchable' => true,
@@ -134,7 +138,7 @@ class RainfallController extends Controller
                 'orderable' => true,
                 'searchable' => true,
                 'form_type' => 'text',
-            ],
+            ],*/
             'rain_fall_time' => [
                 'label' => 'Time',
                 'orderable' => false,
