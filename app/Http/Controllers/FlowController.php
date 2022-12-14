@@ -34,22 +34,25 @@ class FlowController extends Controller
             $susunData['data'][$value['flow_time']]['date_time'] = Carbon::parse($value['flow_time'])->isoFormat('HH::mm');
             $susunData['data'][$value['flow_time']]['datas'][] = $value;
 
-            $arrDataByStation[$value['station']][] =  $value['flow'];
+            $arrDataByStation[$value['station']][$value['flow_time']] =  $value['flow'];
         }
 
         //dd($arrDataByStation);
 
         $avergae = [];
         $max = [];
+        $time = [];
         if (isset(($susunData['station']))) {
             foreach ($susunData['station'] as $key => $value) {
                 $avergae[$key] = round(array_sum($arrDataByStation[$value['station_id']]) / count($arrDataByStation[$value['station_id']]), 3);
                 $max[$key] = max($arrDataByStation[$value['station_id']]);
+                $time[$key] = array_search(max($arrDataByStation[$value['station_id']]),$arrDataByStation[$value['station_id']]);
             }
         }
         //print_r($max);die;
         $summaryData['average'] = $avergae;
         $summaryData['max'] = $max;
+        $summaryData['time'] = $time;
 
 
 

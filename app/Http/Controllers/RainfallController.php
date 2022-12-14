@@ -24,13 +24,15 @@ class RainfallController extends Controller
         $title = 'Current Rainfall';
         $subTitle = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
-        $response = Http::get('http://202.169.224.46:5000/curentRainfall');
+        //$response = Http::get('http://202.169.224.46:5000/curentRainfall');
+        $response = Http::get('http://202.173.16.249:8000/curentRainfall');
 
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
         $load['filterDate'] = $filterDate;
         $load['datas'] = $response->object();
+        //dd($load['datas']);
         $load['arr_field'] = $this->arrField();
 
         return view('pages/rainfall/current', $load);
@@ -105,20 +107,53 @@ class RainfallController extends Controller
         #    $susunData[$value['station']]['station_name'] = $value['station_name'];
         #    $susunData[$value['station']][] = $value;
         #}
-
+        
+        $arrDataByStation = [];
         foreach ($rainfall as $key => $value) {
+        
             //$susunData[$value['date_time']]['date_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');
             //$susunData[$value['date_time']]['station_name'] = $value['station_name'];
+            $susunData['station'][$value['station']]['station_id'] = $value['station'];
             $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
             $susunData['data'][$value['rain_fall_time']]['date_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');
             $susunData['data'][$value['rain_fall_time']]['datas'][] = $value;
+
+            $arrDataByStation[$value['station']]['rh'][$value['rain_fall_time']] =  $value['rain_fall_1_hour'];
+            $arrDataByStation[$value['station']]['rc'][$value['rain_fall_time']] =  $value['rain_fall_continuous'];
+        }
+        //dd($susunData);
+        $avergaeRh = [];
+        $avergaeRc = [];
+        $maxRh = [];
+        $maxRc = [];
+        $timeRh = [];
+        $timeRc = []; 
+        if (isset(($susunData['station']))) {
+            foreach ($susunData['station'] as $key => $value) {
+                
+                $avergaeRh[$key] = round(array_sum($arrDataByStation[$value['station_id']]['rh']) / count($arrDataByStation[$value['station_id']]['rh']), 3);
+                $avergaeRc[$key] = round(array_sum($arrDataByStation[$value['station_id']]['rc']) / count($arrDataByStation[$value['station_id']]['rc']), 3);
+                $maxRh[$key] = max($arrDataByStation[$value['station_id']]['rh']);
+                $maxRc[$key] = max($arrDataByStation[$value['station_id']]['rc']);
+                $timeRh[$key] = array_search(max($arrDataByStation[$value['station_id']]['rh']),$arrDataByStation[$value['station_id']]['rh']);
+                $timeRc[$key] = array_search(max($arrDataByStation[$value['station_id']]['rc']),$arrDataByStation[$value['station_id']]['rc']);
+            }
         }
 
-        //dd($susunData);
+        
+        $summaryData['average']['rh'] = $avergaeRh;
+        $summaryData['average']['rc'] = $avergaeRc;
+        $summaryData['max']['rh'] = $maxRh;
+        $summaryData['max']['rc'] = $maxRc;
+        $summaryData['time']['rh'] = $timeRh;
+        $summaryData['time']['rc'] = $timeRc;
+
+
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
         $load['datas'] = $susunData;
         $load['filterDate'] = $filterDate;
+        $load['summaryData'] = $summaryData;
 
 
         return view('pages/rainfall/daily', $load);

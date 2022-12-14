@@ -59,6 +59,7 @@
                             @endforeach
 
                         </tr>
+
                         @empty
                         <div class="col-md-4">
                             <div class="alert alert-warning fade show m-b-10">
@@ -67,6 +68,40 @@
                             </div>
                         </div>
                         @endforelse
+
+                        <tr class="table-borderless">
+                            <td colspan="{{ count($datas['station'])+ 2}}"></td>
+                            <td colspan="{{ count($datas['station'])+ 2}}"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Average</td>
+                            @foreach($summaryData['average']['rh'] as $key => $value)
+                            <td class="text-center">{{$value}}</td>
+                            @endforeach
+                            @foreach($summaryData['average']['rc'] as $key => $value)
+                            <td class="text-center">{{$value}}</td>
+                            @endforeach
+                        </tr>
+                        <tr>
+                            <td colspan="2">MAX</td>
+                            @foreach($summaryData['max']['rh'] as $key => $value)
+                            <td class="text-center">{{$value}}</td>
+                            @endforeach
+                            @foreach($summaryData['max']['rc'] as $key => $value)
+                            <td class="text-center">{{$value}}</td>
+                            @endforeach
+                        </tr>
+                        <tr>
+                            <td colspan="2">Ttme</td>
+                            @foreach($summaryData['time']['rc'] as $key => $value)
+                            <td class="text-center">{{$value}}</td>
+                            @endforeach
+                            @foreach($summaryData['time']['rc'] as $key => $value)
+                            <td class="text-center">{{$value}}</td>
+                            @endforeach
+                        </tr>
+
+                        
                     </tbody>
                 </table>
                 @else

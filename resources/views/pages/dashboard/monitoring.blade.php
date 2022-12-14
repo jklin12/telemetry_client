@@ -16,12 +16,8 @@
         <div class="h-50">
             <div class="row">
                 <div class="col ">
-                    <div class="panel panel-inverse m-b-3">
-                        <div class="panel-body m-b-0">
-                            <h1 class="page-header" style="margin: 0px;"><small>Alert Status MAP</small></h1>
-                            <div id='map' style="height:220px;"></div>
-                        </div>
-                    </div>
+                    <div id='map' style="height:400px;"></div>
+
                 </div>
 
                 <div class="col ">
@@ -85,8 +81,9 @@
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration  }}</td>
                                         @foreach($value as $kf => $vf )
-                                        <td class="text-center">{{$vf}}</td>
-                                        @endforeach
+                                        @if($kf < 15) <td class="text-center">{{$vf}}</td>
+                                            @endif
+                                            @endforeach
                                     </tr>
                                     @empty
                                     <div class="col-md-4">
@@ -108,6 +105,7 @@
                         <h1 class="page-header" style="margin: 0px;"><small>{{ $waterLevel['title']}}</small></h1>
                         <div class="table-responsive table-striped">
                             <table id="table-data" class="dataTable display compact">
+                                @if(isset($waterLevel['data']['data']))
                                 <thead>
                                     <tr>
                                         <th>No.</th>
@@ -116,8 +114,8 @@
                                         <th class="text-center">{{$value}}</th>
                                         @endforeach
                                     </tr>
-
                                 </thead>
+                               
                                 <tbody>
                                     @forelse($waterLevel['data']['station'] as $key => $value)
                                     <tr>
@@ -136,6 +134,7 @@
                                     </div>
                                     @endforelse
                                 </tbody>
+                                @endif
                             </table>
                         </div>
                     </div>
@@ -149,6 +148,7 @@
                         <h1 class="page-header" style="margin: 0px;"><small>{{ $wireVibration['title']}}</small></h1>
                         <div class="table-responsive table-striped">
                             <table id="table-data" class="dataTable display compact">
+                                @if(isset($wireVibration['data']['data']))
                                 <thead>
                                     <tr>
                                         <th>No.</th>
@@ -168,6 +168,7 @@
                                     </tr>
 
                                 </thead>
+                           
                                 <tbody>
                                     @forelse($wireVibration['data']['station'] as $key => $value)
                                     <tr>
@@ -187,6 +188,7 @@
                                     </div>
                                     @endforelse
                                 </tbody>
+                                @endif
                             </table>
                         </div>
                     </div>
@@ -198,16 +200,20 @@
                         <h1 class="page-header" style="margin: 0px;"><small>{{ $flow['title']}}</small></h1>
                         <div class="table-responsive table-striped">
                             <table id="table-data" class="dataTable display compact">
+                                @if(isset($flow['data']['data']))
                                 <thead>
                                     <tr>
                                         <th>No.</th>
                                         <th class="text-center">Station</th>
                                         @foreach($flow['data']['data'] as $key => $value)
+
                                         <th class="text-center">{{$value}}</th>
+
                                         @endforeach
                                     </tr>
 
                                 </thead>
+                               
                                 <tbody>
                                     @forelse($flow['data']['station'] as $key => $value)
                                     <tr>
@@ -226,6 +232,7 @@
                                     </div>
                                     @endforelse
                                 </tbody>
+                                @endif
                             </table>
                         </div>
                     </div>
@@ -320,20 +327,27 @@
     });
 
     setTimeout(function() {
-        const coordinates = [110.3938888888889, -7.5655555555556].slice();
-        const description = "<strong>Plawangan<\/strong><p><br>RG<br>Jan-00<br><\/p>";
+
+        setInterval(function() {
+            const coordinates = [110.3938888888889, -7.5655555555556].slice();
+            const description = "<strong>Plawangan<\/strong><p><br>RG<br>Jan-00<br><\/p>";
 
 
-        while (Math.abs(110.3938888888889 - coordinates[0]) > 180) {
-            coordinates[0] += 110.3938888888889 > coordinates[0] ? 360 : -360;
-        }
+            while (Math.abs(110.3938888888889 - coordinates[0]) > 180) {
+                coordinates[0] += 110.3938888888889 > coordinates[0] ? 360 : -360;
+            }
 
-        new mapboxgl.Popup()
-            .setLngLat(coordinates)
-            .setHTML(description)
-            .addTo(map);
+            new mapboxgl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(description)
+                .addTo(map);
+        }, 10000);
 
-    }, 3000);
+        setInterval(function() {
+            $('.mapboxgl-popup').remove();
+        }, 15000);
+
+    }, 5000);
 </script>
 
 <script>

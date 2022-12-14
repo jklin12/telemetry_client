@@ -75,13 +75,15 @@ class DashboardController extends Controller
 
         $curentRainfall['title'] = 'Current Rainfall';
         //$responseRainFall = Http::get('http://202.169.224.46:5000/curentRainfall');
-        //$curentRainfall['data'] =  $responseRainFall->object();
-        $curentRainfall['data'] =  [];
+        $responseRainFall = Http::get('http://202.173.16.249:8000/curentRainfall');
+        $curentRainfall['data'] =  $responseRainFall->object();
+        //dd($curentRainfall);
+        //$curentRainfall['data'] =  [];
 
         $waterLevel['title'] = 'Water Level';
         $waterlevelQuery = WaterLevelModel::select('station_id', 'station', 'station_name', 'water_level_date', 'water_level_time', 'water_level_hight')
             ->leftJoin('sch_data_station', 'sch_data_waterlevel.station', '=', 'sch_data_station.station_id')
-            ->where('water_level_date', '2022-12-06')
+            ->where('water_level_date', $filterDate)
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('water_level_time')
@@ -110,7 +112,7 @@ class DashboardController extends Controller
             'vibration',
         )
             ->leftJoin('sch_data_station', 'sch_data_wirevibration.station', '=', 'sch_data_station.station_id')
-            ->where('wire_vibration_date', '2022-12-06')
+            ->where('wire_vibration_date', $filterDate)
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('wire_vibration_time')
@@ -135,7 +137,7 @@ class DashboardController extends Controller
         $flow['title'] = 'Flow Daily Report ';
         $flowQuer = FlowModel::select('station_id', 'station', 'station_name', 'flow_date', 'flow_time', 'flow')
             ->leftJoin('sch_data_station', 'sch_data_flow.station', '=', 'sch_data_station.station_id')
-            ->where('flow_date', '2022-12-06')
+            ->where('flow_date', $filterDate)
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('flow_time')
