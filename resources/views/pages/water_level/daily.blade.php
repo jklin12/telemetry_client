@@ -76,6 +76,12 @@
                             <td class="text-center">{{$value}}</td>
                             @endforeach
                         </tr>
+                        <tr>
+                            <td colspan="2">Ttme</td>
+                            @foreach($summaryData['time'] as $key => $value)
+                            <td class="text-center">{{$value}}</td>
+                            @endforeach
+                        </tr>
 
                     </tbody>
                 </table>

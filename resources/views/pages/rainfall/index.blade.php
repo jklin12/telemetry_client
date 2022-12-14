@@ -17,6 +17,7 @@
 
 <div class="panel panel-inverse">
     <div class="panel-body">
+
         <form action="" method="get" id="filter-form">
             <div class="row">
                 <div class="col-md-4">
@@ -59,6 +60,7 @@
                 <!--<div class="text-muted f-w-600 mt-2 mt-sm-0">compared to <span id="daterange-prev-date">24 Mar-30 Apr 2020</span></div>-->
             </div>
         </form>
+       
         <div class="table-responsive table-striped">
             <div class="dataTables_wrapper dt-bootstrap4 no-footer">
                 @if($datas)

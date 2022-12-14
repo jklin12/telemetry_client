@@ -48,7 +48,9 @@
                         <tr>
                             <td>{{ $loop->iteration  }}</td>
                             @foreach($value as $kf => $vf )
+                            @if($kf < 15)
                             <td>{{$vf}}</td>
+                            @endif
                             @endforeach
                         </tr>
                         @empty

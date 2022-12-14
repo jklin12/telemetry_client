@@ -34,20 +34,24 @@ class WaterLevelController extends Controller
             $susunData['data'][$value['water_level_time']]['date_time'] = Carbon::parse($value['water_level_time'])->isoFormat('HH:mm');
             $susunData['data'][$value['water_level_time']]['datas'][] = $value;
 
-            $arrDataByStation[$value['station']][] =  $value['water_level_hight'];
+            $arrDataByStation[$value['station']][$value['water_level_time']] =  $value['water_level_hight'];
         }
 
         $avergae = [];
         $max = [];
+        $time = [];
         if (isset(($susunData['station']))) {
             foreach ($susunData['station'] as $key => $value) {
+                
                 $avergae[$key] = round(array_sum($arrDataByStation[$value['station_id']]) / count($arrDataByStation[$value['station_id']]), 3);
                 $max[$key] = max($arrDataByStation[$value['station_id']]);
+                $time[$key] = array_search(max($arrDataByStation[$value['station_id']]),$arrDataByStation[$value['station_id']]);
             }
         }
-        //print_r($max);die;
+        
         $summaryData['average'] = $avergae;
         $summaryData['max'] = $max;
+        $summaryData['time'] = $time;
 
 
 
