@@ -25,13 +25,14 @@ class RainfallController extends Controller
         $subTitle = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
         //$response = Http::get('http://202.169.224.46:5000/curentRainfall');
-        $response = Http::get('http://202.173.16.249:8000/curentRainfall');
+        //$response = Http::get('http://202.173.16.249:8000/curentRainfall');
 
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
         $load['filterDate'] = $filterDate;
-        $load['datas'] = $response->object();
+        //$load['datas'] = $response->object();
+        $load['datas'] = [];
         //dd($load['datas']);
         $load['arr_field'] = $this->arrField();
 

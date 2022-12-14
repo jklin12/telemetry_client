@@ -75,10 +75,10 @@ class DashboardController extends Controller
 
         $curentRainfall['title'] = 'Current Rainfall';
         //$responseRainFall = Http::get('http://202.169.224.46:5000/curentRainfall');
-        $responseRainFall = Http::get('http://202.173.16.249:8000/curentRainfall');
-        $curentRainfall['data'] =  $responseRainFall->object();
+        //$responseRainFall = Http::get('http://202.173.16.249:8000/curentRainfall');
+        //$curentRainfall['data'] =  $responseRainFall->object();
         //dd($curentRainfall);
-        //$curentRainfall['data'] =  [];
+        $curentRainfall['data'] =  [];
 
         $waterLevel['title'] = 'Water Level';
         $waterlevelQuery = WaterLevelModel::select('station_id', 'station', 'station_name', 'water_level_date', 'water_level_time', 'water_level_hight')
