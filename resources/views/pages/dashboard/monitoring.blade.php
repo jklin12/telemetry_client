@@ -16,10 +16,14 @@
         <div class="h-50">
             <div class="row">
                 <div class="col ">
-                    <div class=" ">
-                        <div id='map' style="height: 400px;"></div>
+                    <div class="panel panel-inverse m-b-3">
+                        <div class="panel-body m-b-0">
+                            <h1 class="page-header" style="margin: 0px;"><small>Alert Status MAP</small></h1>
+                            <div id='map' style="height:220px;"></div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="col ">
                     <div class="bd-example">
                         <div class="row">
@@ -52,7 +56,7 @@
             <div class="col-md-6">
                 <div class="panel panel-inverse">
                     <div class="panel-body">
-
+                        <h1 class="page-header" style="margin: 0px;"><small>Curent Rainfall</small></h1>
                         <div class="table-responsive table-striped">
                             <table id="table-data" class="dataTable display compact">
                                 <thead>
@@ -101,35 +105,25 @@
             <div class="col-md-6">
                 <div class="panel panel-inverse">
                     <div class="panel-body">
-
+                        <h1 class="page-header" style="margin: 0px;"><small>{{ $waterLevel['title']}}</small></h1>
                         <div class="table-responsive table-striped">
                             <table id="table-data" class="dataTable display compact">
                                 <thead>
                                     <tr>
                                         <th>No.</th>
                                         <th class="text-center">Station</th>
-                                        <th class="text-center">10-min Rainfall</th>
-                                        <th class="text-center">30-min Rainfall</th>
-                                        <th class="text-center">Hourly Rainfall</th>
-                                        <th class="text-center">3-hr Rainfall</th>
-                                        <th class="text-center">6-hr Rainfall</th>
-                                        <th class="text-center">12-hr Rainfall</th>
-                                        <th class="text-center">24-hr Rainfall</th>
-                                        <th class="text-center">Continous Rainfall</th>
-                                        <th class="text-center">Effective Rainfall</th>
-                                        <th class="text-center">Effective Intensity</th>
-                                        <th class="text-center">Previous Working</th>
-                                        <th class="text-center">Working Rainfal</th>
-                                        <th class="text-center">Working Rainfall (half-life:24h)</th>
-                                        <th class="text-center">Remarks</th>
+                                        @foreach($waterLevel['data']['data'] as $key => $value)
+                                        <th class="text-center">{{$value}}</th>
+                                        @endforeach
                                     </tr>
 
                                 </thead>
                                 <tbody>
-                                    @forelse($curentRainFall['data'] as $key => $value)
+                                    @forelse($waterLevel['data']['station'] as $key => $value)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration  }}</td>
-                                        @foreach($value as $kf => $vf )
+                                        <td class="text-center">{{$value['station_name']}}</td>
+                                        @foreach($value['data'] as $kf => $vf)
                                         <td class="text-center">{{$vf}}</td>
                                         @endforeach
                                     </tr>
@@ -152,36 +146,36 @@
             <div class="col-md-6">
                 <div class="panel panel-inverse">
                     <div class="panel-body">
-
+                        <h1 class="page-header" style="margin: 0px;"><small>{{ $wireVibration['title']}}</small></h1>
                         <div class="table-responsive table-striped">
                             <table id="table-data" class="dataTable display compact">
                                 <thead>
                                     <tr>
                                         <th>No.</th>
                                         <th class="text-center">Station</th>
-                                        <th class="text-center">10-min Rainfall</th>
-                                        <th class="text-center">30-min Rainfall</th>
-                                        <th class="text-center">Hourly Rainfall</th>
-                                        <th class="text-center">3-hr Rainfall</th>
-                                        <th class="text-center">6-hr Rainfall</th>
-                                        <th class="text-center">12-hr Rainfall</th>
-                                        <th class="text-center">24-hr Rainfall</th>
-                                        <th class="text-center">Continous Rainfall</th>
-                                        <th class="text-center">Effective Rainfall</th>
-                                        <th class="text-center">Effective Intensity</th>
-                                        <th class="text-center">Previous Working</th>
-                                        <th class="text-center">Working Rainfal</th>
-                                        <th class="text-center">Working Rainfall (half-life:24h)</th>
-                                        <th class="text-center">Remarks</th>
+                                        @foreach($wireVibration['data']['data'] as $key => $value)
+                                        <th class="text-center" colspan="2">{{$value}}</th>
+
+                                        @endforeach
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <th class="text-center"></th>
+                                        @foreach($wireVibration['data']['data'] as $key => $value)
+                                        <th class="text-center">Wire</th>
+                                        <th class="text-center">Vibration</th>
+                                        @endforeach
                                     </tr>
 
                                 </thead>
                                 <tbody>
-                                    @forelse($curentRainFall['data'] as $key => $value)
+                                    @forelse($wireVibration['data']['station'] as $key => $value)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration  }}</td>
-                                        @foreach($value as $kf => $vf )
-                                        <td class="text-center">{{$vf}}</td>
+                                        <td class="text-center">{{$value['station_name']}}</td>
+                                        @foreach($value['data'] as $kf => $vf)
+                                        <td class="text-center">{{$vf['wire']}}</td>
+                                        <td class="text-center">{{$vf['vibration']}}</td>
                                         @endforeach
                                     </tr>
                                     @empty
@@ -201,35 +195,25 @@
             <div class="col-md-6">
                 <div class="panel panel-inverse">
                     <div class="panel-body">
-
+                        <h1 class="page-header" style="margin: 0px;"><small>{{ $flow['title']}}</small></h1>
                         <div class="table-responsive table-striped">
                             <table id="table-data" class="dataTable display compact">
                                 <thead>
                                     <tr>
                                         <th>No.</th>
                                         <th class="text-center">Station</th>
-                                        <th class="text-center">10-min Rainfall</th>
-                                        <th class="text-center">30-min Rainfall</th>
-                                        <th class="text-center">Hourly Rainfall</th>
-                                        <th class="text-center">3-hr Rainfall</th>
-                                        <th class="text-center">6-hr Rainfall</th>
-                                        <th class="text-center">12-hr Rainfall</th>
-                                        <th class="text-center">24-hr Rainfall</th>
-                                        <th class="text-center">Continous Rainfall</th>
-                                        <th class="text-center">Effective Rainfall</th>
-                                        <th class="text-center">Effective Intensity</th>
-                                        <th class="text-center">Previous Working</th>
-                                        <th class="text-center">Working Rainfal</th>
-                                        <th class="text-center">Working Rainfall (half-life:24h)</th>
-                                        <th class="text-center">Remarks</th>
+                                        @foreach($flow['data']['data'] as $key => $value)
+                                        <th class="text-center">{{$value}}</th>
+                                        @endforeach
                                     </tr>
 
                                 </thead>
                                 <tbody>
-                                    @forelse($curentRainFall['data'] as $key => $value)
+                                    @forelse($flow['data']['station'] as $key => $value)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration  }}</td>
-                                        @foreach($value as $kf => $vf )
+                                        <td class="text-center">{{$value['station_name']}}</td>
+                                        @foreach($value['data'] as $kf => $vf)
                                         <td class="text-center">{{$vf}}</td>
                                         @endforeach
                                     </tr>
@@ -275,11 +259,10 @@
         // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [110.4025134, -7.6269335],
-        zoom: 10
+        zoom: 9
     });
 
     map.on('load', () => {
-        map.resize();
         map.loadImage(
             'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
             (error, image) => {
@@ -287,18 +270,15 @@
                 map.addImage('custom-marker', image, {
 
                 });
-                // Add a GeoJSON source with 2 points
+
                 map.addSource('places', {
-                    // This GeoJSON contains features that include an "icon"
-                    // property. The value of the "icon" property corresponds
-                    // to an image in the Mapbox Streets style's sprite.
                     'type': 'geojson',
                     'data': {
                         'type': 'FeatureCollection',
                         'features': <?php echo $station ?>
                     }
                 });
-                // Add a layer showing the places.
+
                 map.addLayer({
                     'id': 'places',
                     'type': 'symbol',
@@ -311,16 +291,11 @@
 
                 });
 
-                // When a click event occurs on a feature in the places layer, open a popup at the
-                // location of the feature, with description HTML from its properties.
                 map.on('click', 'places', (e) => {
-                    // Copy coordinates array.
                     const coordinates = e.features[0].geometry.coordinates.slice();
                     const description = e.features[0].properties.description;
 
-                    // Ensure that if the map is zoomed out such that multiple
-                    // copies of the feature are visible, the popup appears
-                    // over the copy being pointed to.
+
                     while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
                     }
@@ -331,212 +306,539 @@
                         .addTo(map);
                 });
 
-                // Change the cursor to a pointer when the mouse is over the places layer.
+
                 map.on('mouseenter', 'places', () => {
                     map.getCanvas().style.cursor = 'pointer';
                 });
 
-                // Change it back to a pointer when it leaves.
+
                 map.on('mouseleave', 'places', () => {
                     map.getCanvas().style.cursor = '';
                 });
 
             })
     });
+
+    setTimeout(function() {
+        const coordinates = [110.3938888888889, -7.5655555555556].slice();
+        const description = "<strong>Plawangan<\/strong><p><br>RG<br>Jan-00<br><\/p>";
+
+
+        while (Math.abs(110.3938888888889 - coordinates[0]) > 180) {
+            coordinates[0] += 110.3938888888889 > coordinates[0] ? 360 : -360;
+        }
+
+        new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(description)
+            .addTo(map);
+
+    }, 3000);
 </script>
 
 <script>
-    Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json',
-        function(data) {
-
-            Highcharts.chart('container', {
-                chart: {
-                    zoomType: 'x',
-                    height: '50%',
-
-
-                },
-                title: {
-                    text: 'Hytograph',
-                   
-                },
-                xAxis: {
-                    type: 'datetime'
-                },
-                yAxis: {
-                    title: {
-                        text: 'Exchange rate',
-                        style: {
-                            display: 'none'
-                        }
+    Highcharts.chart('container', {
+        chart: {
+            type: 'area',
+            zoomType: 'xy',
+            height: '50%',
+        },
+        title: {
+            text: 'Judmentgraph',
+        },
+        subtitle: {
+            text: '13 Dec 2022',
+        },
+        xAxis: {
+            minPadding: 0,
+            maxPadding: 0,
+            plotLines: [{
+                color: '#888',
+                value: 0.1523,
+                width: 1,
+                label: {
+                    text: '',
+                    rotation: 90,
+                    style: {
+                        display: 'none'
                     }
-                },
+                }
+            }],
+            title: {
+                text: 'Time',
+                style: {
+                    display: 'none'
+                }
+            }
+        },
+        yAxis: [{
+            lineWidth: 1,
+            gridLineWidth: 1,
+            title: null,
+            tickWidth: 1,
+            tickLength: 5,
+            tickPosition: 'inside',
+            labels: {
+                align: 'left',
+                x: 8
+            }
+        }, {
+            opposite: true,
+            linkedTo: 0,
+            lineWidth: 1,
+            gridLineWidth: 0,
+            title: null,
+            tickWidth: 1,
+            tickLength: 5,
+            tickPosition: 'inside',
+            labels: {
+                align: 'right',
+                x: -8
+            }
+        }],
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            area: {
+                fillOpacity: 0.2,
+                lineWidth: 1,
+                step: 'center'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size=10px;">Time: {point.key}</span><br/>',
+            valueDecimals: 2
+        },
+        series: [{
+            name: 'Working Rainfall',
+            data: [
+                [
+                    0.1524,
+                    0.948665
+                ],
+                [
+                    0.1539,
+                    35.510715
+                ],
+                [
+                    0.154,
+                    39.883437
+                ],
+                [
+                    0.1541,
+                    40.499661
+                ],
+                [
+                    0.1545,
+                    43.262994000000006
+                ],
+                [
+                    0.1547,
+                    60.14799400000001
+                ],
+                [
+                    0.1553,
+                    60.30799400000001
+                ],
+                [
+                    0.1558,
+                    60.55018100000001
+                ],
+                [
+                    0.1564,
+                    68.381696
+                ],
+                [
+                    0.1567,
+                    69.46518400000001
+                ],
+                [
+                    0.1569,
+                    69.621464
+                ],
+                [
+                    0.157,
+                    70.398015
+                ],
+                [
+                    0.1574,
+                    70.400197
+                ],
+                [
+                    0.1575,
+                    73.199217
+                ],
+                [
+                    0.158,
+                    77.700017
+                ],
+                [
+                    0.1583,
+                    79.449017
+                ],
+                [
+                    0.1588,
+                    79.584064
+                ],
+                [
+                    0.159,
+                    80.584064
+                ],
+                [
+                    0.16,
+                    81.58156
+                ],
+                [
+                    0.1608,
+                    83.38156
+                ]
+            ],
+            color: '#03a7a8'
+        }, {
+            name: 'Hourly Rainfall',
+            data: [
+                [
+                    0.1435,
+                    242.521842
+                ],
+                [
+                    0.1436,
+                    206.49862099999999
+                ],
+                [
+                    0.1437,
+                    205.823735
+                ],
+                [
+                    0.1438,
+                    197.33275
+                ],
+                [
+                    0.1439,
+                    153.677454
+                ],
+                [
+                    0.144,
+                    146.007722
+                ],
+                [
+                    0.1442,
+                    82.55212900000001
+                ],
+                [
+                    0.1443,
+                    59.152814000000006
+                ],
+                [
+                    0.1444,
+                    57.942260000000005
+                ],
+                [
+                    0.1445,
+                    57.483850000000004
+                ],
+                [
+                    0.1446,
+                    52.39210800000001
+                ],
+                [
+                    0.1447,
+                    51.867208000000005
+                ],
+                [
+                    0.1448,
+                    44.104697
+                ],
+                [
+                    0.1449,
+                    40.131217
+                ],
+                [
+                    0.145,
+                    31.878217
+                ],
+                [
+                    0.1451,
+                    22.794916999999998
+                ],
+                [
+                    0.1453,
+                    12.345828999999998
+                ],
+                [
+                    0.1454,
+                    10.035642
+                ],
+                [
+                    0.148,
+                    9.326642
+                ],
+                [
+                    0.1522,
+                    3.76317
+                ]
+            ],
+            color: '#fc5857'
+        }]
+    });
 
-                plotOptions: {
-                    area: {
-                        fillColor: {
-                            linearGradient: {
-                                x1: 0,
-                                y1: 0,
-                                x2: 0,
-                                y2: 1
-                            },
-                            stops: [
-                                [0, Highcharts.getOptions().colors[0]],
-                                [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                            ]
-                        },
-                        marker: {
-                            radius: 2
-                        },
-                        lineWidth: 1,
-                        states: {
-                            hover: {
-                                lineWidth: 1
-                            }
-                        },
-                        threshold: null
-                    }
-                },
+    Highcharts.chart('container2', {
+        chart: {
+            zoomType: 'xy',
+            height: '50%',
+        },
+        title: {
+            text: 'HydroGraph',
+        },
+        subtitle: {
+            text: '13 Dec 2022',
+        },
+        xAxis: [{
+            categories: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+            crosshair: true
+        }],
+        yAxis: [{ // Primary yAxis
+            labels: {
+                format: '{value} m',
+                style: {
+                    color: Highcharts.getOptions().colors[2]
+                }
+            },
+            title: {
+                text: 'Water Level',
+                style: {
+                    color: Highcharts.getOptions().colors[2]
+                }
+            },
+            opposite: true
 
-                series: [{
-                    showInLegend: false,
-                    type: 'area',
-                    name: '',
-                    data: data
-                }],
-            });
+        }, { // Secondary yAxis
+            gridLineWidth: 0,
+            title: {
+                text: 'Rainfall',
+                style: {
+                    color: Highcharts.getOptions().colors[0]
+                }
+            },
+            labels: {
+                format: '{value} m',
+                style: {
+                    color: Highcharts.getOptions().colors[0]
+                }
+            }
+
+        }, { // Tertiary yAxis
+            gridLineWidth: 0,
+            title: {
+                text: 'Flow',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            },
+            labels: {
+                format: '{value} m/s',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            },
+            opposite: true
+        }],
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 80,
+            verticalAlign: 'top',
+            y: 55,
+            floating: true,
+            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || // theme
+                'rgba(255,255,255,0.25)'
+        },
+        series: [{
+            name: 'Flow',
+            type: 'spline',
+            yAxis: 1,
+            data: [3, 8, 6, 4, 10, 2, 5],
+
+            tooltip: {
+                valueSuffix: ' m/s'
+            }
+
+        }, {
+            name: 'Water Level',
+            type: 'spline',
+            yAxis: 2,
+            data: [0.10, 0.28, 0.35, 0.28, 0.19, 0.10, 0.5],
+            tooltip: {
+                valueSuffix: ' m'
+            }
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        floating: false,
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'bottom',
+                        x: 0,
+                        y: 0
+                    },
+                    yAxis: [{
+                        labels: {
+                            align: 'right',
+                            x: 0,
+                            y: -6
+                        },
+                        showLastLabel: false
+                    }, {
+                        labels: {
+                            align: 'left',
+                            x: 0,
+                            y: -6
+                        },
+                        showLastLabel: false
+                    }, {
+                        visible: false
+                    }]
+                }
+            }]
         }
-    );
-    Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json',
-        function(data) {
+    });
+    Highcharts.chart('container3', {
+        chart: {
+            zoomType: 'xy',
+            height: '50%',
+        },
+        title: {
+            text: 'HytroGraph',
+        },
+        subtitle: {
+            text: '13 Dec 2022',
+        },
+        xAxis: [{
+            categories: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+            crosshair: true
+        }],
+        yAxis: [{ // Primary yAxis
+            labels: {
+                format: '{value} m',
+                style: {
+                    color: Highcharts.getOptions().colors[4]
+                }
+            },
+            title: {
+                text: 'Water Level',
+                style: {
+                    color: Highcharts.getOptions().colors[4]
+                }
+            },
+            opposite: true
 
-            Highcharts.chart('container2', {
-                chart: {
-                    zoomType: 'x',
-                    height: '50%',
+        }, { // Secondary yAxis
+            gridLineWidth: 0,
+            title: {
+                text: 'Rainfall',
+                style: {
+                    color: Highcharts.getOptions().colors[3]
+                }
+            },
+            labels: {
+                format: '{value} Rh (mm/h)',
+                style: {
+                    color: Highcharts.getOptions().colors[3]
+                }
+            }
 
-                },
-                title: {
-                    text: 'Judmentgraph',
-                },
-                subtitle: {
-                    text: '13 Dec 2022',
-                },
-                xAxis: {
-                    type: 'datetime'
-                },
-                yAxis: {
-                    title: {
-                        text: 'Exchange rate',
-                        style: {
-                            display: 'none'
-                        }
-                    }
-                },
+        }, { // Tertiary yAxis
+            gridLineWidth: 0,
+            title: {
+                text: 'Flow',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            },
+            labels: {
+                format: '{value} Rc (mm/h)',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            },
+            opposite: true
+        }],
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 80,
+            verticalAlign: 'top',
+            y: 55,
+            floating: true,
+            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || // theme
+                'rgba(255,255,255,0.25)'
+        },
+        series: [{
+            name: 'Flow',
+            type: 'column',
+            yAxis: 1,
+            data: [3, 8, 6, 4, 10, 2, 5],
 
-                plotOptions: {
-                    area: {
-                        fillColor: {
-                            linearGradient: {
-                                x1: 0,
-                                y1: 0,
-                                x2: 0,
-                                y2: 1
-                            },
-                            stops: [
-                                [0, Highcharts.getOptions().colors[0]],
-                                [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                            ]
+            tooltip: {
+                valueSuffix: ' Rc (mm/h)'
+            }
+
+        }, {
+            name: 'Water Level',
+            type: 'spline',
+            yAxis: 2,
+            data: [0.10, 0.28, 0.35, 0.28, 0.19, 0.10, 0.5],
+            tooltip: {
+                valueSuffix: ' Rh (mm/h)'
+            }
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        floating: false,
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'bottom',
+                        x: 0,
+                        y: 0
+                    },
+                    yAxis: [{
+                        labels: {
+                            align: 'right',
+                            x: 0,
+                            y: -6
                         },
-                        marker: {
-                            radius: 2
+                        showLastLabel: false
+                    }, {
+                        labels: {
+                            align: 'left',
+                            x: 0,
+                            y: -6
                         },
-                        lineWidth: 1,
-                        states: {
-                            hover: {
-                                lineWidth: 1
-                            }
-                        },
-                        threshold: null
-                    }
-                },
-
-                series: [{
-                    showInLegend: false,
-                    type: 'area',
-                    name: '',
-                    data: data
-                }],
-            });
+                        showLastLabel: false
+                    }, {
+                        visible: false
+                    }]
+                }
+            }]
         }
-    );
-    Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json',
-        function(data) {
-
-            Highcharts.chart('container3', {
-                chart: {
-                    zoomType: 'x',
-                    height: '50%',
-
-                },
-                title: {
-                    text: 'HydroGraph',
-                },
-                subtitle: {
-                    text: '13 Dec 2022',
-                }, 
-                xAxis: {
-                    type: 'datetime'
-                },
-                yAxis: {
-                    title: {
-                        text: 'Exchange rate',
-                        style: {
-                            display: 'none'
-                        }
-                    }
-                },
-
-                plotOptions: {
-                    area: {
-                        fillColor: {
-                            linearGradient: {
-                                x1: 0,
-                                y1: 0,
-                                x2: 0,
-                                y2: 1
-                            },
-                            stops: [
-                                [0, Highcharts.getOptions().colors[0]],
-                                [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                            ]
-                        },
-                        marker: {
-                            radius: 2
-                        },
-                        lineWidth: 1,
-                        states: {
-                            hover: {
-                                lineWidth: 1
-                            }
-                        },
-                        threshold: null
-                    }
-                },
-
-                series: [{
-                    showInLegend: false,
-                    type: 'area',
-                    name: '',
-                    data: data
-                }],
-            });
-        }
-    );
+    });
     Highcharts.getJSON(
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json',
         function(data) {
