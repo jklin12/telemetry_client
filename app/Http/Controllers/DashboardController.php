@@ -74,13 +74,14 @@ class DashboardController extends Controller
         $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;
 
         $curentRainfall['title'] = 'Current Rainfall';
-        $responseRainFall = Http::get('http://202.169.224.46:5000/curentRainfall');
-        $curentRainfall['data'] =  $responseRainFall->object();
+        //$responseRainFall = Http::get('http://202.169.224.46:5000/curentRainfall');
+        //$curentRainfall['data'] =  $responseRainFall->object();
+        $curentRainfall['data'] =  [];
 
         $waterLevel['title'] = 'Water Level';
         $waterlevelQuery = WaterLevelModel::select('station_id', 'station', 'station_name', 'water_level_date', 'water_level_time', 'water_level_hight')
             ->leftJoin('sch_data_station', 'sch_data_waterlevel.station', '=', 'sch_data_station.station_id')
-            ->where('water_level_date', $filterDate)
+            ->where('water_level_date', '2022-12-06')
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('water_level_time')
@@ -91,9 +92,11 @@ class DashboardController extends Controller
         foreach ($waterlevelQuery as $key => $value) {
             $waterLevelData['station'][$value['station']]['station_id'] = $value['station_id'];
             $waterLevelData['station'][$value['station']]['station_name'] = $value['station_name'];
-            $waterLevelData['data'][$value['water_level_time']]['date_time'] = Carbon::parse($value['water_level_time'])->isoFormat('HH::mm');
-            $waterLevelData['data'][$value['water_level_time']]['datas'][] = $value;
-        }
+            $waterLevelData['station'][$value['station']]['data'][$value['water_level_time']] = $value['water_level_hight'];
+
+            $waterLevelData['data'][$value['water_level_time']]= Carbon::parse($value['water_level_time'])->isoFormat('HH:mm');
+            
+        } 
         $waterLevel['data'] = $waterLevelData;
 
         $wireVibration['title'] = 'Wire & Vibration Daily Report ';
@@ -105,8 +108,9 @@ class DashboardController extends Controller
             'wire_vibration_time',
             'wire',
             'vibration',
-        )->where('wire_vibration_date', $filterDate)
+        )
             ->leftJoin('sch_data_station', 'sch_data_wirevibration.station', '=', 'sch_data_station.station_id')
+            ->where('wire_vibration_date', '2022-12-06')
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('wire_vibration_time')
@@ -116,17 +120,22 @@ class DashboardController extends Controller
         foreach ($wireVibrationQuery as $key => $value) {
             //$susunData[$value['date_time']]['date_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');
             //$susunData[$value['date_time']]['station_name'] = $value['station_name'];
+            $wireVibrationData['station'][$value['station']]['station_id'] = $value['station_id'];
             $wireVibrationData['station'][$value['station']]['station_name'] = $value['station_name'];
-            $wireVibrationData['data'][$value['wire_vibration_time']]['date_time'] = Carbon::parse($value['wire_vibration_time'])->isoFormat('HH::mm');
-            $wireVibrationData['data'][$value['wire_vibration_time']]['datas'][] = $value;
+            $wireVibrationData['station'][$value['station']]['data'][$value['wire_vibration_time']]['wire'] = $value['wire'];
+            $wireVibrationData['station'][$value['station']]['data'][$value['wire_vibration_time']]['vibration'] = $value['vibration'];
+            $wireVibrationData['data'][$value['wire_vibration_time']] = Carbon::parse($value['wire_vibration_time'])->isoFormat('HH:mm');
+          
+            
         }
+        //dd($wireVibrationData);
 
         $wireVibration['data'] = $wireVibrationData;
 
         $flow['title'] = 'Flow Daily Report ';
         $flowQuer = FlowModel::select('station_id', 'station', 'station_name', 'flow_date', 'flow_time', 'flow')
             ->leftJoin('sch_data_station', 'sch_data_flow.station', '=', 'sch_data_station.station_id')
-            ->where('flow_date', $filterDate)
+            ->where('flow_date', '2022-12-06')
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('flow_time')
@@ -136,9 +145,11 @@ class DashboardController extends Controller
         foreach ($flowQuer as $key => $value) {
             $flowData['station'][$value['station']]['station_id'] = $value['station_id'];
             $flowData['station'][$value['station']]['station_name'] = $value['station_name'];
-            $flowData['data'][$value['flow_time']]['date_time'] = Carbon::parse($value['flow_time'])->isoFormat('HH::mm');
-            $flowData['data'][$value['flow_time']]['datas'][] = $value;
+            $flowData['station'][$value['station']]['data'][$value['flow_time']] = $value['flow'];
+            $flowData['data'][$value['flow_time']] = Carbon::parse($value['flow_time'])->isoFormat('HH:mm');
+            
         }
+        //dd($flowData);
         $flow['data'] = $flowData;
 
         $station = StationModel::get();
@@ -147,15 +158,16 @@ class DashboardController extends Controller
         foreach ($station as $key => $value) {
 
             $stationData[$key]['type'] = 'Feature';
+            $stationData[$key]['properties']['title'] = $value->station_name;
             $stationData[$key]['properties']['description'] = '<strong>' . $value->station_name . '</strong><p>' . $value->station_station_river . '<br>' . $value->station_equipment . '<br>' . $value->station_authority . '<br>' . $value->station_guardsman . '</p>';
-            $susunData[$key]['properties']['icon'] = 'mountain-11';
+            $stationData[$key]['properties']['icon'] = 'mountain-11';
             //$susunData[$key]['properties']['icon'] = $value->station_icon;
             $stationData[$key]['geometry']['type'] = 'Point';
             $stationData[$key]['geometry']['coordinates'][] = $this->dms_to_dec($value->station_long);
             $stationData[$key]['geometry']['coordinates'][] = doubleval('-' . $this->dms_to_dec($value->station_lat));
         }
 
-        //dd($susunData);
+        //dd($stationData);
         
 
         $load['title'] = $title;
@@ -164,7 +176,7 @@ class DashboardController extends Controller
         $load['waterLevel'] = $waterLevel;
         $load['wireVibration'] = $wireVibration;
         $load['flow'] = $flow;
-        $load['station'] = json_encode($stationData);
+        $load['station'] = json_encode(array_values($stationData));
         //dd($load);
 
         return view('pages/dashboard/monitoring', $load);
