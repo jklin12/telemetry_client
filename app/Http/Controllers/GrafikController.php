@@ -54,7 +54,7 @@ class GrafikController extends Controller
         $data['flow'] = [];
         foreach ($waterlevel as $key => $value) {
             if ($value['water_level_hight']) {
-                $data['water_level'][] = intval($value['water_level_hight']);
+                $data['water_level'][] = doubleval($value['water_level_hight']);
                 $data['label'][] = Carbon::parse($value['water_level_time'])->isoFormat('HH::mm');
             }
         }
@@ -70,7 +70,7 @@ class GrafikController extends Controller
 
         foreach ($flow as $key => $value) {
             if ($value['flow']) {
-                $data['flow'][] = intval($value['flow']);
+                $data['flow'][] = doubleval($value['flow']);
             }
         }
 
@@ -106,8 +106,8 @@ class GrafikController extends Controller
         $data['rc'] = [];
         foreach ($rainfall as $key => $value) {
             if ($value['rain_fall_1_hour'] && $value['rain_fall_continuous']) {
-                $data['rh'][] = intval($value['rain_fall_1_hour']);
-                $data['rc'][] = intval($value['rain_fall_continuous']);
+                $data['rh'][] = doubleval($value['rain_fall_1_hour']);
+                $data['rc'][] = doubleval($value['rain_fall_continuous']);
                 $data['label'][] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');
             }
         }
