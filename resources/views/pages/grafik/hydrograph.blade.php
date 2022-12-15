@@ -34,7 +34,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <!--<div class="col-md-4">
                     <div class="form-group row">
                         <label class="col-form-label col-md-4">Display Interval :</label>
                         <div class="col-md-7">
@@ -45,7 +45,7 @@
                             </select>
                         </div>
                     </div>
-                </div>
+                </div>-->
                 <div class="col-md-4">
                     <div class="form-group row">
                         <label class="col-form-label col-md-4">Date : </label>
@@ -108,7 +108,7 @@
             }
         },
         xAxis: [{
-            categories: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00','24:00'],
+            categories: <?php echo json_encode($data['label']) ?>,
             crosshair: true
         }],
         yAxis: [{ // Primary yAxis
@@ -119,7 +119,7 @@
                 }
             },
             title: {
-                text: 'Water Level',
+                text: '',
                 style: {
                     color: Highcharts.getOptions().colors[2]
                 }
@@ -129,7 +129,7 @@
         }, { // Secondary yAxis
             gridLineWidth: 0,
             title: {
-                text: 'Rainfall',
+                text: 'Water Level',
                 style: {
                     color: Highcharts.getOptions().colors[0]
                 }
@@ -174,8 +174,7 @@
             name: 'Flow',
             type: 'spline',
             yAxis: 1,
-            data: [3,8,6,4,10,2,5],
-            
+            data: <?php echo json_encode($data['flow']) ?>,
             tooltip: {
                 valueSuffix: ' m/s'
             }
@@ -184,7 +183,7 @@
             name: 'Water Level',
             type: 'spline',
             yAxis: 2,
-            data: [0.10,0.28,0.35,0.28,0.19,0.10,0.5],
+            data: <?php echo json_encode($data['water_level']) ?>,
             tooltip: {
                 valueSuffix: ' m'
             }
