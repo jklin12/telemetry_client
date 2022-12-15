@@ -83,7 +83,9 @@
     $(".default-select2").select2().on('select2:select', function(e) {
         var data = e.params.data;
         $('#filter-form').submit();
-    }).select2('val', '<?php echo $filterStation ?>');
+    });
+
+    
 
     $(".datepicker").datepicker({
         format: 'yyyy-mm-dd',
