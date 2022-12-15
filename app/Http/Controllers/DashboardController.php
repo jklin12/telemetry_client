@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FlowModel;
+use App\Models\RainfallModel;
 use App\Models\StationModel;
 use App\Models\WaterLevelModel;
 use App\Models\WireVibrationModel;
@@ -78,7 +79,25 @@ class DashboardController extends Controller
         //$responseRainFall = Http::get('http://202.173.16.249:8000/curentRainfall');
         //$curentRainfall['data'] =  $responseRainFall->object();
         //dd($curentRainfall);
-        $curentRainfall['data'] =  [];
+        $rainfall = RainfallModel::select('station', 'rain_fall_date', 'rain_fall_time', 'station_name', 'rain_fall_1_hour', 'rain_fall_continuous')
+            ->leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
+            ->where('rain_fall_date', $filterDate)
+            //->where('rain_fall_date', '2022-12-06')
+            //->groupBy('station')
+            ->orderBy(DB::raw('sch_data_station.station_id'))
+            ->orderBy('rain_fall_time')
+            ->get()->toArray();
+
+        $rainfallData = [];
+        foreach ($rainfall as $key => $value) {
+            $rainfallData['station'][$value['station']]['station_id'] = $value['station'];
+            $rainfallData['station'][$value['station']]['station_name'] = $value['station_name'];
+            $rainfallData['station'][$value['station']]['data']['rh'][$value['rain_fall_time']] = $value['rain_fall_1_hour'];
+            $rainfallData['station'][$value['station']]['data']['rc'][$value['rain_fall_time']] = $value['rain_fall_continuous'];
+            $rainfallData['data'][$value['rain_fall_time']] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH:mm');
+        }
+        $curentRainfall['data'] =  $rainfallData;
+        //dd($rainfallData);
 
         $waterLevel['title'] = 'Water Level';
         $waterlevelQuery = WaterLevelModel::select('station_id', 'station', 'station_name', 'water_level_date', 'water_level_time', 'water_level_hight')
@@ -90,15 +109,14 @@ class DashboardController extends Controller
             ->get()->toArray();
 
         $waterLevelData = [];
-        $arrDataByStation = [];
+
         foreach ($waterlevelQuery as $key => $value) {
             $waterLevelData['station'][$value['station']]['station_id'] = $value['station_id'];
             $waterLevelData['station'][$value['station']]['station_name'] = $value['station_name'];
             $waterLevelData['station'][$value['station']]['data'][$value['water_level_time']] = $value['water_level_hight'];
 
-            $waterLevelData['data'][$value['water_level_time']]= Carbon::parse($value['water_level_time'])->isoFormat('HH:mm');
-            
-        } 
+            $waterLevelData['data'][$value['water_level_time']] = Carbon::parse($value['water_level_time'])->isoFormat('HH:mm');
+        }
         $waterLevel['data'] = $waterLevelData;
 
         $wireVibration['title'] = 'Wire & Vibration Daily Report ';
@@ -127,8 +145,6 @@ class DashboardController extends Controller
             $wireVibrationData['station'][$value['station']]['data'][$value['wire_vibration_time']]['wire'] = $value['wire'];
             $wireVibrationData['station'][$value['station']]['data'][$value['wire_vibration_time']]['vibration'] = $value['vibration'];
             $wireVibrationData['data'][$value['wire_vibration_time']] = Carbon::parse($value['wire_vibration_time'])->isoFormat('HH:mm');
-          
-            
         }
         //dd($wireVibrationData);
 
@@ -149,7 +165,6 @@ class DashboardController extends Controller
             $flowData['station'][$value['station']]['station_name'] = $value['station_name'];
             $flowData['station'][$value['station']]['data'][$value['flow_time']] = $value['flow'];
             $flowData['data'][$value['flow_time']] = Carbon::parse($value['flow_time'])->isoFormat('HH:mm');
-            
         }
         //dd($flowData);
         $flow['data'] = $flowData;
@@ -170,7 +185,7 @@ class DashboardController extends Controller
         }
 
         //dd($stationData);
-        
+
 
         $load['title'] = $title;
         $load['filterDate'] = $filterDate;
