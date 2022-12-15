@@ -97,7 +97,7 @@ return [
     ],
     [
       'icon' => 'fas fa-map-signs',
-      'title' => 'Wire Viration',
+      'title' => 'Wire Vibration',
       'label' => '',
       'url' => '/wire_vibration/daily',
       'route-name' => 'wire_vibration.daily'
