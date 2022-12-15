@@ -26,7 +26,7 @@
                             <select class="default-select2 form-control " id="station" name="station" required>
                                 <option value="">-- Pilih Station --</option>
                                 @forelse($station_list as $key => $value)
-                                <option value="{{$value['station_id']}}">{{$value['station_name']}}</option>
+                                <option selected value="{{$value['station_id']}}">{{$value['station_name']}}</option>
                                 @empty
                                 <option value="">Data tidak ditemukan</option>
                                 @endforelse
@@ -83,7 +83,7 @@
     $(".default-select2").select2().on('select2:select', function(e) {
         var data = e.params.data;
         $('#filter-form').submit();
-    });
+    }).val('<?php echo $filterStation ?>');
 
     
 
