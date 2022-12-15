@@ -52,38 +52,38 @@
             <div class="col-md-6">
                 <div class="panel panel-inverse">
                     <div class="panel-body">
-                        <h1 class="page-header" style="margin: 0px;"><small>Curent Rainfall</small></h1>
+                        <h1 class="page-header" style="margin: 0px;"><small>Daily Rainfall</small></h1>
                         <div class="table-responsive table-striped">
                             <table id="table-data" class="dataTable display compact">
                                 <thead>
+                                    @if(isset($curentRainFall['data']['data']))
                                     <tr>
                                         <th>No.</th>
                                         <th class="text-center">Station</th>
-                                        <th class="text-center">10-min Rainfall</th>
-                                        <th class="text-center">30-min Rainfall</th>
-                                        <th class="text-center">Hourly Rainfall</th>
-                                        <th class="text-center">3-hr Rainfall</th>
-                                        <th class="text-center">6-hr Rainfall</th>
-                                        <th class="text-center">12-hr Rainfall</th>
-                                        <th class="text-center">24-hr Rainfall</th>
-                                        <th class="text-center">Continous Rainfall</th>
-                                        <th class="text-center">Effective Rainfall</th>
-                                        <th class="text-center">Effective Intensity</th>
-                                        <th class="text-center">Previous Working</th>
-                                        <th class="text-center">Working Rainfal</th>
-                                        <th class="text-center">Working Rainfall (half-life:24h)</th>
-                                        <th class="text-center">Remarks</th>
+                                        @foreach($curentRainFall['data']['data'] as $key => $value)
+                                        <th colspan="2" class="text-center">{{$value}}</th>
+                                        @endforeach
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        @foreach($curentRainFall['data']['data'] as $key => $value)
+                                        <th>Rh(mm/h)</th>
+                                        <th>Rc(mm)</th>
+                                        @endforeach
+
                                     </tr>
 
                                 </thead>
                                 <tbody>
-                                    @forelse($curentRainFall['data'] as $key => $value)
+                                    @forelse($curentRainFall['data']['station'] as $key => $value)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration  }}</td>
-                                        @foreach($value as $kf => $vf )
-                                        @if($kf < 15) <td class="text-center">{{$vf}}</td>
-                                            @endif
-                                            @endforeach
+                                        <td class="text-center">{{$value['station_name']}}</td>
+                                        @foreach($value['data']['rh'] as $kf => $vf)
+                                        <td class="text-center">{{$vf}}</td>
+                                        @endforeach
                                     </tr>
                                     @empty
                                     <div class="col-md-4">
@@ -94,6 +94,7 @@
                                     </div>
                                     @endforelse
                                 </tbody>
+                                @endif
                             </table>
                         </div>
                     </div>
@@ -115,7 +116,7 @@
                                         @endforeach
                                     </tr>
                                 </thead>
-                               
+
                                 <tbody>
                                     @forelse($waterLevel['data']['station'] as $key => $value)
                                     <tr>
@@ -168,7 +169,7 @@
                                     </tr>
 
                                 </thead>
-                           
+
                                 <tbody>
                                     @forelse($wireVibration['data']['station'] as $key => $value)
                                     <tr>
@@ -213,7 +214,7 @@
                                     </tr>
 
                                 </thead>
-                               
+
                                 <tbody>
                                     @forelse($flow['data']['station'] as $key => $value)
                                     <tr>
