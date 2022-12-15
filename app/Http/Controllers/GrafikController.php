@@ -38,6 +38,9 @@ class GrafikController extends Controller
         $title = 'Hydrograph';
         $subTitle = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
+        $station = StationModel::find($filterStation);
+        $title .= ' '.$station->station_name;
+
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
 
@@ -91,6 +94,9 @@ class GrafikController extends Controller
         $title = 'Hydrograph';
         $subTitle = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
+        $station = StationModel::find($filterStation);
+        $title .= ' '.$station->station_name;
+        
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
 
