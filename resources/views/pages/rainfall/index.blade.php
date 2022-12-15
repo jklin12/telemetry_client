@@ -25,7 +25,7 @@
                         <label class="col-form-label col-md-4">Station :</label>
                         <div class="col-md-7">
                             <select class="default-select2 form-control " id="station" name="station" required>
-                                <option value="">-- Pilih Profile --</option>
+                                <option value="">-- Pilih Station --</option>
                                 @forelse($station_list as $key => $value)
                                 <option value="{{$value['station_id']}}">{{$value['station_name']}}</option>
                                 @empty
