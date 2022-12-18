@@ -43,7 +43,7 @@ class RainfallController extends Controller
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
         $filterStation = $request->has('station') ? $request->get('station') : 1;
-        $interval = $request->has('interval') ? $request->get('interval') : 10;
+        $interval = $request->has('interval') ? $request->get('interval') : 60;
         $title = 'Rainfall Report ';
         $subTitle = 'by station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 

@@ -140,18 +140,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 
 <script>
-     $('#data-table-fixed-header').DataTable({
-        lengthMenu: [20, 40, 60],
-        fixedHeader: {
-            header: true,
-            headerOffset: $('#header').height(),
-            footer: true
-        },
-        paging: false,
-        ordering: false,
-        searching:false,
-        responsive: true
-    });
     $("#datepicker").datepicker({
         format: 'yyyy-mm-dd',
         defaultDate: '<?php echo $filterDate ?>'
@@ -170,6 +158,18 @@
         $('#filter-form').submit();
     });
     $('#interval option[value=<?php echo $filterInterval ?>]').attr('selected', 'selected');
+    $('#data-table-fixed-header').DataTable({
+        lengthMenu: [20, 40, 60],
+        fixedHeader: {
+            header: true,
+            headerOffset: $('#header').height(),
+            footer: true
+        },
+        paging: false,
+        ordering: false,
+        searching:false,
+        responsive: true
+    });
 </script>
 
 

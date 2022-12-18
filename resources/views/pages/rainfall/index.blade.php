@@ -120,18 +120,7 @@
 
 <script>
     ///alert(Date())
-    $('#data-table-fixed-header').DataTable({
-        lengthMenu: [20, 40, 60],
-        fixedHeader: {
-            header: true,
-            headerOffset: $('#header').height(),
-            footer: true
-        },
-        paging: false,
-        ordering: false,
-        searching: false,
-        responsive: true
-    });
+   
     $(".default-select2").select2().on('select2:select', function(e) {
         var data = e.params.data;
         $('#filter-form').submit();
@@ -149,6 +138,18 @@
         $('#filter-form').submit();
     });
     $('#interval option[value=<?php echo $filterInterval ?>]').attr('selected', 'selected');
+    $('#data-table-fixed-header').DataTable({
+        lengthMenu: [20, 40, 60],
+        fixedHeader: {
+            header: true,
+            headerOffset: $('#header').height(),
+            footer: true
+        },
+        paging: false,
+        ordering: false,
+        searching: false,
+        responsive: true
+    });
 </script>
 
 
