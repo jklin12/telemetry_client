@@ -15,7 +15,7 @@ class RainfallModel extends Model
 
     protected $fillable = [
         'rain_fall_id',
-        'station_id',
+        'station',
         'rain_fall_date',
         'rain_fall_time',
         'rain_fall_10_minut',
