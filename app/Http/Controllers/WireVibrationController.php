@@ -12,41 +12,62 @@ class WireVibrationController extends Controller
     public function daily(Request $request)
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
+        $interval = $request->has('interval') ? $request->get('interval') : '60';
         $title = 'Wire & Vibration Daily Report ';
         $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;
 
+        $select = "station_id, station, station_name,wire_vibration_date, ";
+        $group = '';
+        if ($interval == 10) {
+            $select .= "wire_vibration_time as wvt ,wire as average_w,vibration as average_v";
+        } elseif ($interval == 30) {
+            $select .= 'DATE_FORMAT(wire_vibration_time, "%H:") as hour,IF("30">MINUTE(wire_vibration_time), "00", "30") as wvt,ROUND(AVG(wire),3) as average_w,ROUND(AVG(vibration),3) as average_v';
+            $group = 'station,CONCAT(
+                HOUR(wire_vibration_time),
+                IF("30">MINUTE(wire_vibration_time), "00", "30")
+               )';
+        } elseif ($interval == 60) {
+            $select .= "wire_vibration_time as wvt,ROUND(AVG(wire),3) as average_w,ROUND(AVG(vibration),3) as average_v";
+            $group = 'station,HOUR(wire_vibration_time)';
+        }
 
-        $wireVibration = WireVibrationModel::select(
-            'station_id',
-            'station',
-            'station_name',
-            'wire_vibration_date',
-            'wire_vibration_time',
-            'wire',
-            'vibration',
-        )->where('wire_vibration_date', $filterDate)
+
+        $wireVibration = WireVibrationModel::select(DB::raw($select))
+            ->where('wire_vibration_date', '2022-12-06')
             ->leftJoin('sch_data_station', 'sch_data_wirevibration.station', '=', 'sch_data_station.station_id')
-            //->groupBy('station')
-            ->orderBy(DB::raw('sch_data_station.station_id'))
-            ->orderBy('wire_vibration_time')
-            ->get()->toArray();
+            ->orderBy('wire_vibration_time');
 
-        
-
-        $susunData = []; 
-
-        foreach ($wireVibration as $key => $value) {
+        if ($group) {
+            $wireVibration->groupBy(DB::raw($group));
+        }
+        //dd($wireVibration->get()->toArray(),$select,$filterDate);
+        $susunData = [];
+        foreach ($wireVibration->get()->toArray() as $key => $value) {
             //$susunData[$value['date_time']]['date_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');
             //$susunData[$value['date_time']]['station_name'] = $value['station_name'];
             $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
-            $susunData['data'][$value['wire_vibration_time']]['date_time'] = Carbon::parse($value['wire_vibration_time'])->isoFormat('HH::mm');
-            $susunData['data'][$value['wire_vibration_time']]['datas'][] = $value;
+            //$susunData['data'][$value['wire_vibration_time']]['date_time'] = Carbon::parse($value['wire_vibration_time'])->isoFormat('HH::mm');
+            //$susunData['data'][$value['wire_vibration_time']]['datas'][] = $value;
+            if ($interval == 30) {
+                $times =  date($value['hour'] . $value['wvt']);
+                 $susunData['data'][$value['hour'] . $value['wvt']]['date_time'] = $times; 
+                $susunData['data'][$value['hour'] . $value['wvt']]['datas'][] = $value;
+                $arrDataByStation[$value['station']][$value['hour'] . $value['wvt']] =  $value['average_w'];
+                $arrDataByStation[$value['station']][$value['hour'] . $value['wvt']] =  $value['average_v'];
+            } else {
+                $susunData['data'][$value['wvt']]['date_time'] = Carbon::parse($value['wvt'])->isoFormat('HH:mm');
+                $susunData['data'][$value['wvt']]['datas'][] = $value;
+                $arrDataByStation[$value['station']][$value['wvt']] =  $value['average_w'];
+                $arrDataByStation[$value['station']][$value['wvt']] =  $value['average_v'];
+            }
+
         }
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
         $load['datas'] = $susunData;
         $load['filterDate'] = $filterDate;
+        $load['filterInterval'] = $interval;
 
         return view('pages/wire_vibration/daily', $load);
     }

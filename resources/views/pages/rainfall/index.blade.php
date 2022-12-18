@@ -7,6 +7,8 @@
 <link href="/assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet" />
 <link href="/assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css" rel="stylesheet" />
 <link href="/assets/plugins/select2/dist/css/select2.min.css" rel="stylesheet" />
+<link href="/assets/plugins/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+<link href="/assets/plugins/datatables.net-fixedheader-bs4/css/fixedHeader.bootstrap4.min.css" rel="stylesheet" />
 
 @endpush
 
@@ -51,7 +53,7 @@
                     <div class="form-group row">
                         <label class="col-form-label col-md-4">Date : </label>
                         <div class="col-md-7">
-                            <input id="reservationDate" type="text" name="date" class="form-control datepicker" value="{{ $filterDate }}" />
+                            <input id="datepicker" type="text" name="date" class="form-control datepicker" value="{{ $filterDate }}" />
                         </div>
                     </div>
                 </div>
@@ -60,47 +62,43 @@
                 <!--<div class="text-muted f-w-600 mt-2 mt-sm-0">compared to <span id="daterange-prev-date">24 Mar-30 Apr 2020</span></div>-->
             </div>
         </form>
-       
-        <div class="table-responsive table-striped">
-            <div class="dataTables_wrapper dt-bootstrap4 no-footer">
-                @if($datas)
-                <table id="table-data" class="dataTable display compact">
-                    <thead>
-                        <tr>
-                            <!--<th>No.</th>-->
-                            @foreach($arr_field as $key => $value)
-                            <th class="text-center">{{$value['label']}}</th>
-                            @endforeach
-                        </tr>
 
-                    </thead>
-                    <tbody>
-                        @forelse($datas as $key => $value)
-                        <tr>
-                            <!--<td class="text-center">{{ $loop->iteration  }}</td>-->
-                            @foreach($arr_field as $kf => $vf )
-                            <td class="text-center">{{$value[$kf]}}</td>
-                            @endforeach
-                        </tr>
-                        @empty
-                        <div class="col-md-4">
-                            <div class="alert alert-warning fade show m-b-10">
-                                <span class="close" data-dismiss="alert">×</span>
-                                Maaf! Data tidak ditemua.
-                            </div>
-                        </div>
-                        @endforelse
-                    </tbody>
-                </table>
-                @else
-                <div class="">
-                    <div class="alert alert-warning fade show m-b-10">
-                        <span class="close" data-dismiss="alert">×</span>
-                        Maaf! Data tidak ditemua.
-                    </div>
+        <div class="table-responsive table-striped">
+            @if($datas)
+            <table id="data-table-fixed-header" class="table table-striped table-bordered table-td-valign-middle display compact">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        @foreach($arr_field as $key => $value)
+                        <th class="text-center">{{$value['label']}}</th>
+                        @endforeach
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @forelse($datas as $key => $value)
+                    <tr>
+                        <td>{{ $loop->iteration  }}</td>
+                        @foreach($arr_field as $kf => $vf )
+                        <td class="text-center">{{$value[$kf]}}</td>
+                        @endforeach
+
+                    </tr>
+                    @empty
+
+                    @endforelse
+                </tbody>
+
+            </table>
+            @else
+            <div class="">
+                <div class="alert alert-warning fade show m-b-10">
+                    <span class="close" data-dismiss="alert">×</span>
+                    Maaf! Data tidak ditemua.
                 </div>
-                @endif
             </div>
+            @endif
+
         </div>
     </div>
 </div>
@@ -113,6 +111,8 @@
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.5/js/dataTables.buttons.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.bootstrap4.min.js"></script>
+<script src="/assets/plugins/datatables.net-fixedheader-bs4/js/fixedHeader.bootstrap4.min.js"></script>
+<script src="/assets/plugins/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <script src="/vendor/datatables/buttons.server-side.js"></script>
 <script src="/assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
@@ -120,21 +120,35 @@
 
 <script>
     ///alert(Date())
+    $('#data-table-fixed-header').DataTable({
+        lengthMenu: [20, 40, 60],
+        fixedHeader: {
+            header: true,
+            headerOffset: $('#header').height(),
+            footer: true
+        },
+        paging: false,
+        ordering: false,
+        searching: false,
+        responsive: true
+    });
     $(".default-select2").select2().on('select2:select', function(e) {
         var data = e.params.data;
         $('#filter-form').submit();
     }).select2('val', '<?php echo $filterStation ?>');
 
-    $(".datepicker").datepicker({
+    $("#datepicker").datepicker({
         format: 'yyyy-mm-dd',
         defaultDate: '<?php echo $filterDate ?>'
     }).on('changeDate', function(ev) {
 
         $('#filter-form').submit();
     });
+
     $('#interval').on('change', function(ev) {
         $('#filter-form').submit();
     });
+    $('#interval option[value=<?php echo $filterInterval ?>]').attr('selected', 'selected');
 </script>
 
 
