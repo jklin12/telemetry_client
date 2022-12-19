@@ -9,15 +9,14 @@ class CurentRainfallModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'sch_current_rainfall';
+    protected $table = 'sch_curent_rainfall';
     protected $primaryKey = 'rain_fall_id';
     public $incrementing = false;
 
     protected $fillable = [
         'rain_fall_id',
-        'station_id',
-        'rain_fall_date',
-        'rain_fall_time',
+        'station',
+        'rain_fall_date', 
         'rain_fall_10_minut',
         'rain_fall_30_minute',
         'rain_fall_1_hour',

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\DataTables\RainfallbystationDataTable;
+use App\Models\CurentRainfallModel;
 use App\Models\RainfallModel;
 use App\Models\StationModel;
 use Carbon\Carbon;
@@ -25,14 +26,13 @@ class RainfallController extends Controller
         $subTitle = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
         //$response = Http::get('http://202.169.224.46:5000/curentRainfall');
-        //$response = Http::get('http://202.173.16.249:8000/curentRainfall');
-
+        $curetnRainfall = CurentRainfallModel::where('rain_fall_date',$filterDate)->get();
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
         $load['filterDate'] = $filterDate;
         //$load['datas'] = $response->object();
-        $load['datas'] = [];
+        $load['datas'] = $curetnRainfall;
         //dd($load['datas']);
         $load['arr_field'] = $this->arrField();
 
