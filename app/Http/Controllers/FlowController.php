@@ -22,11 +22,8 @@ class FlowController extends Controller
         if ($interval == 10) {
             $select .= "flow_time as ft ,flow as average_f";
         } elseif ($interval == 30) {
-            $select .= 'DATE_FORMAT(flow_time, "%H:") as hour,IF("30">MINUTE(flow_time), "00", "30") as ft,ROUND(AVG(flow),3) as average_f';
-            $group = 'station,CONCAT(
-                HOUR(flow_time),
-                IF("30">MINUTE(flow_time), "00", "30")
-               )';
+            $select .= 'HOUR(flow_time) as hour,IF("30">MINUTE(flow_time), "00", "30") as ft,ROUND(AVG(flow),3) as average_f';
+            $group = 'station,CONCAT(hour,ft)';
         } elseif ($interval == 60) {
             $select .= "flow_time as ft,ROUND(AVG(flow),3) as average_f";
             $group = 'station,HOUR(flow_time)';
@@ -49,8 +46,8 @@ class FlowController extends Controller
             $susunData['station'][$value['station']]['station_id'] = $value['station_id'];
             $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
             if ($interval == 30) {
-                $times =  date($value['hour'] . $value['ft']);
-                 $susunData['data'][$value['hour'] . $value['ft']]['date_time'] = $times; 
+                $times =  date($value['hour'] . ':' . $value['ft']);
+                $susunData['data'][$value['hour'] . $value['ft']]['date_time'] = $times;
                 $susunData['data'][$value['hour'] . $value['ft']]['datas'][] = $value;
                 $arrDataByStation[$value['station']][$value['hour'] . $value['ft']] =  $value['average_f'];
             } else {
@@ -59,8 +56,6 @@ class FlowController extends Controller
                 $susunData['data'][$value['ft']]['datas'][] = $value;
                 $arrDataByStation[$value['station']][$value['ft']] =  $value['average_f'];
             }
-
-
         }
 
         //dd($arrDataByStation);

@@ -57,11 +57,8 @@ class RainfallController extends Controller
         if ($interval == 10) {
             $select .= "rain_fall_time as rt,rain_fall_10_minut,rain_fall_30_minute,rain_fall_1_hour,rain_fall_3_hour,rain_fall_6_hour,rain_fall_12_hour,rain_fall_24_hour,rain_fall_continuous,rain_fall_effective,rain_fall_effective_intensity,rain_fall_prev_working,rain_fall_working,rain_fall_working_24,rain_fall_remarks";
         } elseif ($interval == 30) {
-            $select .= 'DATE_FORMAT(rain_fall_time, "%H:") as hour,IF("30">MINUTE(rain_fall_time), "00", "30") as rt,ROUND(AVG(rain_fall_10_minut),3) as rain_fall_10_minut,ROUND(AVG(rain_fall_30_minute),3) as rain_fall_30_minute,ROUND(AVG(rain_fall_1_hour),3) as rain_fall_1_hour,ROUND(AVG(rain_fall_3_hour),3) as rain_fall_3_hour,ROUND(AVG(rain_fall_6_hour),3) as rain_fall_6_hour,ROUND(AVG(rain_fall_12_hour),3) as rain_fall_12_hour,ROUND(AVG(rain_fall_24_hour),3) as rain_fall_24_hour,ROUND(AVG(rain_fall_continuous),3) as rain_fall_continuous,ROUND(AVG(rain_fall_effective),3) as rain_fall_effective,ROUND(AVG(rain_fall_effective_intensity),3) as rain_fall_effective_intensity,ROUND(AVG(rain_fall_prev_working),3) as rain_fall_prev_working,ROUND(AVG(rain_fall_working),3) as rain_fall_working,ROUND(AVG(rain_fall_working_24),3) as rain_fall_working_24, rain_fall_remarks';
-            $group = 'station,CONCAT(
-                HOUR(rain_fall_time),
-                IF("30">MINUTE(rain_fall_time), "00", "30")
-               )';
+            $select .= 'HOUR(rain_fall_time) as hour,IF("30">MINUTE(rain_fall_time), "00", "30") as rt,ROUND(AVG(rain_fall_10_minut),3) as rain_fall_10_minut,ROUND(AVG(rain_fall_30_minute),3) as rain_fall_30_minute,ROUND(AVG(rain_fall_1_hour),3) as rain_fall_1_hour,ROUND(AVG(rain_fall_3_hour),3) as rain_fall_3_hour,ROUND(AVG(rain_fall_6_hour),3) as rain_fall_6_hour,ROUND(AVG(rain_fall_12_hour),3) as rain_fall_12_hour,ROUND(AVG(rain_fall_24_hour),3) as rain_fall_24_hour,ROUND(AVG(rain_fall_continuous),3) as rain_fall_continuous,ROUND(AVG(rain_fall_effective),3) as rain_fall_effective,ROUND(AVG(rain_fall_effective_intensity),3) as rain_fall_effective_intensity,ROUND(AVG(rain_fall_prev_working),3) as rain_fall_prev_working,ROUND(AVG(rain_fall_working),3) as rain_fall_working,ROUND(AVG(rain_fall_working_24),3) as rain_fall_working_24, rain_fall_remarks';
+            $group = 'station,CONCAT(hour,rt)';
         } elseif ($interval == 60) {
             $select .= "rain_fall_time as rt,ROUND(AVG(rain_fall_10_minut),3) as rain_fall_10_minut,ROUND(AVG(rain_fall_30_minute),3) as rain_fall_30_minute,ROUND(AVG(rain_fall_1_hour),3) as rain_fall_1_hour,ROUND(AVG(rain_fall_3_hour),3) as rain_fall_3_hour,ROUND(AVG(rain_fall_6_hour),3) as rain_fall_6_hour,ROUND(AVG(rain_fall_12_hour),3) as rain_fall_12_hour,ROUND(AVG(rain_fall_24_hour),3) as rain_fall_24_hour,ROUND(AVG(rain_fall_continuous),3) as rain_fall_continuous,ROUND(AVG(rain_fall_effective),3) as rain_fall_effective,ROUND(AVG(rain_fall_effective_intensity),3) as rain_fall_effective_intensity,ROUND(AVG(rain_fall_prev_working),3) as rain_fall_prev_working,ROUND(AVG(rain_fall_working),3) as rain_fall_working,ROUND(AVG(rain_fall_working_24),3) as rain_fall_working_24,rain_fall_remarks";
             $group = 'station,HOUR(rain_fall_time)';
@@ -81,7 +78,7 @@ class RainfallController extends Controller
         foreach ($rainfall->get()->toArray() as $key => $value) {
             $susunData[$key]['rain_fall_date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D MMMM YYYY');
             if ($interval == 30) {
-                $times =  ($value['hour'] . $value['rt']);
+                $times =  date($value['hour'].':' . $value['rt']);
                 $susunData[$key] = $value;
                 $susunData[$key]['rt'] = $times;
             } else {
@@ -119,11 +116,8 @@ class RainfallController extends Controller
         if ($interval == 10) {
             $select .= "rain_fall_time as rt ,rain_fall_1_hour as average_rc,rain_fall_1_hour as average_rh";
         } elseif ($interval == 30) {
-            $select .= 'DATE_FORMAT(rain_fall_time, "%H:") as hour,IF("30">MINUTE(rain_fall_time), "00", "30") as rt,ROUND(AVG(rain_fall_1_hour),3) as average_rc,ROUND(AVG(rain_fall_1_hour),3) as average_rh';
-            $group = 'station,CONCAT(
-                HOUR(rain_fall_time),
-                IF("30">MINUTE(rain_fall_time), "00", "30")
-               )';
+            $select .= 'HOUR(rain_fall_time) as hour,IF("30">MINUTE(rain_fall_time), "00", "30") as rt,ROUND(AVG(rain_fall_1_hour),3) as average_rc,ROUND(AVG(rain_fall_1_hour),3) as average_rh';
+            $group = 'station,CONCAT(hour,rt)';
         } elseif ($interval == 60) {
             $select .= "rain_fall_time as rt,ROUND(AVG(rain_fall_1_hour),3) as average_rc,ROUND(AVG(rain_fall_1_hour),3) as average_rh";
             $group = 'station,HOUR(rain_fall_time)';
@@ -147,7 +141,7 @@ class RainfallController extends Controller
             $susunData['station'][$value['station']]['station_id'] = $value['station'];
             $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
             if ($interval == 30) {
-                $times =  date($value['hour'] . $value['rt']);
+                $times =  date($value['hour'] .':'. $value['rt']);
                 $susunData['data'][$value['hour'] . $value['rt']]['date_time'] = $times;
                 $susunData['data'][$value['hour'] . $value['rt']]['datas'][] = $value;
 
