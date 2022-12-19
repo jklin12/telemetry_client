@@ -21,10 +21,9 @@ class WireVibrationController extends Controller
         if ($interval == 10) {
             $select .= "wire_vibration_time as wvt ,wire as average_w,vibration as average_v";
         } elseif ($interval == 30) {
-            $select .= 'DATE_FORMAT(wire_vibration_time, "%H:") as hour,IF("30">MINUTE(wire_vibration_time), "00", "30") as wvt,ROUND(AVG(wire),3) as average_w,ROUND(AVG(vibration),3) as average_v';
+            $select .= 'HOUR(wire_vibration_time) as hour,IF("30">MINUTE(wire_vibration_time), "00", "30") as wvt,ROUND(AVG(wire),3) as average_w,ROUND(AVG(vibration),3) as average_v';
             $group = 'station,CONCAT(
-                HOUR(wire_vibration_time),
-                IF("30">MINUTE(wire_vibration_time), "00", "30")
+                hour,wvt
                )';
         } elseif ($interval == 60) {
             $select .= "wire_vibration_time as wvt,ROUND(AVG(wire),3) as average_w,ROUND(AVG(vibration),3) as average_v";
@@ -49,9 +48,9 @@ class WireVibrationController extends Controller
             //$susunData['data'][$value['wire_vibration_time']]['date_time'] = Carbon::parse($value['wire_vibration_time'])->isoFormat('HH::mm');
             //$susunData['data'][$value['wire_vibration_time']]['datas'][] = $value;
             if ($interval == 30) {
-                $times =  date($value['hour'] . $value['wvt']);
-                 $susunData['data'][$value['hour'] . $value['wvt']]['date_time'] = $times; 
-                $susunData['data'][$value['hour'] . $value['wvt']]['datas'][] = $value;
+                $times =  date($value['hour'] . ':' . $value['wvt']);
+                $susunData['data'][$times]['datas'][] = $value;
+                $susunData['data'][$times]['date_time'] = $times;
                 $arrDataByStation[$value['station']][$value['hour'] . $value['wvt']] =  $value['average_w'];
                 $arrDataByStation[$value['station']][$value['hour'] . $value['wvt']] =  $value['average_v'];
             } else {
@@ -60,7 +59,6 @@ class WireVibrationController extends Controller
                 $arrDataByStation[$value['station']][$value['wvt']] =  $value['average_w'];
                 $arrDataByStation[$value['station']][$value['wvt']] =  $value['average_v'];
             }
-
         }
 
         $load['title'] = $title;
