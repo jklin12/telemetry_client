@@ -79,10 +79,14 @@ class DashboardController extends Controller
         //$responseRainFall = Http::get('http://202.173.16.249:8000/curentRainfall');
         //$curentRainfall['data'] =  $responseRainFall->object();
         //dd($curentRainfall);
+        $now = date('H:i:s');
+        $prevHour = date('H:i:s',strtotime('-1 hour', strtotime($now)));
+        //dd($now,$prevHour);
+
         $rainfall = RainfallModel::select('station', 'rain_fall_date', 'rain_fall_time', 'station_name', 'rain_fall_1_hour', 'rain_fall_continuous')
             ->leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
             ->where('rain_fall_date', $filterDate)
-            //->where('rain_fall_date', '2022-12-06')
+            ->whereRaw("rain_fall_time BETWEEN '".$now."' AND '".$prevHour."'")
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('rain_fall_time')
@@ -103,6 +107,7 @@ class DashboardController extends Controller
         $waterlevelQuery = WaterLevelModel::select('station_id', 'station', 'station_name', 'water_level_date', 'water_level_time', 'water_level_hight')
             ->leftJoin('sch_data_station', 'sch_data_waterlevel.station', '=', 'sch_data_station.station_id')
             ->where('water_level_date', $filterDate)
+            ->whereRaw("water_level_time BETWEEN '".$now."' AND '".$prevHour."'")
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('water_level_time')
@@ -131,6 +136,7 @@ class DashboardController extends Controller
         )
             ->leftJoin('sch_data_station', 'sch_data_wirevibration.station', '=', 'sch_data_station.station_id')
             ->where('wire_vibration_date', $filterDate)
+            ->whereRaw("wire_vibration_time BETWEEN '".$now."' AND '".$prevHour."'")
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('wire_vibration_time')
@@ -154,6 +160,7 @@ class DashboardController extends Controller
         $flowQuer = FlowModel::select('station_id', 'station', 'station_name', 'flow_date', 'flow_time', 'flow')
             ->leftJoin('sch_data_station', 'sch_data_flow.station', '=', 'sch_data_station.station_id')
             ->where('flow_date', $filterDate)
+            ->whereRaw("flow_time BETWEEN '".$now."' AND '".$prevHour."'")
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('flow_time')
