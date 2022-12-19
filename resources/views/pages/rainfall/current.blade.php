@@ -47,11 +47,21 @@
                         @forelse($datas as $key => $value)
                         <tr>
                             <td>{{ $loop->iteration  }}</td>
-                            @foreach($value as $kf => $vf )
-                            @if($kf < 15)
-                            <td>{{$vf}}</td>
-                            @endif
-                            @endforeach
+                            <td>{{$value->station}}</td>
+                            <td>{{$value->rain_fall_10_minut}}</td>
+                            <td>{{$value->rain_fall_30_minute}}</td>
+                            <td>{{$value->rain_fall_1_hour}}</td>
+                            <td>{{$value->rain_fall_3_hour}}</td>
+                            <td>{{$value->rain_fall_6_hour}}</td>
+                            <td>{{$value->rain_fall_12_hour}}</td>
+                            <td>{{$value->rain_fall_24_hour}}</td>
+                            <td>{{$value->rain_fall_continuous}}</td>
+                            <td>{{$value->rain_fall_effective}}</td>
+                            <td>{{$value->rain_fall_effective_intensity}}</td>
+                            <td>{{$value->rain_fall_prev_working}}</td>
+                            <td>{{$value->rain_fall_working}}</td>
+                            <td>{{$value->rain_fall_working_24}}</td>
+                            <td>{{$value->rain_fall_remarks}}</td>
                         </tr>
                         @empty
                         <div class="col-md-4">
