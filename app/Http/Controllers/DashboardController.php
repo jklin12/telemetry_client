@@ -80,7 +80,7 @@ class DashboardController extends Controller
         //$curentRainfall['data'] =  $responseRainFall->object();
         //dd($curentRainfall);
         $now = date('H:i:s');
-        $prevHour = date('H:i:s',strtotime('-1 hour', strtotime($now)));
+        $prevHour = date('H:i:s',strtotime('-2 hour', strtotime($now)));
         //dd($now,$prevHour);
 
         $rainfall = RainfallModel::select('station', 'rain_fall_date', 'rain_fall_time', 'station_name', 'rain_fall_1_hour', 'rain_fall_continuous')
