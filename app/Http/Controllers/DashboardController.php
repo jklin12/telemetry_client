@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CurentRainfallModel;
 use App\Models\FlowModel;
 use App\Models\RainfallModel;
 use App\Models\StationModel;
@@ -80,34 +81,18 @@ class DashboardController extends Controller
         //$curentRainfall['data'] =  $responseRainFall->object();
         //dd($curentRainfall);
         $now = date('H:i:s');
-        $prevHour = date('H:i:s',strtotime('-2 hour', strtotime($now)));
+        $prevHour = date('H:i:s', strtotime('-2 hour', strtotime($now)));
         //dd($now,$prevHour);
 
-        $rainfall = RainfallModel::select('station', 'rain_fall_date', 'rain_fall_time', 'station_name', 'rain_fall_1_hour', 'rain_fall_continuous')
-            ->leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
-            ->where('rain_fall_date', $filterDate)
-            ->whereRaw("rain_fall_time BETWEEN '".$prevHour."' AND '".$now."'")
-            //->groupBy('station')
-            ->orderBy(DB::raw('sch_data_station.station_id'))
-            ->orderBy('rain_fall_time')
-            ->get()->toArray();
-
-        $rainfallData = [];
-        foreach ($rainfall as $key => $value) {
-            $rainfallData['station'][$value['station']]['station_id'] = $value['station'];
-            $rainfallData['station'][$value['station']]['station_name'] = $value['station_name'];
-            $rainfallData['station'][$value['station']]['data']['rh'][$value['rain_fall_time']] = $value['rain_fall_1_hour'];
-            $rainfallData['station'][$value['station']]['data']['rc'][$value['rain_fall_time']] = $value['rain_fall_continuous'];
-            $rainfallData['data'][$value['rain_fall_time']] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH:mm');
-        }
-        $curentRainfall['data'] =  $rainfallData;
-        //dd($rainfallData);
+        $curentRainfall['data'] =  CurentRainfallModel::where('rain_fall_date', $filterDate)->get();
+        //echo json_encode(array_values($finalJson));
+        //dd($rainfallData,array_values($finalJson));
 
         $waterLevel['title'] = 'Water Level';
         $waterlevelQuery = WaterLevelModel::select('station_id', 'station', 'station_name', 'water_level_date', 'water_level_time', 'water_level_hight')
             ->leftJoin('sch_data_station', 'sch_data_waterlevel.station', '=', 'sch_data_station.station_id')
             ->where('water_level_date', $filterDate)
-            ->whereRaw("water_level_time BETWEEN '".$prevHour."' AND '".$now."'")
+            ->whereRaw("water_level_time BETWEEN '" . $prevHour . "' AND '" . $now . "'")
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('water_level_time')
@@ -116,13 +101,13 @@ class DashboardController extends Controller
         $waterLevelData = [];
 
         foreach ($waterlevelQuery as $key => $value) {
-            $waterLevelData['station'][$value['station']]['station_id'] = $value['station_id'];
-            $waterLevelData['station'][$value['station']]['station_name'] = $value['station_name'];
-            $waterLevelData['station'][$value['station']]['data'][$value['water_level_time']] = $value['water_level_hight'];
+            $waterLevelData['station'][$value['station']] = $value['station_name'];
 
-            $waterLevelData['data'][$value['water_level_time']] = Carbon::parse($value['water_level_time'])->isoFormat('HH:mm');
+            $waterLevelData['data'][$value['water_level_time']]['time'] = Carbon::parse($value['water_level_time'])->isoFormat('HH:mm');
+            $waterLevelData['data'][$value['water_level_time']]['data'][] = $value['water_level_hight'];
         }
         $waterLevel['data'] = $waterLevelData;
+        //dd($waterLevel);
 
         $wireVibration['title'] = 'Wire & Vibration Daily Report ';
         $wireVibrationQuery = WireVibrationModel::select(
@@ -136,7 +121,7 @@ class DashboardController extends Controller
         )
             ->leftJoin('sch_data_station', 'sch_data_wirevibration.station', '=', 'sch_data_station.station_id')
             ->where('wire_vibration_date', $filterDate)
-            ->whereRaw("wire_vibration_time BETWEEN '".$prevHour."' AND '".$now."'")
+            ->whereRaw("wire_vibration_time BETWEEN '" . $prevHour . "' AND '" . $now . "'")
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('wire_vibration_time')
@@ -144,13 +129,10 @@ class DashboardController extends Controller
 
         $wireVibrationData = [];
         foreach ($wireVibrationQuery as $key => $value) {
-            //$susunData[$value['date_time']]['date_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');
-            //$susunData[$value['date_time']]['station_name'] = $value['station_name'];
-            $wireVibrationData['station'][$value['station']]['station_id'] = $value['station_id'];
-            $wireVibrationData['station'][$value['station']]['station_name'] = $value['station_name'];
-            $wireVibrationData['station'][$value['station']]['data'][$value['wire_vibration_time']]['wire'] = $value['wire'];
-            $wireVibrationData['station'][$value['station']]['data'][$value['wire_vibration_time']]['vibration'] = $value['vibration'];
-            $wireVibrationData['data'][$value['wire_vibration_time']] = Carbon::parse($value['wire_vibration_time'])->isoFormat('HH:mm');
+
+            $wireVibrationData['station'][$value['station']] = $value['station_name'];
+            $wireVibrationData['data'][$value['wire_vibration_time']]['date_time'] = Carbon::parse($value['wire_vibration_time'])->isoFormat('HH:mm');
+            $wireVibrationData['data'][$value['wire_vibration_time']]['datas'][] = $value;
         }
         //dd($wireVibrationData);
 
@@ -160,7 +142,7 @@ class DashboardController extends Controller
         $flowQuer = FlowModel::select('station_id', 'station', 'station_name', 'flow_date', 'flow_time', 'flow')
             ->leftJoin('sch_data_station', 'sch_data_flow.station', '=', 'sch_data_station.station_id')
             ->where('flow_date', $filterDate)
-            ->whereRaw("flow_time BETWEEN '".$prevHour."' AND '".$now."'")
+            ->whereRaw("flow_time BETWEEN '" . $prevHour . "' AND '" . $now . "'")
             //->groupBy('station')
             ->orderBy(DB::raw('sch_data_station.station_id'))
             ->orderBy('flow_time')
@@ -168,10 +150,9 @@ class DashboardController extends Controller
 
         $flowData = [];
         foreach ($flowQuer as $key => $value) {
-            $flowData['station'][$value['station']]['station_id'] = $value['station_id'];
-            $flowData['station'][$value['station']]['station_name'] = $value['station_name'];
-            $flowData['station'][$value['station']]['data'][$value['flow_time']] = $value['flow'];
-            $flowData['data'][$value['flow_time']] = Carbon::parse($value['flow_time'])->isoFormat('HH:mm');
+            $flowData['station'][$value['station']] = $value['station_name'];
+            $flowData['data'][$value['flow_time']]['date_time'] = Carbon::parse($value['flow_time'])->isoFormat('HH:mm');
+            $flowData['data'][$value['flow_time']]['datas'][] = $value['flow'];
         }
         //dd($flowData);
         $flow['data'] = $flowData;
@@ -202,7 +183,135 @@ class DashboardController extends Controller
         $load['flow'] = $flow;
         $load['station'] = json_encode(array_values($stationData));
         //dd($load);
-
         return view('pages/dashboard/monitoring', $load);
+    }
+
+    public function portalData()
+    {
+
+        $filterDate = date('Y-m-d');
+        $now = date('H:i:s');
+        $prevHour = date('H:i:s', strtotime('-2 hour', strtotime($now)));
+
+        $curentRainfall = CurentRainfallModel::where('rain_fall_date', $filterDate)->get();
+
+        $rainfallJson = [];
+        foreach ($curentRainfall as $key => $value) {
+            $rainfallJson[$key][] = $key + 1;
+            $rainfallJson[$key][] = $value->station;
+            $rainfallJson[$key][] = $value->rain_fall_10_minut;
+            $rainfallJson[$key][] = $value->rain_fall_30_minute;
+            $rainfallJson[$key][] = $value->rain_fall_1_hour;
+            $rainfallJson[$key][] = $value->rain_fall_3_hour;
+            $rainfallJson[$key][] = $value->rain_fall_6_hour;
+            $rainfallJson[$key][] = $value->rain_fall_12_hour;
+            $rainfallJson[$key][] = $value->rain_fall_24_hour;
+            $rainfallJson[$key][] = $value->rain_fall_continuous;
+            $rainfallJson[$key][] = $value->rain_fall_effective;
+            $rainfallJson[$key][] = $value->rain_fall_effective_intensity;
+            $rainfallJson[$key][] = $value->rain_fall_prev_working;
+            $rainfallJson[$key][] = $value->rain_fall_working;
+            $rainfallJson[$key][] = $value->rain_fall_working_24;
+            $rainfallJson[$key][] = $value->rain_fall_remarks;
+        }
+
+        $waterlevelQuery = WaterLevelModel::select('station_id', 'station', 'station_name', 'water_level_date', 'water_level_time', 'water_level_hight')
+            ->leftJoin('sch_data_station', 'sch_data_waterlevel.station', '=', 'sch_data_station.station_id')
+            ->where('water_level_date', $filterDate)
+            ->whereRaw("water_level_time BETWEEN '" . $prevHour . "' AND '" . $now . "'")
+            //->groupBy('station')
+            ->orderBy(DB::raw('sch_data_station.station_id'))
+            ->orderBy('water_level_time')
+            ->get();
+
+
+        $susunDataWL = [];
+        foreach ($waterlevelQuery as $key => $value) {
+            $susunDataWL[$value->water_level_time]['time'] = $value->water_level_time;
+            $susunDataWL[$value->water_level_time]['data'][$value->station] = $value->water_level_hight;
+            //$susunDataWL[$value->water_level_time][] = $value->water_level_hight;
+        }
+        $wLJson  = [];
+        $iWl = 1;
+        foreach ($susunDataWL as $key => $value) {
+            $wLJson[$key][] = $iWl;
+            $wLJson[$key][] = $value['time'];
+            foreach ($value['data'] as $kData => $vData) {
+                $wLJson[$key][] = $vData;
+            }
+            $iWl++;
+        }
+
+        $wireVibrationQuery = WireVibrationModel::select(
+            'station_id',
+            'station',
+            'station_name',
+            'wire_vibration_date',
+            'wire_vibration_time',
+            'wire',
+            'vibration',
+        )
+            ->leftJoin('sch_data_station', 'sch_data_wirevibration.station', '=', 'sch_data_station.station_id')
+            ->where('wire_vibration_date', $filterDate)
+            ->whereRaw("wire_vibration_time BETWEEN '" . $prevHour . "' AND '" . $now . "'")
+            //->groupBy('station')
+            ->orderBy(DB::raw('sch_data_station.station_id'))
+            ->orderBy('wire_vibration_time')
+            ->get();
+
+        $susunDataWv = [];
+        foreach ($wireVibrationQuery as $key => $value) {
+            $susunDataWv[$value->wire_vibration_time]['time'] = $value->wire_vibration_time;
+            $susunDataWv[$value->wire_vibration_time]['data'][$value->station]['wire'] = $value->wire;
+            $susunDataWv[$value->wire_vibration_time]['data'][$value->station]['vibration'] = $value->vibration;
+            //$susunDataWL[$value->water_level_time][] = $value->water_level_hight;
+        }
+
+        $wVirationJson  = [];
+        $iWv = 1;
+        foreach ($susunDataWv as $key => $value) {
+            $wVirationJson[$key][] = $iWv;
+            $wVirationJson[$key][] = $value['time'];
+            foreach ($value['data'] as $kData => $vData) {
+                $wVirationJson[$key][] = $vData['wire'];
+                $wVirationJson[$key][] = $vData['vibration'];
+            }
+            $iWv++;
+        }
+
+        $flowQuer = FlowModel::select('station_id', 'station', 'station_name', 'flow_date', 'flow_time', 'flow')
+            ->leftJoin('sch_data_station', 'sch_data_flow.station', '=', 'sch_data_station.station_id')
+            ->where('flow_date', $filterDate)
+            ->whereRaw("flow_time BETWEEN '" . $prevHour . "' AND '" . $now . "'")
+            //->groupBy('station')
+            ->orderBy(DB::raw('sch_data_station.station_id'))
+            ->orderBy('flow_time')
+            ->get();
+
+        $susunFlow = [];
+        foreach ($flowQuer as $key => $value) {
+            $susunFlow[$value->flow_time]['time'] = $value->flow_time;
+            $susunFlow[$value->flow_time]['data'][$value->station] = $value->flow;
+            //$susunDataWL[$value->water_level_time][] = $value->water_level_hight;
+        }
+
+        $flowJson  = [];
+        $iFlow = 1;
+        foreach ($susunFlow as $key => $value) {
+            $flowJson[$key][] = $iFlow;
+            $flowJson[$key][] = $value['time'];
+            foreach ($value['data'] as $kData => $vData) {
+                $flowJson[$key][] = $vData;
+            }
+            $iFlow++;
+        }
+        echo json_encode(
+            [
+                'curent_rainfall' => array_values($rainfallJson),
+                'water_level' => array_values($wLJson),
+                'wire_vibration' => array_values($wVirationJson),
+                'flow' => array_values($flowJson),
+            ]
+        );
     }
 }
