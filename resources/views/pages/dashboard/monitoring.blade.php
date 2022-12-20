@@ -52,50 +52,64 @@
             <div class="col-md-6">
                 <div class="panel panel-inverse">
                     <div class="panel-body">
-                        <h1 class="page-header" style="margin: 0px;"><small>Daily Rainfall</small></h1>
+                        <h1 class="page-header" style="margin: 0px;"><small>{{$curentRainFall['title']}}</small></h1>
                         <div class="table-responsive table-striped">
-                            <table id="table-data" class="dataTable display compact">
+                            @if($curentRainFall['data'])
+                            <table id="table-rainfall" class="dataTable display compact">
                                 <thead>
-                                    @if(isset($curentRainFall['data']['data']))
                                     <tr>
                                         <th>No.</th>
                                         <th class="text-center">Station</th>
-                                        @foreach($curentRainFall['data']['data'] as $key => $value)
-                                        <th colspan="2" class="text-center">{{$value}}</th>
-                                        @endforeach
-                                    </tr>
-                                    
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        @foreach($curentRainFall['data']['data'] as $key => $value)
-                                        <th>Rh(mm/h)</th>
-                                        <th>Rc(mm)</th>
-                                        @endforeach
-
+                                        <th class="text-center">10-min Rainfall</th>
+                                        <th class="text-center">30-min Rainfall</th>
+                                        <th class="text-center">Hourly Rainfall</th>
+                                        <th class="text-center">3-hr Rainfall</th>
+                                        <th class="text-center">6-hr Rainfall</th>
+                                        <th class="text-center">12-hr Rainfall</th>
+                                        <th class="text-center">24-hr Rainfall</th>
+                                        <th class="text-center">Continous Rainfall</th>
+                                        <th class="text-center">Effective Rainfall</th>
+                                        <th class="text-center">Effective Intensity</th>
+                                        <th class="text-center">Previous Working</th>
+                                        <th class="text-center">Working Rainfal</th>
+                                        <th class="text-center">Working Rainfall (half-life:24h)</th>
+                                        <th class="text-center">Remarks</th>
                                     </tr>
 
                                 </thead>
                                 <tbody>
-                                    @forelse($curentRainFall['data']['station'] as $key => $value)
+                                    @forelse($curentRainFall['data'] as $key => $value)
                                     <tr>
-                                        <td class="text-center">{{ $loop->iteration  }}</td>
-                                        <td class="text-center">{{$value['station_name']}}</td>
-                                        @foreach($value['data']['rh'] as $kf => $vf)
-                                        <td class="text-center">{{$vf}}</td>
-                                        @endforeach
+                                        <td>{{ $loop->iteration  }}</td>
+                                        <td>{{$value->station}}</td>
+                                        <td>{{$value->rain_fall_10_minut}}</td>
+                                        <td>{{$value->rain_fall_30_minute}}</td>
+                                        <td>{{$value->rain_fall_1_hour}}</td>
+                                        <td>{{$value->rain_fall_3_hour}}</td>
+                                        <td>{{$value->rain_fall_6_hour}}</td>
+                                        <td>{{$value->rain_fall_12_hour}}</td>
+                                        <td>{{$value->rain_fall_24_hour}}</td>
+                                        <td>{{$value->rain_fall_continuous}}</td>
+                                        <td>{{$value->rain_fall_effective}}</td>
+                                        <td>{{$value->rain_fall_effective_intensity}}</td>
+                                        <td>{{$value->rain_fall_prev_working}}</td>
+                                        <td>{{$value->rain_fall_working}}</td>
+                                        <td>{{$value->rain_fall_working_24}}</td>
+                                        <td>{{$value->rain_fall_remarks}}</td>
                                     </tr>
                                     @empty
-                                    <div class="col-md-4">
-                                        <div class="alert alert-warning fade show m-b-10">
-                                            <span class="close" data-dismiss="alert">×</span>
-                                            Maaf! Data tidak ditemua.
-                                        </div>
-                                    </div>
+
                                     @endforelse
                                 </tbody>
-                                @endif
                             </table>
+                            @else
+                            <div class="">
+                                <div class="alert alert-warning fade show m-b-10">
+                                    <span class="close" data-dismiss="alert">×</span>
+                                    Maaf! Data tidak ditemua.
+                                </div>
+                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -105,37 +119,35 @@
                     <div class="panel-body">
                         <h1 class="page-header" style="margin: 0px;"><small>{{ $waterLevel['title']}}</small></h1>
                         <div class="table-responsive table-striped">
-                            <table id="table-data" class="dataTable display compact">
-                                @if(isset($waterLevel['data']['data']))
+                            <table id="table-waterlevel" class="dataTable">
+
                                 <thead>
                                     <tr>
                                         <th>No.</th>
                                         <th class="text-center">Station</th>
-                                        @foreach($waterLevel['data']['data'] as $key => $value)
+                                        @if(isset($waterLevel['data']['station']))
+                                        @foreach($waterLevel['data']['station'] as $key => $value)
                                         <th class="text-center">{{$value}}</th>
                                         @endforeach
+                                        @endif
                                     </tr>
                                 </thead>
 
                                 <tbody>
-                                    @forelse($waterLevel['data']['station'] as $key => $value)
+                                    @if(isset($waterLevel['data']['data']))
+                                    @foreach($waterLevel['data']['data'] as $key => $value)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration  }}</td>
-                                        <td class="text-center">{{$value['station_name']}}</td>
+                                        <td class="text-center">{{$value['time']}}</td>
                                         @foreach($value['data'] as $kf => $vf)
                                         <td class="text-center">{{$vf}}</td>
                                         @endforeach
                                     </tr>
-                                    @empty
-                                    <div class="col-md-4">
-                                        <div class="alert alert-warning fade show m-b-10">
-                                            <span class="close" data-dismiss="alert">×</span>
-                                            Maaf! Data tidak ditemua.
-                                        </div>
-                                    </div>
-                                    @endforelse
+                                    @endforeach
+
+                                    @endif
                                 </tbody>
-                                @endif
+
                             </table>
                         </div>
                     </div>
@@ -148,48 +160,42 @@
                     <div class="panel-body">
                         <h1 class="page-header" style="margin: 0px;"><small>{{ $wireVibration['title']}}</small></h1>
                         <div class="table-responsive table-striped">
-                            <table id="table-data" class="dataTable display compact">
-                                @if(isset($wireVibration['data']['data']))
+                            <table id="table-wirevibration" class="dataTable display compact">
+
                                 <thead>
+                                    @if(isset($wireVibration['data']['station']))
                                     <tr>
                                         <th>No.</th>
-                                        <th class="text-center">Station</th>
-                                        @foreach($wireVibration['data']['data'] as $key => $value)
+                                        <th class="text-center">Date Time</th>
+                                        @foreach($wireVibration['data']['station'] as $key => $value)
                                         <th class="text-center" colspan="2">{{$value}}</th>
-
                                         @endforeach
                                     </tr>
                                     <tr>
                                         <th></th>
                                         <th class="text-center"></th>
-                                        @foreach($wireVibration['data']['data'] as $key => $value)
+                                        @foreach($wireVibration['data']['station'] as $key => $value)
                                         <th class="text-center">Wire</th>
                                         <th class="text-center">Vibration</th>
                                         @endforeach
                                     </tr>
-
+                                    @endif
                                 </thead>
 
                                 <tbody>
-                                    @forelse($wireVibration['data']['station'] as $key => $value)
+                                    @if(isset($wireVibration['data']['data']))
+                                    @foreach($wireVibration['data']['data'] as $key => $value)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration  }}</td>
-                                        <td class="text-center">{{$value['station_name']}}</td>
-                                        @foreach($value['data'] as $kf => $vf)
+                                        <td class="text-center">{{$value['date_time']}}</td>
+                                        @foreach($value['datas'] as $kf => $vf)
                                         <td class="text-center">{{$vf['wire']}}</td>
                                         <td class="text-center">{{$vf['vibration']}}</td>
                                         @endforeach
                                     </tr>
-                                    @empty
-                                    <div class="col-md-4">
-                                        <div class="alert alert-warning fade show m-b-10">
-                                            <span class="close" data-dismiss="alert">×</span>
-                                            Maaf! Data tidak ditemua.
-                                        </div>
-                                    </div>
-                                    @endforelse
+                                    @endforeach
+                                    @endif
                                 </tbody>
-                                @endif
                             </table>
                         </div>
                     </div>
@@ -200,40 +206,36 @@
                     <div class="panel-body">
                         <h1 class="page-header" style="margin: 0px;"><small>{{ $flow['title']}}</small></h1>
                         <div class="table-responsive table-striped">
-                            <table id="table-data" class="dataTable display compact">
-                                @if(isset($flow['data']['data']))
+                            <table id="table-flow" class="dataTable">
+
                                 <thead>
+                                    @if(isset($flow['data']['station']))
                                     <tr>
                                         <th>No.</th>
                                         <th class="text-center">Station</th>
-                                        @foreach($flow['data']['data'] as $key => $value)
-
+                                        @foreach($flow['data']['station'] as $key => $value)
                                         <th class="text-center">{{$value}}</th>
-
                                         @endforeach
                                     </tr>
+                                    @endif
 
                                 </thead>
 
                                 <tbody>
-                                    @forelse($flow['data']['station'] as $key => $value)
+                                    @if(isset($flow['data']['data']))
+                                    @foreach($flow['data']['data'] as $key => $value)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration  }}</td>
-                                        <td class="text-center">{{$value['station_name']}}</td>
-                                        @foreach($value['data'] as $kf => $vf)
+                                        <td class="text-center">{{$value['date_time']}}</td>
+                                        @foreach($value['datas'] as $kf => $vf)
                                         <td class="text-center">{{$vf}}</td>
                                         @endforeach
                                     </tr>
-                                    @empty
-                                    <div class="col-md-4">
-                                        <div class="alert alert-warning fade show m-b-10">
-                                            <span class="close" data-dismiss="alert">×</span>
-                                            Maaf! Data tidak ditemua.
-                                        </div>
-                                    </div>
-                                    @endforelse
+
+                                    @endforeach
+                                    @endif
                                 </tbody>
-                                @endif
+
                             </table>
                         </div>
                     </div>
@@ -252,7 +254,6 @@
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.5/js/dataTables.buttons.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.bootstrap4.min.js"></script>
-<script src="/vendor/datatables/buttons.server-side.js"></script>
 <script src="/assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 <script src="/assets/plugins/select2/dist/js/select2.min.js"></script>
@@ -327,7 +328,7 @@
             })
     });
 
-    setTimeout(function() {
+    /*setTimeout(function() {
 
         setInterval(function() {
             const coordinates = [110.3938888888889, -7.5655555555556].slice();
@@ -348,7 +349,7 @@
             $('.mapboxgl-popup').remove();
         }, 15000);
 
-    }, 5000);
+    }, 5000);*/
 </script>
 
 <script>
@@ -927,4 +928,54 @@
     );
 </script>
 
+<script>
+    var wireVibrationTable = $('#table-wirevibration').DataTable({
+        paging: false,
+        ordering: false,
+        searching: false,
+        responsive: true
+    });
+    var flowTable = $('#table-flow').DataTable({
+        paging: false,
+        ordering: false,
+        searching: false,
+        responsive: true
+    });
+    var waterLevelTable = $('#table-waterlevel').DataTable({
+        paging: false,
+        ordering: false,
+        searching: false,
+        responsive: true
+    });
+
+    var rainFallTable = $('#table-rainfall').DataTable({
+        paging: false,
+        ordering: false,
+        searching: false,
+        responsive: true
+    });
+
+    setInterval(function() {
+        rainFallTable.clear().draw();
+        waterLevelTable.clear().draw();
+        wireVibrationTable.clear().draw();
+        flowTable.clear().draw();
+
+        $.ajax({
+            url: "<?php echo route('dashboard.portal_data') ?>",
+            success: function(data) {
+                var json = JSON.parse(data)
+                //alert(json.curent_rainfall)
+                rainFallTable.rows.add(json.curent_rainfall).draw();
+                waterLevelTable.rows.add(json.water_level).draw();
+                wireVibrationTable.rows.add(json.wire_vibration).draw();
+                flowTable.rows.add(json.flow).draw();
+            }
+        }).done(function() {
+
+        });
+
+    }, 1000 * 300);
+    //alert(rainFallTable)
+</script>
 @endpush
