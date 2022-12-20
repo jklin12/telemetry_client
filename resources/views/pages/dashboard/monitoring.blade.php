@@ -53,9 +53,9 @@
                 <div class="panel panel-inverse">
                     <div class="panel-body">
                         <h1 class="page-header" style="margin: 0px;"><small>{{$curentRainFall['title']}}</small></h1>
-                        <div class="table-responsive table-striped">
+                        <div class="table-responsive">
                             @if($curentRainFall['data'])
-                            <table id="table-rainfall" class="dataTable display compact">
+                            <table id="table-rainfall" class="table table-striped table-bordered display compact">
                                 <thead>
                                     <tr>
                                         <th>No.</th>
@@ -118,9 +118,8 @@
                 <div class="panel panel-inverse">
                     <div class="panel-body">
                         <h1 class="page-header" style="margin: 0px;"><small>{{ $waterLevel['title']}}</small></h1>
-                        <div class="table-responsive table-striped">
-                            <table id="table-waterlevel" class="dataTable">
-
+                        <div class="table-responsive">
+                            <table id="table-waterlevel" class="table table-striped table-bordered table-td-valign-middle">
                                 <thead>
                                     <tr>
                                         <th>No.</th>
@@ -159,8 +158,8 @@
                 <div class="panel panel-inverse">
                     <div class="panel-body">
                         <h1 class="page-header" style="margin: 0px;"><small>{{ $wireVibration['title']}}</small></h1>
-                        <div class="table-responsive table-striped">
-                            <table id="table-wirevibration" class="dataTable display compact">
+                        <div class="table-responsive">
+                            <table id="table-wirevibration" class="table table-striped table-bordered table-td-valign-middle ">
 
                                 <thead>
                                     @if(isset($wireVibration['data']['station']))
@@ -205,8 +204,8 @@
                 <div class="panel panel-inverse">
                     <div class="panel-body">
                         <h1 class="page-header" style="margin: 0px;"><small>{{ $flow['title']}}</small></h1>
-                        <div class="table-responsive table-striped">
-                            <table id="table-flow" class="dataTable">
+                        <div class="table-responsive">
+                            <table id="table-flow" class="table table-striped table-bordered table-td-valign-middle">
 
                                 <thead>
                                     @if(isset($flow['data']['station']))
@@ -328,28 +327,7 @@
             })
     });
 
-    /*setTimeout(function() {
-
-        setInterval(function() {
-            const coordinates = [110.3938888888889, -7.5655555555556].slice();
-            const description = "<strong>Plawangan<\/strong><p><br>RG<br>Jan-00<br><\/p>";
-
-
-            while (Math.abs(110.3938888888889 - coordinates[0]) > 180) {
-                coordinates[0] += 110.3938888888889 > coordinates[0] ? 360 : -360;
-            }
-
-            new mapboxgl.Popup()
-                .setLngLat(coordinates)
-                .setHTML(description)
-                .addTo(map);
-        }, 10000);
-
-        setInterval(function() {
-            $('.mapboxgl-popup').remove();
-        }, 15000);
-
-    }, 5000);*/
+    
 </script>
 
 <script>

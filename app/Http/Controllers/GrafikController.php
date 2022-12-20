@@ -8,6 +8,7 @@ use App\Models\StationModel;
 use App\Models\WaterLevelModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GrafikController extends Controller
 {
@@ -19,13 +20,36 @@ class GrafikController extends Controller
         $title = 'Judment Graph';
         $subTitle = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
+        $station = StationModel::find($filterStation);
+        $title .= ' '.$station->station_name;
+        
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
+
+        $rainfall = RainfallModel::leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
+            ->where('rain_fall_date', $filterDate)
+            ->where('station', $filterStation)
+            //->groupBy('station') 
+            ->orderBy('rain_fall_time')
+            ->get()->toArray();
+
+        $data['label'] = [];
+        $data['rh'] = [];
+        $data['rc'] = [];
+        foreach ($rainfall as $key => $value) {
+            //if ($value['rain_fall_1_hour'] && $value['rain_fall_continuous']) {
+                $data['rh'][] = doubleval($value['rain_fall_1_hour']);
+                $data['rc'][] = doubleval($value['rain_fall_continuous']);
+                $data['label'][] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH:mm');
+            //}
+        }
+        //dd($data);
 
 
         $load['filterDate'] = $filterDate;
         $load['filterStation'] = $filterStation;
         $load['station_list'] = StationModel::get()->toArray();
+        $load['data'] = $data;
 
         return view('pages/grafik/judment', $load);
     }
@@ -56,10 +80,10 @@ class GrafikController extends Controller
         $data['water_level'] = [];
         $data['flow'] = [];
         foreach ($waterlevel as $key => $value) {
-            if ($value['water_level_hight']) {
+            //if ($value['water_level_hight']) {
                 $data['water_level'][] = doubleval($value['water_level_hight']);
-                $data['label'][] = Carbon::parse($value['water_level_time'])->isoFormat('HH::mm');
-            }
+                $data['label'][] = Carbon::parse($value['water_level_time'])->isoFormat('HH:mm');
+            //}
         }
 
         $flow = FlowModel::select('station_id', 'station', 'station_name', 'flow_date', 'flow_time', 'flow')
@@ -111,11 +135,11 @@ class GrafikController extends Controller
         $data['rh'] = [];
         $data['rc'] = [];
         foreach ($rainfall as $key => $value) {
-            if ($value['rain_fall_1_hour'] && $value['rain_fall_continuous']) {
+            //if ($value['rain_fall_1_hour'] && $value['rain_fall_continuous']) {
                 $data['rh'][] = doubleval($value['rain_fall_1_hour']);
                 $data['rc'][] = doubleval($value['rain_fall_continuous']);
-                $data['label'][] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');
-            }
+                $data['label'][] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH:mm');
+            //}
         }
 
         $load['filterDate'] = $filterDate;
