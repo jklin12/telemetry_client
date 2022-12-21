@@ -41,22 +41,47 @@ class DataController extends BaseController
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
         $filterStation = $request->has('station') ? $request->get('station') : 1;
+        $interval = $request->has('interval') ? $request->get('interval') : 60;
         $title = 'Rainfall By Station ';
         $subTitle = 'by station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
-        $rainfall = RainfallModel::leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
+        $select = "station_id, station, station_name,rain_fall_date, ";
+        $group = '';
+        if ($interval == 10) {
+            $select .= "rain_fall_time as rt,rain_fall_10_minut,rain_fall_30_minute,rain_fall_1_hour,rain_fall_3_hour,rain_fall_6_hour,rain_fall_12_hour,rain_fall_24_hour,rain_fall_continuous,rain_fall_effective,rain_fall_effective_intensity,rain_fall_prev_working,rain_fall_working,rain_fall_working_24,rain_fall_remarks";
+        } elseif ($interval == 30) {
+            $select .= 'HOUR(rain_fall_time) as hour,IF("30">MINUTE(rain_fall_time), "00", "30") as rt,ROUND(AVG(rain_fall_10_minut),3) as rain_fall_10_minut,ROUND(AVG(rain_fall_30_minute),3) as rain_fall_30_minute,ROUND(AVG(rain_fall_1_hour),3) as rain_fall_1_hour,ROUND(AVG(rain_fall_3_hour),3) as rain_fall_3_hour,ROUND(AVG(rain_fall_6_hour),3) as rain_fall_6_hour,ROUND(AVG(rain_fall_12_hour),3) as rain_fall_12_hour,ROUND(AVG(rain_fall_24_hour),3) as rain_fall_24_hour,ROUND(AVG(rain_fall_continuous),3) as rain_fall_continuous,ROUND(AVG(rain_fall_effective),3) as rain_fall_effective,ROUND(AVG(rain_fall_effective_intensity),3) as rain_fall_effective_intensity,ROUND(AVG(rain_fall_prev_working),3) as rain_fall_prev_working,ROUND(AVG(rain_fall_working),3) as rain_fall_working,ROUND(AVG(rain_fall_working_24),3) as rain_fall_working_24, rain_fall_remarks';
+            $group = 'station,CONCAT(hour,rt)';
+        } elseif ($interval == 60) {
+            $select .= "rain_fall_time as rt,ROUND(AVG(rain_fall_10_minut),3) as rain_fall_10_minut,ROUND(AVG(rain_fall_30_minute),3) as rain_fall_30_minute,ROUND(AVG(rain_fall_1_hour),3) as rain_fall_1_hour,ROUND(AVG(rain_fall_3_hour),3) as rain_fall_3_hour,ROUND(AVG(rain_fall_6_hour),3) as rain_fall_6_hour,ROUND(AVG(rain_fall_12_hour),3) as rain_fall_12_hour,ROUND(AVG(rain_fall_24_hour),3) as rain_fall_24_hour,ROUND(AVG(rain_fall_continuous),3) as rain_fall_continuous,ROUND(AVG(rain_fall_effective),3) as rain_fall_effective,ROUND(AVG(rain_fall_effective_intensity),3) as rain_fall_effective_intensity,ROUND(AVG(rain_fall_prev_working),3) as rain_fall_prev_working,ROUND(AVG(rain_fall_working),3) as rain_fall_working,ROUND(AVG(rain_fall_working_24),3) as rain_fall_working_24,rain_fall_remarks";
+            $group = 'station,HOUR(rain_fall_time)';
+        }
+        
+        $rainfall = RainfallModel::select(DB::raw($select))
+            ->leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
             ->where('rain_fall_date', $filterDate)
-            ->where('station', $filterStation)
-            //->groupBy('station')
-            ->orderBy(DB::raw('sch_data_station.station_id'))
-            ->orderBy('rain_fall_time')
-            ->get()->toArray();
+            ->where('station', $filterStation);
+
+        if ($group) {
+            $rainfall->groupBy(DB::raw($group));
+        }
 
         $susunData = [];
-        foreach ($rainfall as $key => $value) {
-            $susunData[$key] = $value;
-            $susunData[$key]['rain_fall_date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D MMMM YYYY');;;
-            $susunData[$key]['rain_fall_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');;
+        foreach ($rainfall->get()->toArray() as $key => $value) {
+            //$susunData[$key] = $value;
+            //$susunData[$key]['rain_fall_date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D MMMM YYYY');;;
+            //$susunData[$key]['rain_fall_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');;
+
+            $susunData[$key]['rain_fall_date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D MMMM YYYY');
+            if ($interval == 30) {
+                $times =  date($value['hour'].':' . $value['rt']);
+                $susunData[$key] = $value;
+                $susunData[$key]['rt'] = $times;
+            } else {
+                
+                $susunData[$key] = $value;
+                $susunData[$key]['rt'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');;
+            }
         }
 
         $load['title'] = $title;
@@ -70,24 +95,39 @@ class DataController extends BaseController
     {
 
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
+        $interval = $request->has('interval') ? $request->get('interval') : 60;
         $title = 'Daily Rainfall All Station';
         $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;
 
-        $rainfall = RainfallModel::select('station', 'rain_fall_date', 'rain_fall_time', 'station_name', 'rain_fall_1_hour', 'rain_fall_continuous')
+        $select = "station_id, station, station_name,rain_fall_date, ";
+        $group = '';
+        if ($interval == 10) {
+            $select .= "rain_fall_time as rt ,rain_fall_1_hour as average_rc,rain_fall_1_hour as average_rh";
+        } elseif ($interval == 30) {
+            $select .= 'HOUR(rain_fall_time) as hour,IF("30">MINUTE(rain_fall_time), "00", "30") as rt,ROUND(AVG(rain_fall_1_hour),3) as average_rc,ROUND(AVG(rain_fall_1_hour),3) as average_rh';
+            $group = 'station,CONCAT(hour,rt)';
+        } elseif ($interval == 60) {
+            $select .= "rain_fall_time as rt,ROUND(AVG(rain_fall_1_hour),3) as average_rc,ROUND(AVG(rain_fall_1_hour),3) as average_rh";
+            $group = 'station,HOUR(rain_fall_time)';
+        }
+
+        $rainfall = RainfallModel::select(DB::raw($select))
             ->leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
-            ->where('rain_fall_date', $filterDate)
-            //->groupBy('station')
-            ->orderBy(DB::raw('sch_data_station.station_id'))
-            ->orderBy('rain_fall_time')
-            ->get()->toArray();
+            ->where('rain_fall_date', $filterDate);
 
-        $stationData  = [];
-        $rainfallData = [];
+        if ($group) {
+            $rainfall->groupBy(DB::raw($group));
+        }
 
-        foreach ($rainfall as $key => $value) {
+
+        $susunData = []; 
+        $stationData = []; 
+        foreach ($rainfall->get()->toArray() as $key => $value) {
             $stationData[$value['station']]['station_name'] = $value['station_name'];
-            $rainfallData[$value['rain_fall_time']]['date_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');
-            $rainfallData[$value['rain_fall_time']]['datas'][] = $value;
+            $rainfallData[$value['rt']]['date_time'] = Carbon::parse($value['rt'])->isoFormat('HH::mm');
+            $rainfallData[$value['rt']]['datas'][] = $value;
+
+            
         }
 
         $load['title'] = $title;
@@ -102,30 +142,45 @@ class DataController extends BaseController
     {
 
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
+        $interval = $request->has('interval') ? $request->get('interval') : '60';
         $title = 'Daily Water Level ';
         $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;
 
 
-        $waterlevel = WaterLevelModel::select('station_id', 'station', 'station_name', 'water_level_date', 'water_level_time', 'water_level_hight')
+        $select = "station_id, station, station_name,water_level_date, ";
+        $group = '';
+        if ($interval == 10) {
+            $select .= "water_level_time as wt ,water_level_hight as average_wh";
+        } elseif ($interval == 30) {
+            $select .= 'HOUR(water_level_time) as hour,IF("30">MINUTE(water_level_time), "00", "30") as wt,ROUND(AVG(water_level_hight),3) as average_wh';
+            $group = 'station,CONCAT(hour,wt)';
+        } elseif ($interval == 60) {
+            $select .= "water_level_time as wt,ROUND(AVG(water_level_hight),3) as average_wh";
+            $group = 'station,HOUR(water_level_time)';
+        }
+        $waterlevel = WaterLevelModel::select(DB::raw($select))
             ->leftJoin('sch_data_station', 'sch_data_waterlevel.station', '=', 'sch_data_station.station_id')
-            ->where('water_level_date', $filterDate)
-            //->groupBy('station')
-            ->orderBy(DB::raw('sch_data_station.station_id'))
-            ->orderBy('water_level_time')
-            ->get()->toArray();
+            ->where('water_level_date', $filterDate);
+        //->groupBy(DB::raw()
 
+        if ($group) {
+
+            $waterlevel->groupBy(DB::raw($group))
+                ->orderBy('water_level_time');
+        }
+
+
+        //dd($waterlevel->get()->toArray());
         $susunData = [];
-        $station = [];
-        $datasss = [];
-        
+
         $arrDataByStation = [];
-        foreach ($waterlevel as $key => $value) {
+        foreach ($waterlevel->get()->toArray() as $key => $value) {
             $station[$value['station']]['station_id'] = $value['station_id'];
             $station[$value['station']]['station_name'] = $value['station_name'];
-            $datasss[$value['water_level_time']]['date_time'] = Carbon::parse($value['water_level_time'])->isoFormat('HH::mm');
-            $datasss[$value['water_level_time']]['datas'][] = $value;
+            $datasss[$value['wt']]['date_time'] = Carbon::parse($value['wt'])->isoFormat('HH::mm');
+            $datasss[$value['wt']]['datas'][] = $value;
 
-            $arrDataByStation[$value['station']][] =  $value['water_level_hight'];
+            $arrDataByStation[$value['station']][] =  $value['average_wh'];
         }
 
         $avergae = [];
@@ -155,37 +210,40 @@ class DataController extends BaseController
     public function wireVibration(Request $request)
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
+        $interval = $request->has('interval') ? $request->get('interval') : '60';
         $title = 'Daily Wire & Vibration ';
         $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;
+        $select = "station_id, station, station_name,wire_vibration_date, ";
+        $group = '';
+        if ($interval == 10) {
+            $select .= "wire_vibration_time as wvt ,wire as average_w,vibration as average_v";
+        } elseif ($interval == 30) {
+            $select .= 'HOUR(wire_vibration_time) as hour,IF("30">MINUTE(wire_vibration_time), "00", "30") as wvt,ROUND(AVG(wire),3) as average_w,ROUND(AVG(vibration),3) as average_v';
+            $group = 'station,CONCAT(
+                hour,wvt
+               )';
+        } elseif ($interval == 60) {
+            $select .= "wire_vibration_time as wvt,ROUND(AVG(wire),3) as average_w,ROUND(AVG(vibration),3) as average_v";
+            $group = 'station,HOUR(wire_vibration_time)';
+        }
 
 
-        $wireVibration = WireVibrationModel::select(
-            'station_id',
-            'station',
-            'station_name',
-            'wire_vibration_date',
-            'wire_vibration_time',
-            'wire',
-            'vibration',
-        )->where('wire_vibration_date', $filterDate)
+        $wireVibration = WireVibrationModel::select(DB::raw($select))
+            ->where('wire_vibration_date', '2022-12-06')
             ->leftJoin('sch_data_station', 'sch_data_wirevibration.station', '=', 'sch_data_station.station_id')
-            //->groupBy('station')
-            ->orderBy(DB::raw('sch_data_station.station_id'))
-            ->orderBy('wire_vibration_time')
-            ->get()->toArray();
+            ->orderBy('wire_vibration_time');
 
-
-
+        if ($group) {
+            $wireVibration->groupBy(DB::raw($group));
+        }
+        //dd($wireVibration->get()->toArray(),$select,$filterDate);
         $susunData = [];
-        $station = [];
-        $datasss = [];
-
-        foreach ($wireVibration as $key => $value) {
+        foreach ($wireVibration->get()->toArray() as $key => $value) {
             //$susunData[$value['date_time']]['date_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');
             //$susunData[$value['date_time']]['station_name'] = $value['station_name'];
             $station[$value['station']]['station_name'] = $value['station_name'];
-            $datasss[$value['wire_vibration_time']]['date_time'] = Carbon::parse($value['wire_vibration_time'])->isoFormat('HH::mm');
-            $datasss[$value['wire_vibration_time']]['datas'][] = $value;
+            $datasss[$value['wvt']]['date_time'] = Carbon::parse($value['wvt'])->isoFormat('HH::mm');
+            $datasss[$value['wvt']]['datas'][] = $value;
         }
 
         $susunData['station'] = array_values($station);
@@ -202,30 +260,44 @@ class DataController extends BaseController
     public function flow(Request $request)
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
+        $interval = $request->has('interval') ? $request->get('interval') : '60';
         $title = 'Daily Flow';
         $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;
 
 
-        $waterlevel = FlowModel::select('station_id', 'station', 'station_name', 'flow_date', 'flow_time', 'flow')
+        $select = "station_id, station, station_name,flow_date, ";
+        $group = '';
+        if ($interval == 10) {
+            $select .= "flow_time as ft ,flow as average_f";
+        } elseif ($interval == 30) {
+            $select .= 'HOUR(flow_time) as hour,IF("30">MINUTE(flow_time), "00", "30") as ft,ROUND(AVG(flow),3) as average_f';
+            $group = 'station,CONCAT(hour,ft)';
+        } elseif ($interval == 60) {
+            $select .= "flow_time as ft,ROUND(AVG(flow),3) as average_f";
+            $group = 'station,HOUR(flow_time)';
+        }
+
+        $waterlevel = FlowModel::select(DB::raw($select))
             ->leftJoin('sch_data_station', 'sch_data_flow.station', '=', 'sch_data_station.station_id')
             ->where('flow_date', $filterDate)
-            //->groupBy('station')
-            ->orderBy(DB::raw('sch_data_station.station_id'))
-            ->orderBy('flow_time')
-            ->get()->toArray();
+            //->groupBy('station') 
+            ->orderBy('flow_time');
+
+        if ($group) {
+            $waterlevel->groupBy(DB::raw($group));
+        }
 
         $susunData = [];
-        $station = [];
-        $datasss = [];
 
         $arrDataByStation = [];
-        foreach ($waterlevel as $key => $value) {
+        foreach ($waterlevel->get()->toArray() as $key => $value) {
+
             $station[$value['station']]['station_id'] = $value['station_id'];
             $station[$value['station']]['station_name'] = $value['station_name'];
-            $datasss[$value['flow_time']]['date_time'] = Carbon::parse($value['flow_time'])->isoFormat('HH::mm');
-            $datasss[$value['flow_time']]['datas'][] = $value;
+            $datasss[$value['ft']]['date_time'] = Carbon::parse($value['ft'])->isoFormat('HH::mm');
+            $datasss[$value['ft']]['datas'][] = $value;
 
-            $arrDataByStation[$value['station']][] =  $value['flow'];
+            $arrDataByStation[$value['station']][] =  $value['average_f'];
         }
 
         //dd($arrDataByStation);
