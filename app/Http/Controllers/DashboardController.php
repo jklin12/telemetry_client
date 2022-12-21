@@ -69,6 +69,7 @@ class DashboardController extends Controller
         return $dec;
     }
 
+
     public function monitoring(Request $request)
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
@@ -313,5 +314,24 @@ class DashboardController extends Controller
                 'flow' => array_values($flowJson),
             ]
         );
+    }
+
+    public function alertData()
+    {
+
+        $random_number_array = range(0, 23);
+        shuffle($random_number_array);
+        $random_number_array = array_slice($random_number_array, 0, rand(0, 5));
+
+        $data = StationModel::whereIn('station_id', $random_number_array)->get();
+
+        $susunData = [];
+        foreach ($data as $key => $value) {
+            $susunData[$key]['class'] = $key % 2 == 0 ? 'warning-popup' : 'danger-popup';
+            $susunData[$key]['element'] =   $key % 2 == 0 ? '<strong>Plawangan</strong><br><p>Alert Warning</p>' : '<strong>Plawangan</strong><br><p>Alert Danger</p>' ;
+            $susunData[$key]['coordinates'][] = $this->dms_to_dec($value->station_long);
+            $susunData[$key]['coordinates'][] = doubleval('-' . $this->dms_to_dec($value->station_lat));
+        }
+        echo json_encode($susunData);
     }
 }

@@ -33,7 +33,8 @@ Route::get('logout', [LoginController::class,'logout'])->name('logout');
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/dashboard/portal', [DashboardController::class, 'monitoring'])->name('dashboard.portal');
-    Route::get('/dashboard/portalData', [DashboardController::class, 'portalData'])->name('dashboard.portal_data');;
+    Route::get('/dashboard/portalData', [DashboardController::class, 'portalData'])->name('dashboard.portal_data');
+    Route::get('/dashboard/alertData', [DashboardController::class, 'alertData'])->name('dashboard.alertData');
     Route::get('/station', [StationController::class, 'index'])->name('station.index');
 
     Route::get('/rainfall/byStation', [RainfallController::class, 'byStation'])->name('rainfall.byStation');

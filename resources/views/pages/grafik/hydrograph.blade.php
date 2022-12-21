@@ -55,6 +55,18 @@
                     </div>
                 </div>
 
+                <div class="col-md-4">
+                    <div class="form-group row">
+                        <label class="col-form-label col-md-4">Display Interval :</label>
+                        <div class="col-md-7">
+                            <select class="form-control " id="interval" name="interval" required>
+                                <option value="10">10 Minutes</option>
+                                <option value="30">30 Minutes</option>
+                                <option value="60">1 Hour</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
                 <!--<div class="text-muted f-w-600 mt-2 mt-sm-0">compared to <span id="daterange-prev-date">24 Mar-30 Apr 2020</span></div>-->
             </div>
@@ -85,7 +97,7 @@
         $('#filter-form').submit();
     }).val('<?php echo $filterStation ?>');
 
-    
+
 
     $(".datepicker").datepicker({
         format: 'yyyy-mm-dd',
