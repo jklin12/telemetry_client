@@ -109,7 +109,7 @@
     $('#interval').on('change', function(ev) {
         $('#filter-form').submit();
     });
-
+    $('#interval option[value=<?php echo $filterInterval ?>]').attr('selected', 'selected');
     Highcharts.chart('container_chart', {
         chart: {
             zoomType: 'xy'
