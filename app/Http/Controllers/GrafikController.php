@@ -69,6 +69,7 @@ class GrafikController extends Controller
 
         $load['filterDate'] = $filterDate;
         $load['filterStation'] = $filterStation;
+        $load['filterInterval'] = $interval;
         $load['station_list'] = StationModel::get()->toArray();
         $load['data'] = $data;
 
@@ -158,6 +159,7 @@ class GrafikController extends Controller
 
         $load['filterDate'] = $filterDate;
         $load['filterStation'] = $filterStation;
+        $load['filterInterval'] = $interval;
         $load['station_list'] = StationModel::get()->toArray();
         $load['data'] = $data;
 
@@ -217,6 +219,7 @@ class GrafikController extends Controller
 
         $load['filterDate'] = $filterDate;
         $load['filterStation'] = $filterStation;
+        $load['filterInterval'] = $interval;
         $load['station_list'] = StationModel::get()->toArray();
         $load['data'] = $data;
 

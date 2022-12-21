@@ -56,7 +56,7 @@ class DataController extends BaseController
             $select .= "rain_fall_time as rt,ROUND(AVG(rain_fall_10_minut),3) as rain_fall_10_minut,ROUND(AVG(rain_fall_30_minute),3) as rain_fall_30_minute,ROUND(AVG(rain_fall_1_hour),3) as rain_fall_1_hour,ROUND(AVG(rain_fall_3_hour),3) as rain_fall_3_hour,ROUND(AVG(rain_fall_6_hour),3) as rain_fall_6_hour,ROUND(AVG(rain_fall_12_hour),3) as rain_fall_12_hour,ROUND(AVG(rain_fall_24_hour),3) as rain_fall_24_hour,ROUND(AVG(rain_fall_continuous),3) as rain_fall_continuous,ROUND(AVG(rain_fall_effective),3) as rain_fall_effective,ROUND(AVG(rain_fall_effective_intensity),3) as rain_fall_effective_intensity,ROUND(AVG(rain_fall_prev_working),3) as rain_fall_prev_working,ROUND(AVG(rain_fall_working),3) as rain_fall_working,ROUND(AVG(rain_fall_working_24),3) as rain_fall_working_24,rain_fall_remarks";
             $group = 'station,HOUR(rain_fall_time)';
         }
-        
+
         $rainfall = RainfallModel::select(DB::raw($select))
             ->leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
             ->where('rain_fall_date', $filterDate)
@@ -74,11 +74,11 @@ class DataController extends BaseController
 
             $susunData[$key]['rain_fall_date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D MMMM YYYY');
             if ($interval == 30) {
-                $times =  date($value['hour'].':' . $value['rt']);
+                $times =  date($value['hour'] . ':' . $value['rt']);
                 $susunData[$key] = $value;
                 $susunData[$key]['rt'] = $times;
             } else {
-                
+
                 $susunData[$key] = $value;
                 $susunData[$key]['rt'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');;
             }
@@ -120,14 +120,12 @@ class DataController extends BaseController
         }
 
 
-        $susunData = []; 
-        $stationData = []; 
+        $susunData = [];
+        $stationData = [];
         foreach ($rainfall->get()->toArray() as $key => $value) {
             $stationData[$value['station']]['station_name'] = $value['station_name'];
             $rainfallData[$value['rt']]['date_time'] = Carbon::parse($value['rt'])->isoFormat('HH::mm');
             $rainfallData[$value['rt']]['datas'][] = $value;
-
-            
         }
 
         $load['title'] = $title;
@@ -143,6 +141,7 @@ class DataController extends BaseController
 
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
         $interval = $request->has('interval') ? $request->get('interval') : '60';
+
         $title = 'Daily Water Level ';
         $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;
 
@@ -162,6 +161,10 @@ class DataController extends BaseController
             ->leftJoin('sch_data_station', 'sch_data_waterlevel.station', '=', 'sch_data_station.station_id')
             ->where('water_level_date', $filterDate);
         //->groupBy(DB::raw()
+
+        if ($request->has('station') && $request->input('station')) {
+            $waterlevel->where('station', $request->input('station'));
+        }
 
         if ($group) {
 
@@ -233,6 +236,10 @@ class DataController extends BaseController
             ->leftJoin('sch_data_station', 'sch_data_wirevibration.station', '=', 'sch_data_station.station_id')
             ->orderBy('wire_vibration_time');
 
+        if ($request->has('station') && $request->input('station')) {
+            $wireVibration->where('station', $request->input('station'));
+        }
+
         if ($group) {
             $wireVibration->groupBy(DB::raw($group));
         }
@@ -283,6 +290,9 @@ class DataController extends BaseController
             //->groupBy('station') 
             ->orderBy('flow_time');
 
+        if ($request->has('station') && $request->input('station')) {
+            $waterlevel->where('station', $request->input('station'));
+        }
         if ($group) {
             $waterlevel->groupBy(DB::raw($group));
         }
