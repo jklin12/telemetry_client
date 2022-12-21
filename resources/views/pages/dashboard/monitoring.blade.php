@@ -8,6 +8,24 @@
 <link href="/assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css" rel="stylesheet" />
 <link href="/assets/plugins/select2/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css" rel="stylesheet">
+<style>
+    .danger-popup .mapboxgl-popup-content {
+        background-color: red;
+    }
+
+    .danger-popup .mapboxgl-popup-tip {
+        border-top-color: red;
+    }
+
+    /* change background and tip color to yellow */
+    .warning-popup .mapboxgl-popup-content {
+        background-color: yellow;
+    }
+
+    .warning-popup .mapboxgl-popup-tip {
+        border-top-color: yellow;
+    }
+</style>
 @endpush
 
 @section('content')
@@ -327,7 +345,36 @@
             })
     });
 
-    
+
+    setInterval(function() {
+        $.ajax({
+            url: "<?php echo route('dashboard.alertData') ?>",
+            success: function(data) {
+                var json = JSON.parse(data)
+                var time = 2000;
+                $.each(json, function(index, value) {
+
+                    const coordinates = value.coordinates.slice();
+                    const description = value.element;
+
+                    setTimeout(function() {
+                        new mapboxgl.Popup({
+                                className: value.class
+                            })
+                            .setLngLat(coordinates)
+                            .setHTML(description)
+                            .addTo(map);
+                    }, time);
+                    time + 1000;
+                })
+
+            }
+        }).done(function() {
+            setTimeout(function() {
+                $('.mapboxgl-popup').remove();
+            }, 10000);
+        })
+    }, 15000);
 </script>
 
 <script>
