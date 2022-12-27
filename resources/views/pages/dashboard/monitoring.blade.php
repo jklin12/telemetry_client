@@ -380,343 +380,30 @@
 <script>
     Highcharts.chart('container', {
         chart: {
-            type: 'area',
-            zoomType: 'xy',
-            height: '50%',
+            type: 'line',
+            //height: '50%',
         },
         title: {
-            text: 'Judmentgraph',
+            text: '<?php echo $rainfallChart['title_rh'] ?>',
         },
         subtitle: {
-            text: '13 Dec 2022',
-        },
-        xAxis: {
-            minPadding: 0,
-            maxPadding: 0,
-            plotLines: [{
-                color: '#888',
-                value: 0.1523,
-                width: 1,
-                label: {
-                    text: '',
-                    rotation: 90,
-                    style: {
-                        display: 'none'
-                    }
-                }
-            }],
-            title: {
-                text: 'Time',
-                style: {
-                    display: 'none'
-                }
-            }
-        },
-        yAxis: [{
-            lineWidth: 1,
-            gridLineWidth: 1,
-            title: null,
-            tickWidth: 1,
-            tickLength: 5,
-            tickPosition: 'inside',
-            labels: {
-                align: 'left',
-                x: 8
-            }
-        }, {
-            opposite: true,
-            linkedTo: 0,
-            lineWidth: 1,
-            gridLineWidth: 0,
-            title: null,
-            tickWidth: 1,
-            tickLength: 5,
-            tickPosition: 'inside',
-            labels: {
-                align: 'right',
-                x: -8
-            }
-        }],
-        legend: {
-            enabled: false
-        },
-        plotOptions: {
-            area: {
-                fillOpacity: 0.2,
-                lineWidth: 1,
-                step: 'center'
-            }
-        },
-        tooltip: {
-            headerFormat: '<span style="font-size=10px;">Time: {point.key}</span><br/>',
-            valueDecimals: 2
-        },
-        series: [{
-            name: 'Working Rainfall',
-            data: [
-                [
-                    0.1524,
-                    0.948665
-                ],
-                [
-                    0.1539,
-                    35.510715
-                ],
-                [
-                    0.154,
-                    39.883437
-                ],
-                [
-                    0.1541,
-                    40.499661
-                ],
-                [
-                    0.1545,
-                    43.262994000000006
-                ],
-                [
-                    0.1547,
-                    60.14799400000001
-                ],
-                [
-                    0.1553,
-                    60.30799400000001
-                ],
-                [
-                    0.1558,
-                    60.55018100000001
-                ],
-                [
-                    0.1564,
-                    68.381696
-                ],
-                [
-                    0.1567,
-                    69.46518400000001
-                ],
-                [
-                    0.1569,
-                    69.621464
-                ],
-                [
-                    0.157,
-                    70.398015
-                ],
-                [
-                    0.1574,
-                    70.400197
-                ],
-                [
-                    0.1575,
-                    73.199217
-                ],
-                [
-                    0.158,
-                    77.700017
-                ],
-                [
-                    0.1583,
-                    79.449017
-                ],
-                [
-                    0.1588,
-                    79.584064
-                ],
-                [
-                    0.159,
-                    80.584064
-                ],
-                [
-                    0.16,
-                    81.58156
-                ],
-                [
-                    0.1608,
-                    83.38156
-                ]
-            ],
-            color: '#03a7a8'
-        }, {
-            name: 'Hourly Rainfall',
-            data: [
-                [
-                    0.1435,
-                    242.521842
-                ],
-                [
-                    0.1436,
-                    206.49862099999999
-                ],
-                [
-                    0.1437,
-                    205.823735
-                ],
-                [
-                    0.1438,
-                    197.33275
-                ],
-                [
-                    0.1439,
-                    153.677454
-                ],
-                [
-                    0.144,
-                    146.007722
-                ],
-                [
-                    0.1442,
-                    82.55212900000001
-                ],
-                [
-                    0.1443,
-                    59.152814000000006
-                ],
-                [
-                    0.1444,
-                    57.942260000000005
-                ],
-                [
-                    0.1445,
-                    57.483850000000004
-                ],
-                [
-                    0.1446,
-                    52.39210800000001
-                ],
-                [
-                    0.1447,
-                    51.867208000000005
-                ],
-                [
-                    0.1448,
-                    44.104697
-                ],
-                [
-                    0.1449,
-                    40.131217
-                ],
-                [
-                    0.145,
-                    31.878217
-                ],
-                [
-                    0.1451,
-                    22.794916999999998
-                ],
-                [
-                    0.1453,
-                    12.345828999999998
-                ],
-                [
-                    0.1454,
-                    10.035642
-                ],
-                [
-                    0.148,
-                    9.326642
-                ],
-                [
-                    0.1522,
-                    3.76317
-                ]
-            ],
-            color: '#fc5857'
-        }]
-    });
-
-    Highcharts.chart('container2', {
-        chart: {
-            zoomType: 'xy',
-            height: '50%',
-        },
-        title: {
-            text: 'HydroGraph',
-        },
-        subtitle: {
-            text: '13 Dec 2022',
+            text: '<?php echo $rainfallChart['sub_title'] ?>',
         },
         xAxis: [{
-            categories: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+            categories: <?php echo json_encode($rainfallChart['label']) ?>,
             crosshair: true
         }],
-        yAxis: [{ // Primary yAxis
-            labels: {
-                format: '{value} m',
-                style: {
-                    color: Highcharts.getOptions().colors[2]
-                }
-            },
+        yAxis: {
             title: {
-                text: 'Water Level',
-                style: {
-                    color: Highcharts.getOptions().colors[2]
-                }
-            },
-            opposite: true
-
-        }, { // Secondary yAxis
-            gridLineWidth: 0,
-            title: {
-                text: 'Rainfall',
-                style: {
-                    color: Highcharts.getOptions().colors[0]
-                }
-            },
-            labels: {
-                format: '{value} m',
-                style: {
-                    color: Highcharts.getOptions().colors[0]
-                }
+                text: 'Rh(mm/h)'
             }
-
-        }, { // Tertiary yAxis
-            gridLineWidth: 0,
-            title: {
-                text: 'Flow',
-                style: {
-                    color: Highcharts.getOptions().colors[1]
-                }
-            },
-            labels: {
-                format: '{value} m/s',
-                style: {
-                    color: Highcharts.getOptions().colors[1]
-                }
-            },
-            opposite: true
-        }],
-        tooltip: {
-            shared: true
         },
         legend: {
             layout: 'vertical',
-            align: 'left',
-            x: 80,
-            verticalAlign: 'top',
-            y: 55,
-            floating: true,
-            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || // theme
-                'rgba(255,255,255,0.25)'
+            align: 'right',
+            verticalAlign: 'middle'
         },
-        series: [{
-            name: 'Flow',
-            type: 'spline',
-            yAxis: 1,
-            data: [3, 8, 6, 4, 10, 2, 5],
-
-            tooltip: {
-                valueSuffix: ' m/s'
-            }
-
-        }, {
-            name: 'Water Level',
-            type: 'spline',
-            yAxis: 2,
-            data: [0.10, 0.28, 0.35, 0.28, 0.19, 0.10, 0.5],
-            tooltip: {
-                valueSuffix: ' m'
-            }
-        }],
+        series: <?php echo json_encode($rainfallChart['series_rh']) ?>,
         responsive: {
             rules: [{
                 condition: {
@@ -724,233 +411,115 @@
                 },
                 chartOptions: {
                     legend: {
-                        floating: false,
                         layout: 'horizontal',
                         align: 'center',
-                        verticalAlign: 'bottom',
-                        x: 0,
-                        y: 0
-                    },
-                    yAxis: [{
-                        labels: {
-                            align: 'right',
-                            x: 0,
-                            y: -6
-                        },
-                        showLastLabel: false
-                    }, {
-                        labels: {
-                            align: 'left',
-                            x: 0,
-                            y: -6
-                        },
-                        showLastLabel: false
-                    }, {
-                        visible: false
-                    }]
+                        verticalAlign: 'bottom'
+                    }
                 }
             }]
         }
+
+    });
+    Highcharts.chart('container2', {
+        chart: {
+            type: 'line',
+            //height: '50%',
+        },
+        title: {
+            text: '<?php echo $rainfallChart['title_rc'] ?>',
+        },
+        subtitle: {
+            text: '<?php echo $rainfallChart['sub_title'] ?>',
+        },
+        xAxis: [{
+            categories: <?php echo json_encode($rainfallChart['label']) ?>,
+            crosshair: true
+        }],
+        yAxis: {
+            title: {
+                text: 'Rh(mm/h)'
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle'
+        },
+        series: <?php echo json_encode($rainfallChart['series_rc']) ?>,
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    legend: {
+                        layout: 'horizontal',
+                        align: 'center',
+                        verticalAlign: 'bottom'
+                    }
+                }
+            }]
+        }
+
+    });
+    Highcharts.chart('container4', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '<?php echo $flowChart['title'] ?>',
+        },
+        subtitle: {
+            text: '<?php echo $flowChart['sub_title'] ?>',
+        },
+        xAxis: [{
+            categories: <?php echo json_encode($flowChart['label']) ?>,
+            crosshair: true
+        }],
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Water Level'
+            }
+        },
+         
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: <?php echo json_encode($flowChart['series']) ?>
     });
     Highcharts.chart('container3', {
         chart: {
-            zoomType: 'xy',
-            height: '50%',
+            type: 'column'
         },
         title: {
-            text: 'HytroGraph',
+            text: '<?php echo $waterLevelChart['title'] ?>',
         },
         subtitle: {
-            text: '13 Dec 2022',
+            text: '<?php echo $waterLevelChart['sub_title'] ?>',
         },
         xAxis: [{
-            categories: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+            categories: <?php echo json_encode($waterLevelChart['label']) ?>,
             crosshair: true
         }],
-        yAxis: [{ // Primary yAxis
-            labels: {
-                format: '{value} m',
-                style: {
-                    color: Highcharts.getOptions().colors[4]
-                }
-            },
+        yAxis: {
+            min: 0,
             title: {
-                text: 'Water Level',
-                style: {
-                    color: Highcharts.getOptions().colors[4]
-                }
-            },
-            opposite: true
-
-        }, { // Secondary yAxis
-            gridLineWidth: 0,
-            title: {
-                text: 'Rainfall',
-                style: {
-                    color: Highcharts.getOptions().colors[3]
-                }
-            },
-            labels: {
-                format: '{value} Rh (mm/h)',
-                style: {
-                    color: Highcharts.getOptions().colors[3]
-                }
+                text: 'Water Level'
             }
-
-        }, { // Tertiary yAxis
-            gridLineWidth: 0,
-            title: {
-                text: 'Flow',
-                style: {
-                    color: Highcharts.getOptions().colors[1]
-                }
-            },
-            labels: {
-                format: '{value} Rc (mm/h)',
-                style: {
-                    color: Highcharts.getOptions().colors[1]
-                }
-            },
-            opposite: true
-        }],
-        tooltip: {
-            shared: true
         },
-        legend: {
-            layout: 'vertical',
-            align: 'left',
-            x: 80,
-            verticalAlign: 'top',
-            y: 55,
-            floating: true,
-            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || // theme
-                'rgba(255,255,255,0.25)'
+         
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
         },
-        series: [{
-            name: 'Flow',
-            type: 'column',
-            yAxis: 1,
-            data: [3, 8, 6, 4, 10, 2, 5],
-
-            tooltip: {
-                valueSuffix: ' Rc (mm/h)'
-            }
-
-        }, {
-            name: 'Water Level',
-            type: 'spline',
-            yAxis: 2,
-            data: [0.10, 0.28, 0.35, 0.28, 0.19, 0.10, 0.5],
-            tooltip: {
-                valueSuffix: ' Rh (mm/h)'
-            }
-        }],
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
-                },
-                chartOptions: {
-                    legend: {
-                        floating: false,
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom',
-                        x: 0,
-                        y: 0
-                    },
-                    yAxis: [{
-                        labels: {
-                            align: 'right',
-                            x: 0,
-                            y: -6
-                        },
-                        showLastLabel: false
-                    }, {
-                        labels: {
-                            align: 'left',
-                            x: 0,
-                            y: -6
-                        },
-                        showLastLabel: false
-                    }, {
-                        visible: false
-                    }]
-                }
-            }]
-        }
+        series: <?php echo json_encode($waterLevelChart['series']) ?>
     });
-    Highcharts.getJSON(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json',
-        function(data) {
-
-            Highcharts.chart('container4', {
-                chart: {
-                    zoomType: 'x',
-                    height: '50%',
-
-                },
-                title: {
-                    text: '',
-                    style: {
-                        display: 'none'
-                    }
-                },
-                subtitle: {
-                    text: '',
-                    style: {
-                        display: 'none'
-                    }
-                },
-
-                xAxis: {
-                    type: 'datetime'
-                },
-                yAxis: {
-                    title: {
-                        text: 'Exchange rate',
-                        style: {
-                            display: 'none'
-                        }
-                    }
-                },
-
-                plotOptions: {
-                    area: {
-                        fillColor: {
-                            linearGradient: {
-                                x1: 0,
-                                y1: 0,
-                                x2: 0,
-                                y2: 1
-                            },
-                            stops: [
-                                [0, Highcharts.getOptions().colors[0]],
-                                [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                            ]
-                        },
-                        marker: {
-                            radius: 2
-                        },
-                        lineWidth: 1,
-                        states: {
-                            hover: {
-                                lineWidth: 1
-                            }
-                        },
-                        threshold: null
-                    }
-                },
-
-                series: [{
-                    showInLegend: false,
-                    type: 'area',
-                    name: '',
-                    data: data
-                }],
-            });
-        }
-    );
 </script>
 
 <script>

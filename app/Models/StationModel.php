@@ -25,6 +25,7 @@ class StationModel extends Model
         'station_authority',
         'station_guardsman',
         'station_reg_number',
+        'station_alert'
     ];
 
     public $timestamps = false;

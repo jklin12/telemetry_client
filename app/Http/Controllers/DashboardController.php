@@ -86,8 +86,36 @@ class DashboardController extends Controller
         //dd($now,$prevHour);
 
         $curentRainfall['data'] =  CurentRainfallModel::where('rain_fall_date', $filterDate)->get();
+
+        $rainfallData = RainfallModel::select(DB::raw('station_id, station, station_name,rain_fall_date,rain_fall_time as rt ,rain_fall_continuous as average_rc,rain_fall_1_hour as average_rh'))
+            ->leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
+            ->where('rain_fall_date', $filterDate)
+            ->whereIn('station_id', [2, 5, 11, 17])
+            ->whereRaw("rain_fall_time BETWEEN '" . $prevHour . "' AND '" . $now . "'")
+            ->orderBy('rain_fall_time')
+            ->get()->toArray();
         //echo json_encode(array_values($finalJson));
-        //dd($rainfallData,array_values($finalJson));
+
+        $rainfallLabel = [];
+        $rainfallSeriesRh = [];
+        $rainfallSeriesRC = [];
+        foreach ($rainfallData as $key => $value) {
+
+            $rainfallSeriesRh[$value['station']]['name'] = $value['station_name'];
+            $rainfallSeriesRh[$value['station']]['data'][] = intval($value['average_rh']);
+            $rainfallSeriesRC[$value['station']]['name'] = $value['station_name'];
+            $rainfallSeriesRC[$value['station']]['data'][] = intval($value['average_rc']);
+            //$rainfallLabel[$value['station']] = $value['station_name'];
+            $rainfallLabel[$value['rt']] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
+        }
+        $rainfalChart['title_rh'] = "Rainfall Hourly ";
+        $rainfalChart['title_rc'] = "Rainfall Continously ";
+        $rainfalChart['sub_title'] = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');
+        $rainfalChart['label'] = array_values($rainfallLabel);
+        $rainfalChart['series_rc'] = array_values($rainfallSeriesRC);
+        $rainfalChart['series_rh'] = array_values($rainfallSeriesRh);
+
+        //dd(json_encode($rainfalChart['label']));
 
         $waterLevel['title'] = 'Water Level';
         $waterlevelQuery = WaterLevelModel::select('station_id', 'station', 'station_name', 'water_level_date', 'water_level_time', 'water_level_hight')
@@ -101,14 +129,28 @@ class DashboardController extends Controller
 
         $waterLevelData = [];
 
+        $waterLevelLabel = [];
+        $waterLevelSeries = [];
         foreach ($waterlevelQuery as $key => $value) {
             $waterLevelData['station'][$value['station']] = $value['station_name'];
 
             $waterLevelData['data'][$value['water_level_time']]['time'] = Carbon::parse($value['water_level_time'])->isoFormat('HH:mm');
             $waterLevelData['data'][$value['water_level_time']]['data'][] = $value['water_level_hight'];
+
+            if ($value['station'] == '10') {
+                $waterLevelLabel[$value['water_level_time']] = Carbon::parse($value['water_level_time'])->isoFormat('HH:mm');
+                $waterLevelSeries[$value['station']]['name'] = $value['station_name'];
+                $waterLevelSeries[$value['station']]['data'][] = doubleval($value['water_level_hight']);
+            }
         }
         $waterLevel['data'] = $waterLevelData;
-        //dd($waterLevel);
+
+        $waterLevelChart['title'] = "Water Level";
+        $waterLevelChart['sub_title'] = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');
+        $waterLevelChart['label'] = array_values($waterLevelLabel);
+        $waterLevelChart['series'] = array_values($waterLevelSeries);
+
+        
 
         $wireVibration['title'] = 'Wire & Vibration Daily Report ';
         $wireVibrationQuery = WireVibrationModel::select(
@@ -150,12 +192,24 @@ class DashboardController extends Controller
             ->get()->toArray();
 
         $flowData = [];
+
+        $flowLabel = [];
+        $flowSeries = [];
         foreach ($flowQuer as $key => $value) {
             $flowData['station'][$value['station']] = $value['station_name'];
             $flowData['data'][$value['flow_time']]['date_time'] = Carbon::parse($value['flow_time'])->isoFormat('HH:mm');
             $flowData['data'][$value['flow_time']]['datas'][] = $value['flow'];
+
+            $flowLabel[$value['flow_time']] = Carbon::parse($value['flow_time'])->isoFormat('HH:mm');
+            $flowSeries[$value['station']]['name'] = $value['station_name'];
+            $flowSeries[$value['station']]['data'][] = doubleval($value['flow']);
         }
-        //dd($flowData);
+        $flowChart['title'] = "Flow"; 
+        $flowChart['sub_title'] = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');
+        $flowChart['label'] = array_values($flowLabel);
+        $flowChart['series'] = array_values($flowSeries); 
+
+        //dd($flowChart);
         $flow['data'] = $flowData;
 
         $station = StationModel::get();
@@ -179,9 +233,12 @@ class DashboardController extends Controller
         $load['title'] = $title;
         $load['filterDate'] = $filterDate;
         $load['curentRainFall'] = $curentRainfall;
+        $load['rainfallChart'] = $rainfalChart;
         $load['waterLevel'] = $waterLevel;
+        $load['waterLevelChart'] = $waterLevelChart;
         $load['wireVibration'] = $wireVibration;
         $load['flow'] = $flow;
+        $load['flowChart'] = $flowChart;
         $load['station'] = json_encode(array_values($stationData));
         //dd($load);
         return view('pages/dashboard/monitoring', $load);
@@ -323,14 +380,32 @@ class DashboardController extends Controller
         shuffle($random_number_array);
         $random_number_array = array_slice($random_number_array, 0, rand(0, 5));
 
-        $data = StationModel::whereIn('station_id', $random_number_array)->get();
+        //$data = StationModel::whereIn('station_id', $random_number_array)->get();
+        $now = date('H:i:s');
+        $filterDate = date('Y-m-d');
+        //$filterDate = '2022-12-25';
+
+        $rainfall = RainfallModel::leftJoin('sch_data_station', function ($join) {
+            $join->on('sch_data_rainfall.station', '=', 'sch_data_station.station_id');
+        })
+            ->where('rain_fall_date', $filterDate)
+            ->whereRaw("rain_fall_time > '" . $now . "'")
+            ->limit(200)
+            ->get();
+        //dd($rainfall);
 
         $susunData = [];
-        foreach ($data as $key => $value) {
-            $susunData[$key]['class'] = $key % 2 == 0 ? 'warning-popup' : 'danger-popup';
-            $susunData[$key]['element'] =   $key % 2 == 0 ? '<strong>Plawangan</strong><br><p>Alert Warning</p>' : '<strong>Plawangan</strong><br><p>Alert Danger</p>' ;
+        foreach ($rainfall as $key => $value) {
+            /*$susunData[$key]['class'] = $key % 2 == 0 ? 'warning-popup' : 'danger-popup';
+            $susunData[$key]['element'] =   $key % 2 == 0 ? '<strong>Plawangan</strong><br><p>Alert Warning</p>' : '<strong>Plawangan</strong><br><p>Alert Danger</p>';
             $susunData[$key]['coordinates'][] = $this->dms_to_dec($value->station_long);
-            $susunData[$key]['coordinates'][] = doubleval('-' . $this->dms_to_dec($value->station_lat));
+            $susunData[$key]['coordinates'][] = doubleval('-' . $this->dms_to_dec($value->station_lat));*/
+            if (doubleval($value->rain_fall_continuous) >= $value->station_alert) {
+                $susunData[$key]['class'] = $key % 2 == 0 ? 'warning-popup' : 'danger-popup';
+                $susunData[$key]['element'] =   $key % 2 == 0 ? '<strong>Plawangan</strong><br><p>Alert Warning</p>' : '<strong>Plawangan</strong><br><p>' . $value->rain_fall_date . ' - ' . $value->rain_fall_time . '<br>Rc : ' . $value->rain_fall_continuous . '<br>Rh : ' . $value->rain_fall_1_hour . '</p>';
+                $susunData[$key]['coordinates'][] = $value->station_long ? $this->dms_to_dec($value->station_long) : '';
+                $susunData[$key]['coordinates'][] = $value->station_lat ? doubleval('-' . $this->dms_to_dec($value->station_lat)) : '';
+            }
         }
         echo json_encode($susunData);
     }
