@@ -25,7 +25,11 @@ class StationDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addIndexColumn()
-            
+            ->addColumn('action', function ($row) {
+                $actionBtn = '<a href="' . route('station.form', $row->station_id) . '" class="btn btn-indigo btn-icon btn-circle"><i class="fa fa-edit"></i></a>';
+                return $actionBtn;
+            })
+            ->rawColumns(['action'])
             ->setRowId('station_id');
     }
 
@@ -86,7 +90,10 @@ class StationDataTable extends DataTable
             $tableColumn[$i]['orderable'] = $value['orderable'];
             $tableColumn[$i]['searchable'] = $value['searchable'];
         }
-       
+        $tableColumn[$i + 1]['data'] = 'action';
+        $tableColumn[$i + 1]['name'] = 'action';
+
+
         return $tableColumn;
     }
 
@@ -166,6 +173,18 @@ class StationDataTable extends DataTable
                 'searchable' => false,
                 'form_type' => 'text',
             ],
+            'station_alert' => [
+                'label' => 'Alert Value',
+                'orderable' => true,
+                'searchable' => false,
+                'form_type' => 'text',
+            ],
+            /*'station_alert_column' => [
+                'label' => 'Alert Column',
+                'orderable' => true,
+                'searchable' => false,
+                'form_type' => 'text',
+            ],*/
         ];
     }
 }

@@ -36,6 +36,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard/portalData', [DashboardController::class, 'portalData'])->name('dashboard.portal_data');
     Route::get('/dashboard/alertData', [DashboardController::class, 'alertData'])->name('dashboard.alertData');
     Route::get('/station', [StationController::class, 'index'])->name('station.index');
+    Route::get('/station/form/{station_id}', [StationController::class, 'form'])->name('station.form');
+    Route::post('/station/store/', [StationController::class, 'store'])->name('station.store');
 
     Route::get('/rainfall/byStation', [RainfallController::class, 'byStation'])->name('rainfall.byStation');
     Route::get('/rainfall/daily', [RainfallController::class, 'daily'])->name('rainfall.daily');

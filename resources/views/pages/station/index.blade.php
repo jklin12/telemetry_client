@@ -12,6 +12,8 @@
 <!-- begin page-header -->
 <h1 class="page-header">{{ $title }} <small>{{ $subTitle }}</small></h1>
 <!-- end page-header -->
+@include('includes.component.erorr-message')
+@include('includes.component.success-message')
 
 <div class="panel panel-inverse">
     <div class="panel-body">
