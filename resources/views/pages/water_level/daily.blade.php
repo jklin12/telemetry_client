@@ -98,7 +98,7 @@
             <div class="">
                 <div class="alert alert-warning fade show m-b-10">
                     <span class="close" data-dismiss="alert">×</span>
-                    Maaf! Data tidak ditemua.
+                    Maaf! Data belum tersedia.
                 </div>
             </div>
             @endif
