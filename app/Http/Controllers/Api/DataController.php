@@ -468,10 +468,7 @@ class DataController extends BaseController
         if ($group) {
             $rainfall->groupBy(DB::raw($group));
         }
-
-        $data['label'] = [];
-        $data['rh'] = [];
-        $data['rc'] = [];
+ 
         foreach ($rainfall->get()->toArray() as $key => $value) {
             $data[$key]['rh'] = doubleval($value['average_rh']);
             $data[$key]['rc'] = doubleval($value['average_rc']);
