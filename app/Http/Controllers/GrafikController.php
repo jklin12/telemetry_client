@@ -30,12 +30,12 @@ class GrafikController extends Controller
         $select = "station_id, station, station_name,rain_fall_date, ";
         $group = '';
         if ($interval == 10) {
-            $select .= "rain_fall_time as rt ,rain_fall_1_hour as average_rc,rain_fall_1_hour as average_rh";
+            $select .= "rain_fall_time as rt ,rain_fall_continuous as average_rc,rain_fall_1_hour as average_rh";
         } elseif ($interval == 30) {
-            $select .= 'HOUR(rain_fall_time) as hour,IF("30">MINUTE(rain_fall_time), "00", "30") as rt,ROUND(AVG(rain_fall_1_hour),3) as average_rc,ROUND(AVG(rain_fall_1_hour),3) as average_rh';
+            $select .= 'HOUR(rain_fall_time) as hour,IF("30">MINUTE(rain_fall_time), "00", "30") as rt,ROUND(AVG(rain_fall_continuous),3) as average_rc,ROUND(AVG(rain_fall_1_hour),3) as average_rh';
             $group = 'station,CONCAT(hour,rt)';
         } elseif ($interval == 60) {
-            $select .= "rain_fall_time as rt,ROUND(AVG(rain_fall_1_hour),3) as average_rc,ROUND(AVG(rain_fall_1_hour),3) as average_rh";
+            $select .= "rain_fall_time as rt,ROUND(AVG(rain_fall_continuous),3) as average_rc,ROUND(AVG(rain_fall_1_hour),3) as average_rh";
             $group = 'station,HOUR(rain_fall_time)';
         }
 
@@ -49,6 +49,7 @@ class GrafikController extends Controller
             $rainfall->groupBy(DB::raw($group));
         }
 
+        //dd($rainfall->get()->toArray());
         $data['label'] = [];
         $data['rh'] = [];
         $data['rc'] = [];
