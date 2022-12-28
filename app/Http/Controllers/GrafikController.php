@@ -173,7 +173,7 @@ class GrafikController extends Controller
         $filterStation = $request->has('station') ? $request->get('station') : 1;
         $interval = $request->has('interval') ? $request->get('interval') : '60';
 
-        $title = 'Hydrograph';
+        $title = 'Hytrograph';
         $subTitle = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
         $station = StationModel::find($filterStation);
