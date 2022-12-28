@@ -380,16 +380,13 @@ class DataController extends BaseController
             $waterlevel->groupBy(DB::raw($group))
                 ->orderBy('water_level_time');
         }
-
-        $data['label'] = [];
-        $data['water_level'] = [];
-        $data['flow'] = [];
+ 
         foreach ($waterlevel->get()->toArray() as $key => $value) {
-            $data['water_level'][] = doubleval($value['average_wh']);
+            $data[$key]['wh'] = doubleval($value['average_wh']);
             if ($interval == 30) {
-                $data['label'][] = $value['hour'] . ':' . $value['wt'];
+                $data[$key]['time'] = $value['hour'] . ':' . $value['wt'];
             } else {
-                $data['label'][] = Carbon::parse($value['wt'])->isoFormat('HH:mm');
+                $data[$key]['time'] = Carbon::parse($value['wt'])->isoFormat('HH:mm');
             }
         }
 
@@ -419,7 +416,7 @@ class DataController extends BaseController
 
         foreach ($flow->get()->toArray() as $key => $value) {
             //if ($value['flow']) {
-            $data['flow'][] = doubleval($value['average_f']);
+            $data[$key]['flow'] = doubleval($value['average_f']);
             //}
         }
 
@@ -476,12 +473,12 @@ class DataController extends BaseController
         $data['rh'] = [];
         $data['rc'] = [];
         foreach ($rainfall->get()->toArray() as $key => $value) {
-            $data['rh'][] = doubleval($value['average_rh']);
-            $data['rc'][] = doubleval($value['average_rc']);
+            $data[$key]['rh'] = doubleval($value['average_rh']);
+            $data[$key]['rc'] = doubleval($value['average_rc']);
             if ($interval == 30) {
-                $data['label'][] = $value['hour'] . ':' . $value['rt'];
+                $data[$key]['label'] = $value['hour'] . ':' . $value['rt'];
             } else {
-                $data['label'][] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
+                $data[$key]['label'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
             }
         }
 
