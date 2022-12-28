@@ -380,7 +380,7 @@ class DataController extends BaseController
             $waterlevel->groupBy(DB::raw($group))
                 ->orderBy('water_level_time');
         }
- 
+
         foreach ($waterlevel->get()->toArray() as $key => $value) {
             $data[$key]['wh'] = doubleval($value['average_wh']);
             if ($interval == 30) {
@@ -468,7 +468,8 @@ class DataController extends BaseController
         if ($group) {
             $rainfall->groupBy(DB::raw($group));
         }
- 
+
+        $data = [];
         foreach ($rainfall->get()->toArray() as $key => $value) {
             $data[$key]['rh'] = doubleval($value['average_rh']);
             $data[$key]['rc'] = doubleval($value['average_rc']);
