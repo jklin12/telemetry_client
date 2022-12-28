@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\CurentRainfallModel;
 use App\Models\FlowModel;
 use App\Models\RainfallModel;
 use App\Models\StationModel;
@@ -24,14 +25,17 @@ class DataController extends BaseController
         return $this->sendResponse($station, $title . ' data found');
     }
 
-    public function curentRainFall()
+    public function curentRainFall(Request $request)
     {
-        //$filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
+        $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
 
         $title = 'Current Rainfall';
-        $response = Http::get('http://202.169.224.46:5000/curentRainfall');
+        $subTitle = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
-        $load['datas'] = $response->object();
+        //$response = Http::get('http://202.169.224.46:5000/curentRainfall');
+        $curetnRainfall = CurentRainfallModel::where('rain_fall_date', $filterDate)->get();
+
+        $load['datas'] = $curetnRainfall;
         $load['date'] = date('Y-m-d');
 
         return $this->sendResponse($load, $title . ' data found');
@@ -136,7 +140,7 @@ class DataController extends BaseController
         return $this->sendResponse($load, $title . ' data found');
     }
 
-    public function waterLevel(Request $request)
+    public function waterLevel(Request $request, $stationId = '')
     {
 
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
@@ -162,9 +166,10 @@ class DataController extends BaseController
             ->where('water_level_date', $filterDate);
         //->groupBy(DB::raw()
 
-        if ($request->has('station') && $request->input('station')) {
-            $waterlevel->where('station', $request->input('station'));
+        if ($stationId) {
+            $waterlevel->where('station', $stationId);
         }
+ 
 
         if ($group) {
 
@@ -264,7 +269,7 @@ class DataController extends BaseController
         return $this->sendResponse($load, $title . ' data found');
     }
 
-    public function flow(Request $request)
+    public function flow(Request $request,$stationId = '')
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
         $interval = $request->has('interval') ? $request->get('interval') : '60';
@@ -290,8 +295,8 @@ class DataController extends BaseController
             //->groupBy('station') 
             ->orderBy('flow_time');
 
-        if ($request->has('station') && $request->input('station')) {
-            $waterlevel->where('station', $request->input('station'));
+        if ($stationId) {
+            $waterlevel->where('station', $stationId);
         }
         if ($group) {
             $waterlevel->groupBy(DB::raw($group));

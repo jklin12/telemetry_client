@@ -137,7 +137,7 @@
         },
         series: [{
             name: 'Rain Hourly',
-            data: <?php echo json_encode($data['rc']) ?>
+            data: <?php echo json_encode($data['rh']) ?>
 
         }, {
             name: 'Rain  Continously',
