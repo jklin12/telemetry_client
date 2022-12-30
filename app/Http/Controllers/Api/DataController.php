@@ -22,8 +22,48 @@ class DataController extends BaseController
         $title = "Station List";
         $station = StationModel::paginate(50);
 
-        return $this->sendResponse($station, $title . ' data found');
+        $datas = [];
+        foreach ($station as $key => $value) {
+            $datas[$key]['station_id'] = $value->station_id;
+            $datas[$key]['station_name'] = $value->station_name;
+            $datas[$key]['station_lat'] = doubleval('-' . $this->dms_to_dec($value->station_lat));
+            $datas[$key]['station_long'] = $this->dms_to_dec($value->station_long);
+            $datas[$key]['station_river'] = $value->station_river;
+            $datas[$key]['station_equipment'] = $value->station_equipment;
+            $datas[$key]['station_prod_year'] = $value->station_prod_year;
+            $datas[$key]['station_instalaton_date'] = $value->station_instalaton_date;
+            $datas[$key]['station_authority'] = $value->station_authority;
+            $datas[$key]['station_guardsman'] = $value->station_guardsman;
+            $datas[$key]['station_reg_number'] = $value->station_reg_number;
+        }
+
+
+
+        return $this->sendResponse($datas, $title . ' data found');
     }
+
+    function dms_to_dec($dms)
+    {
+
+        $dms = stripslashes($dms);
+        $parts = explode(' ', $dms);
+        foreach ($parts as $key => $value) {
+            $parts[$key] = preg_replace('/\D/', '', $value);
+        }
+
+        // parts: 0 = degree, 1 = minutes, 2 = seconds
+        $d = isset($parts[0]) ? (float)$parts[0] : 0;
+        $m = isset($parts[1]) ? (float)$parts[1] : 0;
+        if (strpos($dms, ".") > 1 && isset($parts[2])) {
+            $m = (float)($parts[1] . '.' . $parts[2]);
+            unset($parts[2]);
+        }
+        $s = isset($parts[2]) ? (float)$parts[2] : 0;
+        $dec = ($d + ($m / 60) + ($s / 3600));
+        return $dec;
+    }
+
+
 
     public function curentRainFall(Request $request)
     {
