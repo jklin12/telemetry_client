@@ -36,4 +36,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('wireVibration',[DataController::class,'wireVibration']);
     Route::post('hydrograph',[DataController::class,'hydrograph']);
     Route::post('hytrograph',[DataController::class,'hytrograph']);
+    Route::get('logout',[LoginController::class,'logout']);
+    
 });

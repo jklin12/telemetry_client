@@ -21,4 +21,13 @@ class LoginController extends BaseController
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
         }
     }
+
+    public function logout(Request $request)
+    {
+       
+        auth()->user()->tokens()->delete();
+
+        return $this->sendResponse('Success Logout.', ['message' => 'You have successfully logged out and the token was successfully deleted']);
+        
+    }
 }
