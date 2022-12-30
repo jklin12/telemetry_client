@@ -421,6 +421,7 @@ class DataController extends BaseController
                 ->orderBy('water_level_time');
         }
 
+        $data  = [];
         foreach ($waterlevel->get()->toArray() as $key => $value) {
             $data[$key]['wh'] = doubleval($value['average_wh']);
             if ($interval == 30) {
