@@ -101,7 +101,7 @@
                         @endforeach
                     </tr>
                     <tr>
-                        <th colspan="2">Ttme</th>
+                        <th colspan="2">Time</th>
                         @foreach($summaryData['time']['rh'] as $key => $value)
                         <th class="text-center">{{$value}}</th>
                         @endforeach

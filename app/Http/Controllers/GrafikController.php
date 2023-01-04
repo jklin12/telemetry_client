@@ -67,11 +67,16 @@ class GrafikController extends Controller
         }
         //dd($data);
 
+        $stationList = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
+            ->where('station_type',  'RG')
+            ->get()->toArray();
+
+        //dd($stationList);
 
         $load['filterDate'] = $filterDate;
         $load['filterStation'] = $filterStation;
         $load['filterInterval'] = $interval;
-        $load['station_list'] = StationModel::get()->toArray();
+        $load['station_list'] = $stationList;
         $load['data'] = $data;
 
         return view('pages/grafik/judment', $load);
@@ -80,7 +85,7 @@ class GrafikController extends Controller
     public function hydrograph(Request $request)
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
-        $filterStation = $request->has('station') ? $request->get('station') : 1;
+        $filterStation = $request->has('station') ? $request->get('station') : 3;
         $interval = $request->has('interval') ? $request->get('interval') : '60';
 
         $title = 'Hydrograph';
@@ -152,16 +157,21 @@ class GrafikController extends Controller
 
         foreach ($flow->get()->toArray() as $key => $value) {
             //if ($value['flow']) {
-                $data['flow'][] = doubleval($value['average_f']);
+            $data['flow'][] = doubleval($value['average_f']);
             //}
         }
+
+        $stationList = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
+            ->where('station_type',  'WL')
+            ->orWhere('station_type',  'MF')
+            ->get()->toArray();
 
         //dd($data);
 
         $load['filterDate'] = $filterDate;
         $load['filterStation'] = $filterStation;
         $load['filterInterval'] = $interval;
-        $load['station_list'] = StationModel::get()->toArray();
+        $load['station_list'] = $stationList;
         $load['data'] = $data;
 
         return view('pages/grafik/hydrograph', $load);
@@ -218,10 +228,14 @@ class GrafikController extends Controller
             }
         }
 
+        $stationList = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
+            ->where('station_type',  'RG')
+            ->get()->toArray();
+
         $load['filterDate'] = $filterDate;
         $load['filterStation'] = $filterStation;
         $load['filterInterval'] = $interval;
-        $load['station_list'] = StationModel::get()->toArray();
+        $load['station_list'] = $stationList;
         $load['data'] = $data;
 
         return view('pages/grafik/hytrograph', $load);
