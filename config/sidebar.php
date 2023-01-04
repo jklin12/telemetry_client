@@ -1,6 +1,9 @@
 <?php
+ 
+$users = [];
 
 return [
+
 
   /*
     |--------------------------------------------------------------------------
@@ -12,6 +15,8 @@ return [
     | the usual Laravel view path has already been registered for you.
     |
     */
+
+
   'menu' => [
     [
       'icon' => 'fa fa-th-large',
@@ -109,6 +114,5 @@ return [
       'url' => '/flow/daily',
       'route-name' => 'flow.daily'
     ],
-
   ]
 ];

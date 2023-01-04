@@ -6,6 +6,7 @@ use App\Http\Controllers\GrafikController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RainfallController;
 use App\Http\Controllers\StationController;
+use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WaterLevelController;
 use App\Http\Controllers\WireVibrationController;
 use Illuminate\Support\Facades\Route;
@@ -37,7 +38,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard/alertData', [DashboardController::class, 'alertData'])->name('dashboard.alertData');
     Route::get('/station', [StationController::class, 'index'])->name('station.index');
     Route::get('/station/form/{station_id}', [StationController::class, 'form'])->name('station.form');
+    Route::get('/station/formType/{station_id}/', [StationController::class, 'formType'])->name('station.addType');
+    Route::get('/station/formType/{station_id}/{type_id}', [StationController::class, 'formType'])->name('station.formType');
+    Route::get('/station/form/', [StationController::class, 'form'])->name('station.add');
     Route::post('/station/store/', [StationController::class, 'store'])->name('station.store');
+    Route::post('/stationType/store/', [StationController::class, 'storeType'])->name('stationType.store');
 
     Route::get('/rainfall/byStation', [RainfallController::class, 'byStation'])->name('rainfall.byStation');
     Route::get('/rainfall/daily', [RainfallController::class, 'daily'])->name('rainfall.daily');
@@ -52,4 +57,5 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/grafik/judment', [GrafikController::class, 'judment'])->name('grafik.judment');
     Route::get('/grafik/hydrograph', [GrafikController::class, 'hydrograph'])->name('grafik.hydrograph');
     Route::get('/grafik/hytrograph', [GrafikController::class, 'hytrograph'])->name('grafik.hytrograph');
+    Route::resource('users', UsersController::class);
 });

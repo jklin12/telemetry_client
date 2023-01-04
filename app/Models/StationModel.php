@@ -11,7 +11,7 @@ class StationModel extends Model
 
     protected $table = 'sch_data_station';
     protected $primaryKey = 'station_id';
-    public $incrementing = false;
+    
 
     protected $fillable = [
         'station_id',

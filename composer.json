@@ -30,7 +30,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "config/sidebar.php"
+            "config/sidebar.php",
+            "config/new_sidebar.php"
         ]
     },
     "autoload-dev": {
