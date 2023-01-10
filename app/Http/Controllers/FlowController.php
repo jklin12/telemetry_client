@@ -42,6 +42,7 @@ class FlowController extends Controller
         $susunData = [];
 
         $arrDataByStation = [];
+        $susunGrafik = [];
         foreach ($waterlevel->get()->toArray() as $key => $value) {
             $susunData['station'][$value['station']]['station_id'] = $value['station_id'];
             $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
@@ -50,11 +51,19 @@ class FlowController extends Controller
                 $susunData['data'][$value['hour'] . $value['ft']]['date_time'] = $times;
                 $susunData['data'][$value['hour'] . $value['ft']]['datas'][] = $value;
                 $arrDataByStation[$value['station']][$value['hour'] . $value['ft']] =  $value['average_f'];
+                
+                $susunGrafik['label'][$value['hour'] . ':' . $value['ft']] = $times;
+                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
+                $susunGrafik['datas'][$value['station']]['value'][] = $value['average_f']; 
             } else {
                 $susunData['data'][$value['ft']]['date_time'] = Carbon::parse($value['ft'])->isoFormat('HH:mm');
                 //$susunData['data'][$value['wt']]['date_time'] = $value['wt'];
                 $susunData['data'][$value['ft']]['datas'][] = $value;
                 $arrDataByStation[$value['station']][$value['ft']] =  $value['average_f'];
+
+                $susunGrafik['label'][$value['ft']] = Carbon::parse($value['ft'])->isoFormat('HH:mm');
+                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
+                $susunGrafik['datas'][$value['station']]['value'][] = $value['average_f']; 
             }
         }
 
@@ -81,6 +90,7 @@ class FlowController extends Controller
         $load['subTitle'] = $subTitle;
         $load['datas'] = $susunData;
         $load['summaryData'] = $summaryData;
+        $load['susunGrafik'] = $susunGrafik;
         $load['filterDate'] = $filterDate;
         $load['filterInterval'] = $interval;
 

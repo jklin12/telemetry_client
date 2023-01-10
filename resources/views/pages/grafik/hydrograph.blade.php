@@ -72,6 +72,7 @@
             </div>
         </form>
 
+        
         <div id="container_chart"></div>
     </div>
 </div>
@@ -110,133 +111,120 @@
         $('#filter-form').submit();
     });
     $('#interval option[value=<?php echo $filterInterval ?>]').attr('selected', 'selected');
-    Highcharts.chart('container_chart', {
-        chart: {
-            zoomType: 'xy'
-        },
-        title: {
-            text: '',
-            align: 'left',
-            style: {
-                display: 'none'
-            }
-        },
-        xAxis: [{
-            categories: <?php echo json_encode($data['label']) ?>,
-            crosshair: true
-        }],
-        yAxis: [{ // Primary yAxis
-            labels: {
-                format: '{value} m',
-                style: {
-                    color: Highcharts.getOptions().colors[2]
-                }
+
+    <?php if (($data)) { ?>
+
+
+        Highcharts.chart('container_chart', {
+            chart: {
+                zoomType: 'xy'
             },
             title: {
                 text: '',
+                align: 'left',
                 style: {
-                    color: Highcharts.getOptions().colors[2]
+                    display: 'none'
                 }
             },
-            opposite: true
+            xAxis: [{
+                categories: <?php echo json_encode($data['label']) ?>,
 
-        }, { // Secondary yAxis
-            gridLineWidth: 0,
-            title: {
-                text: 'Water Level',
-                style: {
-                    color: Highcharts.getOptions().colors[0]
-                }
-            },
-            labels: {
-                format: '{value} m',
-                style: {
-                    color: Highcharts.getOptions().colors[0]
-                }
-            }
-
-        }, { // Tertiary yAxis
-            gridLineWidth: 0,
-            title: {
-                text: 'Flow',
-                style: {
-                    color: Highcharts.getOptions().colors[1]
-                }
-            },
-            labels: {
-                format: '{value} m/s',
-                style: {
-                    color: Highcharts.getOptions().colors[1]
-                }
-            },
-            opposite: true
-        }],
-        tooltip: {
-            shared: true
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'left',
-            x: 80,
-            verticalAlign: 'top',
-            y: 55,
-            floating: true,
-            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || // theme
-                'rgba(255,255,255,0.25)'
-        },
-        series: [{
-            name: 'Flow',
-            type: 'spline',
-            yAxis: 1,
-            data: <?php echo json_encode($data['flow']) ?>,
-            tooltip: {
-                valueSuffix: ' m/s'
-            }
-
-        }, {
-            name: 'Water Level',
-            type: 'spline',
-            yAxis: 2,
-            data: <?php echo json_encode($data['water_level']) ?>,
-            tooltip: {
-                valueSuffix: ' m'
-            }
-        }],
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
+            }],
+            yAxis: [{ // Primary yAxis
+                labels: {
+                    format: '{value} m/s',
+                    style: {
+                        color: Highcharts.getOptions().colors[1]
+                    }
                 },
-                chartOptions: {
-                    legend: {
-                        floating: false,
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom',
-                        x: 0,
-                        y: 0
-                    },
-                    yAxis: [{
-                        labels: {
-                            align: 'right',
-                            x: 0,
-                            y: -6
-                        },
-                        showLastLabel: false
-                    }, {
-                        labels: {
-                            align: 'left',
-                            x: 0,
-                            y: -6
-                        },
-                        showLastLabel: false
-                    }, {
-                        visible: false
-                    }]
+                title: {
+                    text: 'Flow',
+                    style: {
+                        color: Highcharts.getOptions().colors[1]
+                    }
+                },
+                opposite: true
+
+            }, { // Secondary yAxis
+                gridLineWidth: 0,
+                title: {
+                    text: 'Water Level',
+                    style: {
+                        color: Highcharts.getOptions().colors[0]
+                    }
+                },
+                labels: {
+                    format: '{value} m',
+                    style: {
+                        color: Highcharts.getOptions().colors[0]
+                    }
                 }
-            }]
-        }
-    });
+
+            }],
+            tooltip: {
+                shared: true
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                x: 80,
+                verticalAlign: 'top',
+                y: 55,
+                floating: true,
+                backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || // theme
+                    'rgba(255,255,255,0.25)'
+            },
+            series: [{
+                name: 'Flow',
+                type: 'column',
+                yAxis: 1,
+                data: <?php echo json_encode($data['flow']) ?>,
+                tooltip: {
+                    valueSuffix: ' mm'
+                }
+
+            }, {
+                name: 'Water Level',
+                type: 'spline',
+                data: <?php echo json_encode($data['water_level']) ?>,
+                tooltip: {
+                    valueSuffix: ' °C'
+                }
+            }],
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            floating: false,
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom',
+                            x: 0,
+                            y: 0
+                        },
+                        yAxis: [{
+                            labels: {
+                                align: 'right',
+                                x: 0,
+                                y: -6
+                            },
+                            showLastLabel: false
+                        }, {
+                            labels: {
+                                align: 'left',
+                                x: 0,
+                                y: -6
+                            },
+                            showLastLabel: false
+                        }]
+                    }
+                }]
+            }
+        });
+    <?php } ?>
 </script>
 
 

@@ -19,7 +19,7 @@
     <div class="panel-body">
         <form action="" method="get" id="filter-form">
             <div class="row">
-                <div class="col-md-4">
+                <!--<div class="col-md-4">
                     <div class="form-group row">
                         <label class="col-form-label col-md-4">Station :</label>
                         <div class="col-md-7">
@@ -33,7 +33,7 @@
                             </select>
                         </div>
                     </div>
-                </div>
+                </div>-->
                 <div class="col-md-4">
                     <div class="form-group row">
                         <label class="col-form-label col-md-4">Date : </label>
@@ -58,6 +58,15 @@
                 <!--<div class="text-muted f-w-600 mt-2 mt-sm-0">compared to <span id="daterange-prev-date">24 Mar-30 Apr 2020</span></div>-->
             </div>
         </form>
+
+        @if(!isset($data['datas']))
+        <div class="">
+            <div class="alert alert-warning fade show m-b-10">
+                <span class="close" data-dismiss="alert">×</span>
+                Maaf! Data belum tersedia.
+            </div>
+        </div>
+        @endif
 
         <div id="container_chart"></div>
     </div>
@@ -96,134 +105,67 @@
     });
     $('#interval option[value=<?php echo $filterInterval ?>]').attr('selected', 'selected');
 
-    Highcharts.chart('container_chart', {
-        chart: {
-            zoomType: 'xy'
-        },
-        title: {
-            text: '',
-            align: 'left',
-            style: {
-                display: 'none'
-            }
-        },
-        xAxis: [{
-            categories: <?php echo json_encode($data['label']) ?>,
-            crosshair: true
-        }],
-        yAxis: [{ // Primary yAxis
-            labels: {
-                format: '{value} m',
-                style: {
-                    color: Highcharts.getOptions().colors[4]
-                }
-            },
-            title: {
-                text: 'Rainfall Continous',
-                style: {
-                    color: Highcharts.getOptions().colors[4]
-                }
-            },
-            opposite: true
 
-        }, { // Secondary yAxis
-            gridLineWidth: 0,
-            title: {
-                text: 'Rainfall Hourly',
-                style: {
-                    color: Highcharts.getOptions().colors[3]
-                }
-            },
-            labels: {
-                format: '{value} Rh (mm/h)',
-                style: {
-                    color: Highcharts.getOptions().colors[3]
-                }
-            }
+    <?php if (isset($data['datas'])) { ?>
 
-        }, { // Tertiary yAxis
-            gridLineWidth: 0,
+
+        Highcharts.chart('container_chart', {
             title: {
                 text: '',
+                align: 'left',
                 style: {
-                    color: Highcharts.getOptions().colors[1]
+                    display: 'none'
                 }
             },
-            labels: {
-                format: '{value} Rc (mm/h)',
-                style: {
-                    color: Highcharts.getOptions().colors[1]
-                }
-            },
-            opposite: true
-        }],
-        tooltip: {
-            shared: true
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'left',
-            x: 80,
-            verticalAlign: 'top',
-            y: 55,
-            floating: true,
-            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || // theme
-                'rgba(255,255,255,0.25)'
-        },
-        series: [{
-            name: 'Rainfall Continous',
-            type: 'column',
-            yAxis: 1,
-            data: <?php echo json_encode($data['rc']) ?>,
-            
-            tooltip: {
-                valueSuffix: ' Rc (mm/h)'
-            }
 
-        }, {
-            name: 'Rainfall Hourly',
-            type: 'spline',
-            yAxis: 2,
-            data: <?php echo json_encode($data['rh']) ?>,
-            tooltip: {
-                valueSuffix: ' Rh (mm/h)'
-            }
-        }],
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
-                },
-                chartOptions: {
-                    legend: {
-                        floating: false,
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom',
-                        x: 0,
-                        y: 0
-                    },
-                    yAxis: [{
-                        labels: {
-                            align: 'right',
-                            x: 0,
-                            y: -6
-                        },
-                        showLastLabel: false
-                    }, {
-                        labels: {
-                            align: 'left',
-                            x: 0,
-                            y: -6
-                        },
-                        showLastLabel: false
-                    }, {
-                        visible: false
-                    }]
+            xAxis: [{
+                categories: <?php echo json_encode($data['label']) ?>,
+
+            }],
+            yAxis: {
+                title: {
+                    text: 'Continous Rainfall'
                 }
-            }]
-        }
-    });
+            },
+
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle'
+            },
+
+            plotOptions: {
+                series: {
+                    label: {
+                        connectorAllowed: false
+                    },
+                }
+            },
+
+            series: [
+                <?php foreach ($data['datas'] as $key => $value) { ?> {
+                        name: '<?php echo $value['station'] ?>',
+                        data: <?php echo json_encode($value['value']) ?>
+                    },
+
+                <?php } ?>
+            ],
+            tooltip: {
+                shared: true
+            },
+            responsive: {
+                rules: [{
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
+            }
+        });
+    <?php } ?>
 </script>
 
 

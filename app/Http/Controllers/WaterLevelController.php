@@ -45,6 +45,7 @@ class WaterLevelController extends Controller
         $susunData = [];
 
         $arrDataByStation = [];
+        $susunGrafik = [];
         foreach ($waterlevel->get()->toArray() as $key => $value) {
             $susunData['station'][$value['station']]['station_id'] = $value['station_id'];
             $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
@@ -55,17 +56,27 @@ class WaterLevelController extends Controller
                 $susunData['data'][$value['hour'] . $value['wt']]['datas'][] = $value;
 
                 $arrDataByStation[$value['station']][$value['hour'] . $value['wt']] =  $value['average_wh'];
+
+                $susunGrafik['label'][$value['hour'] . $value['wt']] = $times;
+                $susunGrafik['datas'][$value['hour'] . $value['wt']]['station'] = $value['station_name'];
+                $susunGrafik['datas'][$value['hour'] . $value['wt']]['value'][] = $value['average_wh'];
             } else {
                 $susunData['data'][$value['wt']]['date_time'] = Carbon::parse($value['wt'])->isoFormat('HH:mm');
                 //$susunData['data'][$value['wt']]['date_time'] = $value['wt'];
                 $susunData['data'][$value['wt']]['datas'][] = $value;
                 $arrDataByStation[$value['station']][$value['wt']] =  $value['average_wh'];
+
+                $susunGrafik['label'][$value['wt']] = Carbon::parse($value['wt'])->isoFormat('HH:mm');
+                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
+                $susunGrafik['datas'][$value['station']]['value'][] = $value['average_wh'];
             }
+          
         }
 
         $avergae = [];
         $max = [];
         $time = [];
+        
         if (isset(($susunData['station']))) {
             foreach ($susunData['station'] as $key => $value) {
 
@@ -73,20 +84,24 @@ class WaterLevelController extends Controller
                 $max[$key] = max($arrDataByStation[$value['station_id']]);
                 $time[$key] = array_search(max($arrDataByStation[$value['station_id']]), $arrDataByStation[$value['station_id']]);
             }
+
         }
+        //dd($susunGrafik);
 
         $summaryData['average'] = $avergae;
         $summaryData['max'] = $max;
         $summaryData['time'] = $time;
 
-
+        
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
         $load['datas'] = $susunData;
         $load['summaryData'] = $summaryData;
+        $load['susunGrafik'] = $susunGrafik;
         $load['filterDate'] = $filterDate;
         $load['filterInterval'] = $interval;
+
 
 
         return view('pages/water_level/daily', $load);

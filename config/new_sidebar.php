@@ -45,12 +45,12 @@ if (!function_exists('side_menu')) {
                 'url' => 'javascript:;',
                 'caret' => true,
                 'sub_menu' => [
-                    [
+                    /*[
                         'title' => 'Judment Graph',
                         //'label' => 'NEW',
                         'url' => '/grafik/judment',
                         'route-name' => 'grafik.judment'
-                    ],
+                    ],*/
                     [
                         'title' => 'Hydrograph',
                         //'label' => 'NEW',
