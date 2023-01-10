@@ -57,7 +57,7 @@
                         @endforeach
                     </tr>
                     <tr>
-                         @foreach($datas['station'] as $key => $value)
+                        @foreach($datas['station'] as $key => $value)
                         <th class="text-center">Wire</th>
                         <th class="text-center">Vibration</th>
                         @endforeach
@@ -74,7 +74,7 @@
                         @foreach($value['datas'] as $kdata => $vdata)
                         <td class="text-center">{{ $vdata['average_w']}}</td>
                         <td class="text-center">{{ $vdata['average_v']}}</td>
-                        
+
                         @endforeach
 
                     </tr>
@@ -82,7 +82,7 @@
 
                     @endforelse
                 </tbody>
-                
+
 
             </table>
             @else
@@ -93,9 +93,10 @@
                 </div>
             </div>
             @endif
-        
+
         </div>
     </div>
+    <div id="container_chart"></div>
 </div>
 @endsection
 
@@ -116,10 +117,15 @@
 <script src="/assets/plugins/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
 <script src="/assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <script>
     ///alert(Date())
-   
+
     $("#datepicker").datepicker({
         format: 'yyyy-mm-dd',
         defaultDate: '<?php echo $filterDate ?>'
@@ -146,8 +152,7 @@
             footer: true
         },
         dom: 'Bfrtip',
-        buttons: [
-            {
+        buttons: [{
                 extend: 'csv',
                 className: 'btn btn-indigo '
             },
@@ -159,14 +164,71 @@
                 extend: 'pdf',
                 className: 'btn btn-indigo '
             },
-             
+
         ],
         paging: false,
         ordering: false,
-        searching:false,
+        searching: false,
         responsive: true
     });
 
+    <?php if (isset($susunGrafik['datas'])) { ?>
+        Highcharts.chart('container_chart', {
+            title: {
+                text: 'Wire Vibration Chart',
+                align: 'center',
+            },
+            subtitle: {
+                text: '<?php echo $subTitle ?>'
+            },
+            xAxis: [{
+                categories: <?php echo json_encode(array_values($susunGrafik['label'])) ?>,
+
+            }],
+            yAxis: {
+                title: {
+                    text: 'Wire Vibration'
+                }
+            },
+
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle'
+            },
+
+            plotOptions: {
+                series: {
+                    label: {
+                        connectorAllowed: false
+                    },
+                }
+            },
+
+            series: [
+                <?php foreach ($susunGrafik['datas'] as $key => $value) { ?> {
+                        name: '<?php echo $value['station'] ?>',
+                        data: <?php echo json_encode($value['value']['average_w']) ?>
+                    },
+
+                <?php } ?>
+            ],
+            tooltip: {
+                shared: true
+            },
+            responsive: {
+                rules: [{
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
+            }
+        });
+    <?php } ?>
 </script>
 
 

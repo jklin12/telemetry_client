@@ -75,22 +75,34 @@ class RainfallController extends Controller
         //dd($rainfall->get()->toArray());
 
         $susunData = [];
+        $susunGrafik = [];
         foreach ($rainfall->get()->toArray() as $key => $value) {
             $susunData[$key]['rain_fall_date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D MMMM YYYY');
             if ($interval == 30) {
                 $times =  date($value['hour'].':' . $value['rt']);
                 $susunData[$key] = $value;
                 $susunData[$key]['rt'] = $times;
+
+                $susunGrafik['label'][$value['hour'].':' . $value['rt']] = $times;
+                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
+                $susunGrafik['datas'][$value['station']]['value'][] = $value['rain_fall_continuous'];
             } else {
                 
                 $susunData[$key] = $value;
-                $susunData[$key]['rt'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');;
+                $susunData[$key]['rt'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
+
+                $susunGrafik['label'][$value['rt']] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
+                $susunGrafik['datas']['rc']['station'] = 'Rain Continous';
+                $susunGrafik['datas']['rc']['value'][] = $value['rain_fall_continuous'];
+                $susunGrafik['datas']['rh']['station'] = 'Rain Houry';
+                $susunGrafik['datas']['rh']['value'][] = $value['rain_fall_1_hour'];
             }
         }
-        //dd($susunData);
+        //dd($susunGrafik);
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
         $load['datas'] = $susunData;
+        $load['susunGrafik'] = $susunGrafik;
         $load['filterDate'] = $filterDate;
         $load['filterStation'] = $filterStation;
         $load['filterInterval'] = $interval;
@@ -147,11 +159,19 @@ class RainfallController extends Controller
 
                 $arrDataByStation[$value['station']]['rh'][$value['hour'] . $value['rt']] =  $value['average_rh'];
                 $arrDataByStation[$value['station']]['rc'][$value['hour'] . $value['rt']] =  $value['average_rc'];
+
+                $susunGrafik['label'][$value['hour'] .':'. $value['rt']] = $times;
+                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
+                $susunGrafik['datas'][$value['station']]['value'][] = $value['average_rc']; 
             } else {
                 $susunData['data'][$value['rt']]['date_time'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
                 $susunData['data'][$value['rt']]['datas'][] = $value;
                 $arrDataByStation[$value['station']]['rh'][$value['rt']] =  $value['average_rh'];
                 $arrDataByStation[$value['station']]['rc'][$value['rt']] =  $value['average_rc'];
+
+                $susunGrafik['label'][$value['rt']] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
+                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
+                $susunGrafik['datas'][$value['station']]['value'][] = $value['average_rc']; 
             }
         }
         //dd($susunData);
@@ -186,6 +206,7 @@ class RainfallController extends Controller
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
         $load['datas'] = $susunData;
+        $load['susunGrafik'] = $susunGrafik;
         $load['filterDate'] = $filterDate;
         $load['summaryData'] = $summaryData;
         $load['filterInterval'] = $interval;

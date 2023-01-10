@@ -101,6 +101,7 @@
 
         </div>
     </div>
+    <div id="container_chart"></div>
 </div>
 @endsection
 
@@ -122,6 +123,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 <script src="/assets/plugins/select2/dist/js/select2.min.js"></script>
 
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script>
     ///alert(Date())
 
@@ -170,6 +176,65 @@
         searching: false,
         responsive: true
     });
+
+
+    <?php if (isset($susunGrafik['datas'])) { ?>
+        Highcharts.chart('container_chart', {
+            title: {
+                text: 'Flow Chart',
+                align: 'center',
+            },
+            subtitle: {
+                text: '<?php echo $subTitle ?>'
+            },
+            xAxis: [{
+                categories: <?php echo json_encode(array_values($susunGrafik['label'])) ?>,
+
+            }],
+            yAxis: {
+                title: {
+                    text: 'Rainfall mm/h'
+                }
+            },
+
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle'
+            },
+
+            plotOptions: {
+                series: {
+                    label: {
+                        connectorAllowed: false
+                    },
+                }
+            },
+
+            series: [
+                <?php foreach ($susunGrafik['datas'] as $key => $value) { ?> {
+                        name: '<?php echo $value['station'] ?>',
+                        data: <?php echo json_encode($value['value']) ?>
+                    },
+
+                <?php } ?>
+            ],
+            tooltip: {
+                shared: true
+            },
+            responsive: {
+                rules: [{
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
+            }
+        });
+    <?php } ?>
 </script>
 
 

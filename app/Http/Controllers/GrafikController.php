@@ -79,6 +79,8 @@ class GrafikController extends Controller
         $load['station_list'] = $stationList;
         $load['data'] = $data;
 
+        dd($load);
+
         return view('pages/grafik/judment', $load);
     }
 
@@ -164,6 +166,7 @@ class GrafikController extends Controller
         $stationList = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
             ->where('station_type',  'WL')
             ->orWhere('station_type',  'MF')
+            ->groupBy('sch_data_station.station_id')
             ->get()->toArray();
 
         //dd($data);
@@ -208,25 +211,26 @@ class GrafikController extends Controller
         $rainfall = RainfallModel::select(DB::raw($select))
             ->leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
             ->where('rain_fall_date', $filterDate)
-            ->where('station', $filterStation)
+           // ->where('station', $filterStation)
             //->groupBy('station') 
             ->orderBy('rain_fall_time');
         if ($group) {
             $rainfall->groupBy(DB::raw($group));
         }
-
+ 
         $data['label'] = [];
         $data['rh'] = [];
         $data['rc'] = [];
         foreach ($rainfall->get()->toArray() as $key => $value) {
-            $data['rh'][] = doubleval($value['average_rh']);
-            $data['rc'][] = doubleval($value['average_rc']);
+            //$data['rh'][] = doubleval($value['average_rh']);
+            $data['datas'][$value['station_id']]['station'] = ($value['station_name']);
+            $data['datas'][$value['station_id']]['value'][] = doubleval($value['average_rc']);
             if ($interval == 30) {
                 $data['label'][] = $value['hour'] . ':' . $value['rt'];
             } else {
                 $data['label'][] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
             }
-        }
+        }   
 
         $stationList = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
             ->where('station_type',  'RG')
@@ -237,6 +241,7 @@ class GrafikController extends Controller
         $load['filterInterval'] = $interval;
         $load['station_list'] = $stationList;
         $load['data'] = $data;
+        
 
         return view('pages/grafik/hytrograph', $load);
     }

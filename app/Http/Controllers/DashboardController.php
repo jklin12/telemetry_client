@@ -34,7 +34,8 @@ class DashboardController extends Controller
 
             $susunData[$key]['type'] = 'Feature';
             $susunData[$key]['properties']['description'] = '<strong>' . $value->station_name . '</strong><p>' . $value->station_station_river . '<br>' . $value->station_equipment . '<br>' . $value->station_authority . '<br>' . $value->station_guardsman . '</p>';
-            $susunData[$key]['properties']['icon'] = 'mountain-11';
+            $susunData[$key]['properties']['icon'] = $value->station_icon ?? 'triangle-stroked';
+            $susunData[$key]['properties']['status'] = strval($key);
             //$susunData[$key]['properties']['icon'] = $value->station_icon;
             $susunData[$key]['geometry']['type'] = 'Point';
             $susunData[$key]['geometry']['coordinates'][] = $this->dms_to_dec($value->station_long);

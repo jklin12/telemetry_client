@@ -41,6 +41,7 @@ class WireVibrationController extends Controller
         }
         //dd($wireVibration->get()->toArray(),$select,$filterDate);
         $susunData = [];
+        $susunGrafik = [];
         foreach ($wireVibration->get()->toArray() as $key => $value) {
             //$susunData[$value['date_time']]['date_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');
             //$susunData[$value['date_time']]['station_name'] = $value['station_name'];
@@ -53,17 +54,28 @@ class WireVibrationController extends Controller
                 $susunData['data'][$times]['date_time'] = $times;
                 $arrDataByStation[$value['station']][$value['hour'] . $value['wvt']] =  $value['average_w'];
                 $arrDataByStation[$value['station']][$value['hour'] . $value['wvt']] =  $value['average_v'];
+
+                $susunGrafik['label'][$value['hour'] . $value['wvt']] = $times;
+                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
+                $susunGrafik['datas'][$value['station']]['value']['average_w'][] = $value['average_w'];
+                $susunGrafik['datas'][$value['station']]['value']['average_v'][] = $value['average_v'];
             } else {
                 $susunData['data'][$value['wvt']]['date_time'] = Carbon::parse($value['wvt'])->isoFormat('HH:mm');
                 $susunData['data'][$value['wvt']]['datas'][] = $value;
                 $arrDataByStation[$value['station']][$value['wvt']] =  $value['average_w'];
                 $arrDataByStation[$value['station']][$value['wvt']] =  $value['average_v'];
+
+                $susunGrafik['label'][$value['wvt']] = Carbon::parse($value['wvt'])->isoFormat('HH:mm');
+                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
+                $susunGrafik['datas'][$value['station']]['value']['average_w'][] = $value['average_w'];
+                $susunGrafik['datas'][$value['station']]['value']['average_v'][] = $value['average_v'];
             }
         }
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
         $load['datas'] = $susunData;
+        $load['susunGrafik'] = $susunGrafik;
         $load['filterDate'] = $filterDate;
         $load['filterInterval'] = $interval;
 

@@ -32,6 +32,20 @@
 
 <div class="panel panel-inverse">
     <div class="panel-body">
+        <div id="menu" class="mb-2">
+            <div class="radio radio-css radio-inline">
+                <input type="radio" name="rtoggle" id="satellite-streets-v11" value="satellite" checked="checked">
+                <label for="satellite-streets-v11">Satellite Streets</label>
+            </div>
+            <div class="radio radio-css radio-inline">
+                <input type="radio" name="rtoggle" id="streets-v11" value="streets"  >
+                <label for="streets-v11">Streets</label>
+            </div>
+            <div class="radio radio-css radio-inline">
+                <input type="radio" name="rtoggle" id="outdoors-v11" value="outdoors" >
+                <label for="outdoors-v11">Outdors</label>
+            </div>
+        </div>
         <div id='map' style='height: 500px;'></div>
     </div>
 </div>
@@ -47,79 +61,138 @@
     const map = new mapboxgl.Map({
         container: 'map',
         // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/mapbox/satellite-streets-v11',
         center: [110.4025134, -7.6269335],
         zoom: 10
     });
 
-    map.on('load', () => {
+    const layerList = document.getElementById('menu');
+    const inputs = layerList.getElementsByTagName('input');
+
+    for (const input of inputs) {
+        input.onclick = (layer) => {
+            const layerId = layer.target.id;
+            map.setStyle('mapbox://styles/mapbox/' + layerId);
+        };
+    }
+    map.on('style.load', () => {
         map.loadImage(
-            'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
+            '/assets/icons/building.png',
             (error, image) => {
                 if (error) throw error;
-                map.addImage('custom-marker', image, {
-
+                map.addImage('building', image, {
+                    'sdf': true
                 });
-                // Add a GeoJSON source with 2 points
-                map.addSource('places', {
-                    // This GeoJSON contains features that include an "icon"
-                    // property. The value of the "icon" property corresponds
-                    // to an image in the Mapbox Streets style's sprite.
-                    'type': 'geojson',
-                    'data': {
-                        'type': 'FeatureCollection',
-                        'features': <?php echo $datas ?>
-                    }
+            }
+        );
+        map.loadImage(
+            '/assets/icons/communications-tower.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('communications-tower', image, {
+                    'sdf': true
                 });
-                // Add a layer showing the places.
-                map.addLayer({
-                    'id': 'places',
-                    'type': 'symbol',
-                    'source': 'places',
-                    'layout': {
-                        'icon-image': '{icon}',
-                        'icon-size': 1.5,
-                        'icon-allow-overlap': true
-                    },
-
+            }
+        );
+        map.loadImage(
+            '/assets/icons/dam.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('dam', image, {
+                    'sdf': true
                 });
-
-                // When a click event occurs on a feature in the places layer, open a popup at the
-                // location of the feature, with description HTML from its properties.
-                map.on('click', 'places', (e) => {
-                    // Copy coordinates array.
-                    const coordinates = e.features[0].geometry.coordinates.slice();
-                    const description = e.features[0].properties.description;
-
-                    // Ensure that if the map is zoomed out such that multiple
-                    // copies of the feature are visible, the popup appears
-                    // over the copy being pointed to.
-                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                    }
-
-                    new mapboxgl.Popup()
-                        .setLngLat(coordinates)
-                        .setHTML(description)
-                        .addTo(map);
+            }
+        );
+        map.loadImage(
+            '/assets/icons/triangle-stroked.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('triangle-stroked', image, {
+                    'sdf': true
                 });
+            }
+        );
 
-                // Change the cursor to a pointer when the mouse is over the places layer.
-                map.on('mouseenter', 'places', () => {
-                    map.getCanvas().style.cursor = 'pointer';
-                });
+        map.addSource('places', {
+            'type': 'geojson',
+            'data': {
+                'type': 'FeatureCollection',
+                'features': <?php echo $datas ?>
+            }
+        });
+        // Add a layer showing the places.
+        map.addLayer({
+            'id': 'places',
+            'type': 'symbol',
+            'source': 'places',
+            'layout': {
+                'icon-image': '{icon}',
+                'icon-size': 1.5,
+                'icon-allow-overlap': true
+            },
+            "paint": {
+                'icon-color': [
+                    'match', // Use the 'match' expression: https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-match
+                    ['get', 'icon'], // Use the result 'STORE_TYPE' property
+                    'dam',
+                    '#4cff00',
+                    'building',
+                    '#000000',
+                    'triangle-stroked',
+                    '#182bf7',
+                    'communications-tower',
+                    '#9ACD32',
+                    '4',
+                    '#008000',
+                    '5',
+                    '#008000',
+                    '6',
+                    '#008000',
+                    '7',
+                    '#008000',
+                    '8',
+                    '#008000',
+                    '#FF0000' // any other store type
+                ]
+            }
 
-                // Change it back to a pointer when it leaves.
-                map.on('mouseleave', 'places', () => {
-                    map.getCanvas().style.cursor = '';
-                });
+        });
 
-            })
+        // When a click event occurs on a feature in the places layer, open a popup at the
+        // location of the feature, with description HTML from its properties.
+        map.on('click', 'places', (e) => {
+            // Copy coordinates array.
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const description = e.features[0].properties.description;
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+
+            new mapboxgl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(description)
+                .addTo(map);
+        });
+
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', 'places', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', 'places', () => {
+            map.getCanvas().style.cursor = '';
+        });
     });
 
-    setInterval(function() {
+    /*setInterval(function() {
         $.ajax({
-            url: "<?php echo route('dashboard.alertData') ?>",
+            url: "<?php //echo route('dashboard.alertData') 
+                    ?>",
             success: function(data) {
                 var json = JSON.parse(data)
                 var time = 2000;
@@ -145,6 +218,6 @@
                 $('.mapboxgl-popup').remove();
             }, 10000);
         })
-    }, 15000);
+    }, 15000);*/
 </script>
 @endpush
