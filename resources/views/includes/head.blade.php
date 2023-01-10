@@ -10,4 +10,10 @@
 <link href="/assets/css/material/theme/indigo.min.css" rel="stylesheet" />
 <!-- ================== END BASE CSS STYLE ================== -->
 
+
+<link rel="stylesheet" href="/assets/plugins/select2/dist/css/select2.min.css">
+<link href="/assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.css" rel="stylesheet" />
+<link href="/assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css" rel="stylesheet" />
+<link href="/assets/plugins/select2/dist/css/select2.min.css" rel="stylesheet" />
+
 @stack('css')

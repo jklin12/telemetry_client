@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\FlowController;
 use App\Http\Controllers\GrafikController;
 use App\Http\Controllers\LoginController;
@@ -42,6 +43,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/station/formType/{station_id}/{type_id}', [StationController::class, 'formType'])->name('station.formType');
     Route::get('/station/form/', [StationController::class, 'form'])->name('station.add');
     Route::post('/station/store/', [StationController::class, 'store'])->name('station.store');
+    Route::post('/station/find/', [StationController::class, 'find'])->name('station.find');
     Route::post('/stationType/store/', [StationController::class, 'storeType'])->name('stationType.store');
 
     Route::get('/rainfall/byStation', [RainfallController::class, 'byStation'])->name('rainfall.byStation');
@@ -53,6 +55,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/wire_vibration/daily', [WireVibrationController::class, 'daily'])->name('wire_vibration.daily');
 
     Route::get('/flow/daily', [FlowController::class, 'daily'])->name('flow.daily');
+
+    Route::get('/download/index', [DownloadController::class, 'index'])->name('download.index');
+    Route::post('/download/store', [DownloadController::class, 'store'])->name('download.store');
 
     Route::get('/grafik/judment', [GrafikController::class, 'judment'])->name('grafik.judment');
     Route::get('/grafik/hydrograph', [GrafikController::class, 'hydrograph'])->name('grafik.hydrograph');

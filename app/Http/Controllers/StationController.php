@@ -62,6 +62,7 @@ class StationController extends Controller
     }
 
 
+
     public function form(Request $request, $station_id = 0)
     {
 
@@ -186,6 +187,25 @@ class StationController extends Controller
             }
         }
         //dd($postVal);
+    }
+    public function find(Request $request)
+    {
+
+        $type = $request->input('type') == 'WV' ? 'MF' : $request->type;
+        
+
+        $station = StationModel::selectRaw('sch_data_station.*,sch_station_types.id,sch_station_types.station_type,alert_column,alert_value')
+            ->leftJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
+            ->where('station_type', $type)
+            ->get();
+        $element = '<option value=""> Pilih Station </option>';
+        foreach ($station as $key => $value) {
+            $element .= ' <option value="' . $value->station_id . '">' . $value->station_name . '</option>';
+        }
+        
+        echo json_encode($element);
+
+
     }
 
     protected function arrField()

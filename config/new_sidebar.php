@@ -114,6 +114,13 @@ if (!function_exists('side_menu')) {
                 'url' => '/flow/daily',
                 'route-name' => 'flow.daily'
             ],
+            [
+                'icon' => 'fas fa-download',
+                'title' => 'CSV Download',
+                'label' => '',
+                'url' => '/download/index',
+                'route-name' => 'download.index'
+            ],
             $users
         ];
         return $menu;
