@@ -221,7 +221,7 @@ class DashboardController extends Controller
             $stationData[$key]['type'] = 'Feature';
             $stationData[$key]['properties']['title'] = $value->station_name;
             $stationData[$key]['properties']['description'] = '<strong>' . $value->station_name . '</strong><p>' . $value->station_station_river . '<br>' . $value->station_equipment . '<br>' . $value->station_authority . '<br>' . $value->station_guardsman . '</p>';
-            $stationData[$key]['properties']['icon'] = 'mountain-11';
+            $stationData[$key]['properties']['icon'] = $value->station_icon ?? 'triangle-stroked';
             //$susunData[$key]['properties']['icon'] = $value->station_icon;
             $stationData[$key]['geometry']['type'] = 'Point';
             $stationData[$key]['geometry']['coordinates'][] = $this->dms_to_dec($value->station_long);

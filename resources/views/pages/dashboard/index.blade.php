@@ -22,6 +22,44 @@
         border-top-color: yellow;
     }
 </style>
+<style>
+    .map-overlay {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: #fff;
+        margin-right: 50px;
+        font-family: Arial, sans-serif;
+        overflow: auto;
+        border-radius: 3px;
+    }
+
+    #legend {
+        padding: 10px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        line-height: 18px;
+        height: 250px;
+        margin-bottom: 40px;
+        width: 200px;
+    }
+
+    .legend-key {
+        display: inline-block;
+        border-radius: 20%;
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+
+    .legend-key-color {
+        display: inline-block;
+        border-radius: 20%;
+        width: 10px;
+        height: 10px;
+        margin-right: 5px; 
+    }
+</style>
 @endpush
 
 @section('content')
@@ -38,15 +76,27 @@
                 <label for="satellite-streets-v11">Satellite Streets</label>
             </div>
             <div class="radio radio-css radio-inline">
-                <input type="radio" name="rtoggle" id="streets-v11" value="streets"  >
+                <input type="radio" name="rtoggle" id="streets-v11" value="streets">
                 <label for="streets-v11">Streets</label>
             </div>
             <div class="radio radio-css radio-inline">
-                <input type="radio" name="rtoggle" id="outdoors-v11" value="outdoors" >
+                <input type="radio" name="rtoggle" id="outdoors-v11" value="outdoors">
                 <label for="outdoors-v11">Outdors</label>
             </div>
         </div>
         <div id='map' style='height: 500px;'></div>
+        <div class='map-overlay' id='legend'>
+            <div><img src="/assets/icons/circle.png" class="legend-key" alt=""><span>Rainfall</span></div>
+            <div><img src="/assets/icons/square.png" class="legend-key" alt=""><span>Water Level</span></div>
+            <div><img src="/assets/icons/circle.png" class="legend-key" alt=""><span>Mudflow</span></div>
+            <div><img src="/assets/icons/square_circle.png" class="legend-key" alt=""><span>Rainfall & Water Level</span></div>
+            <div><img src="/assets/icons/square_star.png" class="legend-key" alt=""><span>Water Level & Mudflow</span></div>
+            <div><img src="/assets/icons/circle_star.png" class="legend-key" alt=""><span>Rainfall & Mudflow</span></div>
+            <hr>
+            <div><span class="legend-key-color" style="background-color: #f20953;"></span><span>Inactive Station</span></div>
+        </div>
+
+
     </div>
 </div>
 
@@ -95,19 +145,55 @@
             }
         );
         map.loadImage(
-            '/assets/icons/dam.png',
+            '/assets/icons/square.png',
             (error, image) => {
                 if (error) throw error;
-                map.addImage('dam', image, {
+                map.addImage('square', image, {
                     'sdf': true
                 });
             }
         );
         map.loadImage(
-            '/assets/icons/triangle-stroked.png',
+            '/assets/icons/circle.png',
             (error, image) => {
                 if (error) throw error;
-                map.addImage('triangle-stroked', image, {
+                map.addImage('circle', image, {
+                    'sdf': true
+                });
+            }
+        );
+        map.loadImage(
+            '/assets/icons/star.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('star', image, {
+                    'sdf': true
+                });
+            }
+        );
+        map.loadImage(
+            '/assets/icons/square_circle.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('square_circle', image, {
+                    'sdf': true
+                });
+            }
+        );
+        map.loadImage(
+            '/assets/icons/square_star.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('square_star', image, {
+                    'sdf': true
+                });
+            }
+        );
+        map.loadImage(
+            '/assets/icons/circle_star.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('circle_star', image, {
                     'sdf': true
                 });
             }
@@ -127,33 +213,37 @@
             'source': 'places',
             'layout': {
                 'icon-image': '{icon}',
-                'icon-size': 1.5,
+                'icon-size': 1,
                 'icon-allow-overlap': true
             },
             "paint": {
-                'icon-color': [
+                "icon-halo-color": [
                     'match', // Use the 'match' expression: https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-match
                     ['get', 'icon'], // Use the result 'STORE_TYPE' property
-                    'dam',
-                    '#4cff00',
+                    'circle',
+                    '#ffffff',
                     'building',
-                    '#000000',
+                    '#ecfc0c',
                     'triangle-stroked',
                     '#182bf7',
                     'communications-tower',
-                    '#9ACD32',
-                    '4',
-                    '#008000',
-                    '5',
-                    '#008000',
-                    '6',
-                    '#008000',
-                    '7',
-                    '#008000',
-                    '8',
-                    '#008000',
-                    '#FF0000' // any other store type
-                ]
+                    '#000000',
+                    '#f20953' // any other store type
+                ],
+                "icon-halo-width": 2,
+                'icon-color': [
+                    'match', // Use the 'match' expression: https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-match
+                    ['get', 'icon'], // Use the result 'STORE_TYPE' property
+                    'circle',
+                    '#ffffff',
+                    'building',
+                    '#ecfc0c',
+                    'triangle-stroked',
+                    '#182bf7',
+                    'communications-tower',
+                    '#000000',
+                    '#f20953' // any other store type
+                ],
             }
 
         });
