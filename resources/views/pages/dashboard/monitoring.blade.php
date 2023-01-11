@@ -283,66 +283,163 @@
     const map = new mapboxgl.Map({
         container: 'map',
         // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/mapbox/satellite-streets-v11',
         center: [110.4025134, -7.6269335],
         zoom: 9
     });
 
     map.on('load', () => {
         map.loadImage(
-            'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
+            '/assets/icons/building.png',
             (error, image) => {
                 if (error) throw error;
-                map.addImage('custom-marker', image, {
-
+                map.addImage('building', image, {
+                    'sdf': true
                 });
-
-                map.addSource('places', {
-                    'type': 'geojson',
-                    'data': {
-                        'type': 'FeatureCollection',
-                        'features': <?php echo $station ?>
-                    }
+            }
+        );
+        map.loadImage(
+            '/assets/icons/communications-tower.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('communications-tower', image, {
+                    'sdf': true
                 });
-
-                map.addLayer({
-                    'id': 'places',
-                    'type': 'symbol',
-                    'source': 'places',
-                    'layout': {
-                        'icon-image': '{icon}',
-                        'icon-size': 1.5,
-                        'icon-allow-overlap': true
-                    },
-
+            }
+        );
+        map.loadImage(
+            '/assets/icons/square.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('square', image, {
+                    'sdf': true
                 });
-
-                map.on('click', 'places', (e) => {
-                    const coordinates = e.features[0].geometry.coordinates.slice();
-                    const description = e.features[0].properties.description;
-
-
-                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                    }
-
-                    new mapboxgl.Popup()
-                        .setLngLat(coordinates)
-                        .setHTML(description)
-                        .addTo(map);
+            }
+        );
+        map.loadImage(
+            '/assets/icons/circle.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('circle', image, {
+                    'sdf': true
                 });
-
-
-                map.on('mouseenter', 'places', () => {
-                    map.getCanvas().style.cursor = 'pointer';
+            }
+        );
+        map.loadImage(
+            '/assets/icons/star.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('star', image, {
+                    'sdf': true
                 });
-
-
-                map.on('mouseleave', 'places', () => {
-                    map.getCanvas().style.cursor = '';
+            }
+        );
+        map.loadImage(
+            '/assets/icons/square_circle.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('square_circle', image, {
+                    'sdf': true
                 });
+            }
+        );
+        map.loadImage(
+            '/assets/icons/square_star.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('square_star', image, {
+                    'sdf': true
+                });
+            }
+        );
+        map.loadImage(
+            '/assets/icons/circle_star.png',
+            (error, image) => {
+                if (error) throw error;
+                map.addImage('circle_star', image, {
+                    'sdf': true
+                });
+            }
+        );
 
-            })
+        map.addSource('places', {
+            'type': 'geojson',
+            'data': {
+                'type': 'FeatureCollection',
+                'features': <?php echo $station ?>
+            }
+        });
+        // Add a layer showing the places.
+        map.addLayer({
+            'id': 'places',
+            'type': 'symbol',
+            'source': 'places',
+            'layout': {
+                'icon-image': '{icon}',
+                'icon-size': 1,
+                'icon-allow-overlap': true
+            },
+            "paint": {
+                "icon-halo-color": [
+                    'match', // Use the 'match' expression: https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-match
+                    ['get', 'icon'], // Use the result 'STORE_TYPE' property
+                    'circle',
+                    '#ffffff',
+                    'building',
+                    '#ecfc0c',
+                    'triangle-stroked',
+                    '#182bf7',
+                    'communications-tower',
+                    '#000000',
+                    '#f20953' // any other store type
+                ],
+                "icon-halo-width": 2,
+                'icon-color': [
+                    'match', // Use the 'match' expression: https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-match
+                    ['get', 'icon'], // Use the result 'STORE_TYPE' property
+                    'circle',
+                    '#ffffff',
+                    'building',
+                    '#ecfc0c',
+                    'triangle-stroked',
+                    '#182bf7',
+                    'communications-tower',
+                    '#000000',
+                    '#f20953' // any other store type
+                ],
+            }
+
+        });
+
+        // When a click event occurs on a feature in the places layer, open a popup at the
+        // location of the feature, with description HTML from its properties.
+        map.on('click', 'places', (e) => {
+            // Copy coordinates array.
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const description = e.features[0].properties.description;
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+
+            new mapboxgl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(description)
+                .addTo(map);
+        });
+
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', 'places', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', 'places', () => {
+            map.getCanvas().style.cursor = '';
+        });
     });
 
 
@@ -482,7 +579,7 @@
                 text: 'Water Level'
             }
         },
-         
+
         plotOptions: {
             column: {
                 pointPadding: 0.2,
@@ -511,7 +608,7 @@
                 text: 'Water Level'
             }
         },
-         
+
         plotOptions: {
             column: {
                 pointPadding: 0.2,
