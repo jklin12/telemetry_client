@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\WaterLevel30Model;
+use App\Models\WaterLevel60Model;
 use App\Models\WaterLevelModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -20,18 +22,21 @@ class WaterLevelController extends Controller
 
         $select = "station_id, station, station_name,water_level_date, ";
         $group = '';
+        $select .= "water_level_time as wt ,water_level_hight as average_wh";
         if ($interval == 10) {
-            $select .= "water_level_time as wt ,water_level_hight as average_wh";
+            $waterlevel = WaterLevelModel::select(DB::raw($select))
+                ->leftJoin('sch_data_station', 'sch_data_waterlevel.station', '=', 'sch_data_station.station_id')
+                ->where('water_level_date', $filterDate);
         } elseif ($interval == 30) {
-            $select .= 'HOUR(water_level_time) as hour,IF("30">MINUTE(water_level_time), "00", "30") as wt,ROUND(AVG(water_level_hight),3) as average_wh';
-            $group = 'station,CONCAT(hour,wt)';
+            $waterlevel = WaterLevel30Model::select(DB::raw($select))
+                ->leftJoin('sch_data_station', 'sch_data_waterlevel_30.station', '=', 'sch_data_station.station_id')
+                ->where('water_level_date', $filterDate);
         } elseif ($interval == 60) {
-            $select .= "water_level_time as wt,ROUND(AVG(water_level_hight),3) as average_wh";
-            $group = 'station,HOUR(water_level_time)';
+            $waterlevel = WaterLevel60Model::select(DB::raw($select))
+                ->leftJoin('sch_data_station', 'sch_data_waterlevel_60.station', '=', 'sch_data_station.station_id')
+                ->where('water_level_date', $filterDate);
         }
-        $waterlevel = WaterLevelModel::select(DB::raw($select))
-            ->leftJoin('sch_data_station', 'sch_data_waterlevel.station', '=', 'sch_data_station.station_id')
-            ->where('water_level_date', $filterDate);
+
         //->groupBy(DB::raw()
 
         if ($group) {
@@ -49,34 +54,21 @@ class WaterLevelController extends Controller
         foreach ($waterlevel->get()->toArray() as $key => $value) {
             $susunData['station'][$value['station']]['station_id'] = $value['station_id'];
             $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
-            if ($interval == 30) {
-                $times =  date($value['hour'] . ':' . $value['wt']);
-                $susunData['data'][$value['hour'] . $value['wt']]['date_time'] = $times;
 
-                $susunData['data'][$value['hour'] . $value['wt']]['datas'][] = $value;
+            $susunData['data'][$value['wt']]['date_time'] = Carbon::parse($value['wt'])->isoFormat('HH:mm');
+            //$susunData['data'][$value['wt']]['date_time'] = $value['wt'];
+            $susunData['data'][$value['wt']]['datas'][] = $value;
+            $arrDataByStation[$value['station']][$value['wt']] =  $value['average_wh'];
 
-                $arrDataByStation[$value['station']][$value['hour'] . $value['wt']] =  $value['average_wh'];
-
-                $susunGrafik['label'][$value['hour'] . $value['wt']] = $times;
-                $susunGrafik['datas'][$value['hour'] . $value['wt']]['station'] = $value['station_name'];
-                $susunGrafik['datas'][$value['hour'] . $value['wt']]['value'][] = $value['average_wh'];
-            } else {
-                $susunData['data'][$value['wt']]['date_time'] = Carbon::parse($value['wt'])->isoFormat('HH:mm');
-                //$susunData['data'][$value['wt']]['date_time'] = $value['wt'];
-                $susunData['data'][$value['wt']]['datas'][] = $value;
-                $arrDataByStation[$value['station']][$value['wt']] =  $value['average_wh'];
-
-                $susunGrafik['label'][$value['wt']] = Carbon::parse($value['wt'])->isoFormat('HH:mm');
-                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
-                $susunGrafik['datas'][$value['station']]['value'][] = $value['average_wh'];
-            }
-          
+            $susunGrafik['label'][$value['wt']] = Carbon::parse($value['wt'])->isoFormat('HH:mm');
+            $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
+            $susunGrafik['datas'][$value['station']]['value'][] = $value['average_wh'];
         }
 
         $avergae = [];
         $max = [];
         $time = [];
-        
+
         if (isset(($susunData['station']))) {
             foreach ($susunData['station'] as $key => $value) {
 
@@ -84,7 +76,6 @@ class WaterLevelController extends Controller
                 $max[$key] = max($arrDataByStation[$value['station_id']]);
                 $time[$key] = array_search(max($arrDataByStation[$value['station_id']]), $arrDataByStation[$value['station_id']]);
             }
-
         }
         //dd($susunGrafik);
 
@@ -92,7 +83,7 @@ class WaterLevelController extends Controller
         $summaryData['max'] = $max;
         $summaryData['time'] = $time;
 
-        
+
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
