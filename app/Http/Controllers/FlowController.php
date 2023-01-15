@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Flow30Model;
+use App\Models\Flow60Model;
 use App\Models\FlowModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,21 +21,28 @@ class FlowController extends Controller
 
         $select = "station_id, station, station_name,flow_date, ";
         $group = '';
-        if ($interval == 10) {
-            $select .= "flow_time as ft ,flow as average_f";
-        } elseif ($interval == 30) {
-            $select .= 'HOUR(flow_time) as hour,IF("30">MINUTE(flow_time), "00", "30") as ft,ROUND(AVG(flow),3) as average_f';
-            $group = 'station,CONCAT(hour,ft)';
-        } elseif ($interval == 60) {
-            $select .= "flow_time as ft,ROUND(AVG(flow),3) as average_f";
-            $group = 'station,HOUR(flow_time)';
-        }
+        $select .= "flow_time as ft ,flow as average_f";
 
-        $waterlevel = FlowModel::select(DB::raw($select))
-            ->leftJoin('sch_data_station', 'sch_data_flow.station', '=', 'sch_data_station.station_id')
-            ->where('flow_date', $filterDate)
-            //->groupBy('station') 
-            ->orderBy('flow_time');
+        if ($interval == 10) {
+            $waterlevel = FlowModel::select(DB::raw($select))
+                ->leftJoin('sch_data_station', 'sch_data_flow.station', '=', 'sch_data_station.station_id')
+                ->where('flow_date', $filterDate)
+                //->groupBy('station') 
+                ->orderBy('flow_time');
+        } elseif ($interval == 30) {
+            $waterlevel = Flow30Model::select(DB::raw($select))
+                ->leftJoin('sch_data_station', 'sch_data_flow_30.station', '=', 'sch_data_station.station_id')
+                ->where('flow_date', $filterDate)
+                //->groupBy('station') 
+                ->orderBy('flow_time');
+        } elseif ($interval == 60) {
+            $waterlevel = Flow60Model::select(DB::raw($select))
+                ->leftJoin('sch_data_station', 'sch_data_flow_60.station', '=', 'sch_data_station.station_id')
+                ->where('flow_date', $filterDate)
+                //->groupBy('station') 
+                ->orderBy('flow_time');
+        }
+ 
 
         if ($group) {
             $waterlevel->groupBy(DB::raw($group));
@@ -46,25 +55,15 @@ class FlowController extends Controller
         foreach ($waterlevel->get()->toArray() as $key => $value) {
             $susunData['station'][$value['station']]['station_id'] = $value['station_id'];
             $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
-            if ($interval == 30) {
-                $times =  date($value['hour'] . ':' . $value['ft']);
-                $susunData['data'][$value['hour'] . $value['ft']]['date_time'] = $times;
-                $susunData['data'][$value['hour'] . $value['ft']]['datas'][] = $value;
-                $arrDataByStation[$value['station']][$value['hour'] . $value['ft']] =  $value['average_f'];
-                
-                $susunGrafik['label'][$value['hour'] . ':' . $value['ft']] = $times;
-                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
-                $susunGrafik['datas'][$value['station']]['value'][] = $value['average_f']; 
-            } else {
-                $susunData['data'][$value['ft']]['date_time'] = Carbon::parse($value['ft'])->isoFormat('HH:mm');
-                //$susunData['data'][$value['wt']]['date_time'] = $value['wt'];
-                $susunData['data'][$value['ft']]['datas'][] = $value;
-                $arrDataByStation[$value['station']][$value['ft']] =  $value['average_f'];
 
-                $susunGrafik['label'][$value['ft']] = Carbon::parse($value['ft'])->isoFormat('HH:mm');
-                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
-                $susunGrafik['datas'][$value['station']]['value'][] = $value['average_f']; 
-            }
+            $susunData['data'][$value['ft']]['date_time'] = Carbon::parse($value['ft'])->isoFormat('HH:mm');
+            //$susunData['data'][$value['wt']]['date_time'] = $value['wt'];
+            $susunData['data'][$value['ft']]['datas'][] = $value;
+            $arrDataByStation[$value['station']][$value['ft']] =  $value['average_f'];
+
+            $susunGrafik['label'][$value['ft']] = Carbon::parse($value['ft'])->isoFormat('HH:mm');
+            $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
+            $susunGrafik['datas'][$value['station']]['value'][] = $value['average_f'];
         }
 
         //dd($arrDataByStation);

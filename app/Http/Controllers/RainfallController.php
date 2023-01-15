@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 
 use App\DataTables\RainfallbystationDataTable;
 use App\Models\CurentRainfallModel;
+use App\Models\Rainfall30Model;
+use App\Models\Rainfall60Model;
 use App\Models\RainfallModel;
 use App\Models\StationModel;
 use Carbon\Carbon;
@@ -26,7 +28,7 @@ class RainfallController extends Controller
         $subTitle = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
         //$response = Http::get('http://202.169.224.46:5000/curentRainfall');
-        $curetnRainfall = CurentRainfallModel::where('rain_fall_date',$filterDate)->get();
+        $curetnRainfall = CurentRainfallModel::where('rain_fall_date', $filterDate)->get();
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
@@ -54,20 +56,25 @@ class RainfallController extends Controller
 
         $select = "station_id, station, station_name,rain_fall_date, ";
         $group = '';
-        if ($interval == 10) {
-            $select .= "rain_fall_time as rt,rain_fall_10_minut,rain_fall_30_minute,rain_fall_1_hour,rain_fall_3_hour,rain_fall_6_hour,rain_fall_12_hour,rain_fall_24_hour,rain_fall_continuous,rain_fall_effective,rain_fall_effective_intensity,rain_fall_prev_working,rain_fall_working,rain_fall_working_24,rain_fall_remarks";
-        } elseif ($interval == 30) {
-            $select .= 'HOUR(rain_fall_time) as hour,IF("30">MINUTE(rain_fall_time), "00", "30") as rt,ROUND(AVG(rain_fall_10_minut),3) as rain_fall_10_minut,ROUND(AVG(rain_fall_30_minute),3) as rain_fall_30_minute,ROUND(AVG(rain_fall_1_hour),3) as rain_fall_1_hour,ROUND(AVG(rain_fall_3_hour),3) as rain_fall_3_hour,ROUND(AVG(rain_fall_6_hour),3) as rain_fall_6_hour,ROUND(AVG(rain_fall_12_hour),3) as rain_fall_12_hour,ROUND(AVG(rain_fall_24_hour),3) as rain_fall_24_hour,ROUND(AVG(rain_fall_continuous),3) as rain_fall_continuous,ROUND(AVG(rain_fall_effective),3) as rain_fall_effective,ROUND(AVG(rain_fall_effective_intensity),3) as rain_fall_effective_intensity,ROUND(AVG(rain_fall_prev_working),3) as rain_fall_prev_working,ROUND(AVG(rain_fall_working),3) as rain_fall_working,ROUND(AVG(rain_fall_working_24),3) as rain_fall_working_24, rain_fall_remarks';
-            $group = 'station,CONCAT(hour,rt)';
-        } elseif ($interval == 60) {
-            $select .= "rain_fall_time as rt,ROUND(AVG(rain_fall_10_minut),3) as rain_fall_10_minut,ROUND(AVG(rain_fall_30_minute),3) as rain_fall_30_minute,ROUND(AVG(rain_fall_1_hour),3) as rain_fall_1_hour,ROUND(AVG(rain_fall_3_hour),3) as rain_fall_3_hour,ROUND(AVG(rain_fall_6_hour),3) as rain_fall_6_hour,ROUND(AVG(rain_fall_12_hour),3) as rain_fall_12_hour,ROUND(AVG(rain_fall_24_hour),3) as rain_fall_24_hour,ROUND(AVG(rain_fall_continuous),3) as rain_fall_continuous,ROUND(AVG(rain_fall_effective),3) as rain_fall_effective,ROUND(AVG(rain_fall_effective_intensity),3) as rain_fall_effective_intensity,ROUND(AVG(rain_fall_prev_working),3) as rain_fall_prev_working,ROUND(AVG(rain_fall_working),3) as rain_fall_working,ROUND(AVG(rain_fall_working_24),3) as rain_fall_working_24,rain_fall_remarks";
-            $group = 'station,HOUR(rain_fall_time)';
-        }
 
-        $rainfall = RainfallModel::select(DB::raw($select))
-            ->leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
-            ->where('rain_fall_date', $filterDate)
-            ->where('station', $filterStation);
+        $select .= "rain_fall_time as rt,rain_fall_10_minut,rain_fall_30_minute,rain_fall_1_hour,rain_fall_3_hour,rain_fall_6_hour,rain_fall_12_hour,rain_fall_24_hour,rain_fall_continuous,rain_fall_effective,rain_fall_effective_intensity,rain_fall_prev_working,rain_fall_working,rain_fall_working_24,rain_fall_remarks";
+
+        if ($interval == 60) {
+            $rainfall = Rainfall60Model::select(DB::raw($select))
+                ->leftJoin('sch_data_station', 'sch_data_rainfall_60.station', '=', 'sch_data_station.station_id')
+                ->where('rain_fall_date', $filterDate)
+                ->where('station', $filterStation);
+        } elseif ($interval == 30) {
+            $rainfall = Rainfall30Model::select(DB::raw($select))
+                ->leftJoin('sch_data_station', 'sch_data_rainfall_30.station', '=', 'sch_data_station.station_id')
+                ->where('rain_fall_date', $filterDate)
+                ->where('station', $filterStation);
+        } elseif ($interval == 10) {
+            $rainfall = RainfallModel::select(DB::raw($select))
+                ->leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
+                ->where('rain_fall_date', $filterDate)
+                ->where('station', $filterStation);
+        }
 
         if ($group) {
             $rainfall->groupBy(DB::raw($group));
@@ -78,27 +85,24 @@ class RainfallController extends Controller
         $susunGrafik = [];
         foreach ($rainfall->get()->toArray() as $key => $value) {
             $susunData[$key]['rain_fall_date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D MMMM YYYY');
-            if ($interval == 30) {
-                $times =  date($value['hour'].':' . $value['rt']);
-                $susunData[$key] = $value;
-                $susunData[$key]['rt'] = $times;
 
-                $susunGrafik['label'][$value['hour'].':' . $value['rt']] = $times;
-                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
-                $susunGrafik['datas'][$value['station']]['value'][] = $value['rain_fall_continuous'];
-            } else {
-                
-                $susunData[$key] = $value;
-                $susunData[$key]['rt'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
 
-                $susunGrafik['label'][$value['rt']] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
-                $susunGrafik['datas']['rc']['station'] = 'Rain Continous';
-                $susunGrafik['datas']['rc']['value'][] = $value['rain_fall_continuous'];
-                $susunGrafik['datas']['rh']['station'] = 'Rain Houry';
-                $susunGrafik['datas']['rh']['value'][] = $value['rain_fall_1_hour'];
-            }
+            $susunData[$key] = $value;
+            $susunData[$key]['rt'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
+
+            $susunGrafik['label'][$value['rt']] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
+            $susunGrafik['datas']['rc']['station'] = 'Rain Continous';
+            $susunGrafik['datas']['rc']['value'][] = $value['rain_fall_continuous'];
+            $susunGrafik['datas']['rh']['station'] = 'Rain Houry';
+            $susunGrafik['datas']['rh']['value'][] = $value['rain_fall_1_hour'];
         }
         //dd($susunGrafik);
+
+        $stationList = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
+            ->where('station_type',  'WL')
+            ->groupBy('sch_data_station.station_id')
+            ->get()->toArray();
+
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
         $load['datas'] = $susunData;
@@ -107,7 +111,7 @@ class RainfallController extends Controller
         $load['filterStation'] = $filterStation;
         $load['filterInterval'] = $interval;
         $load['arr_field'] = $this->arrField();
-        $load['station_list'] = StationModel::get()->toArray();
+        $load['station_list'] = $stationList;
 
 
         return view('pages/rainfall/index', $load);
@@ -125,54 +129,48 @@ class RainfallController extends Controller
 
         $select = "station_id, station, station_name,rain_fall_date, ";
         $group = '';
-        if ($interval == 10) {
-            $select .= "rain_fall_time as rt ,rain_fall_continuous as average_rc,rain_fall_1_hour as average_rh";
-        } elseif ($interval == 30) {
-            $select .= 'HOUR(rain_fall_time) as hour,IF("30">MINUTE(rain_fall_time), "00", "30") as rt,ROUND(AVG(rain_fall_continuous),3) as average_rc,ROUND(AVG(rain_fall_1_hour),3) as average_rh';
-            $group = 'station,CONCAT(hour,rt)';
-        } elseif ($interval == 60) {
-            $select .= "rain_fall_time as rt,ROUND(AVG(rain_fall_continuous),3) as average_rc,ROUND(AVG(rain_fall_1_hour),3) as average_rh";
-            $group = 'station,HOUR(rain_fall_time)';
-        }
+
+        $select .= "rain_fall_time as rt ,rain_fall_continuous as average_rc,rain_fall_1_hour as average_rh";
+
 
         $rainfall = RainfallModel::select(DB::raw($select))
             ->leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
             ->where('rain_fall_date', $filterDate);
 
+        if ($interval == 60) {
+            $rainfall = Rainfall60Model::select(DB::raw($select))
+                ->leftJoin('sch_data_station', 'sch_data_rainfall_60.station', '=', 'sch_data_station.station_id')
+                ->where('rain_fall_date', $filterDate);
+        } elseif ($interval == 30) {
+            $rainfall = Rainfall30Model::select(DB::raw($select))
+                ->leftJoin('sch_data_station', 'sch_data_rainfall_30.station', '=', 'sch_data_station.station_id')
+                ->where('rain_fall_date', $filterDate);
+        } elseif ($interval == 10) {
+            $rainfall = RainfallModel::select(DB::raw($select))
+                ->leftJoin('sch_data_station', 'sch_data_rainfall.station', '=', 'sch_data_station.station_id')
+                ->where('rain_fall_date', $filterDate);
+        }
         if ($group) {
             $rainfall->groupBy(DB::raw($group));
         }
 
 
         $susunData = [];
-
-
+        $susunGrafik = [];
         $arrDataByStation = [];
         foreach ($rainfall->get()->toArray() as $key => $value) {
 
             $susunData['station'][$value['station']]['station_id'] = $value['station'];
             $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
-            if ($interval == 30) {
-                $times =  date($value['hour'] .':'. $value['rt']);
-                $susunData['data'][$value['hour'] . $value['rt']]['date_time'] = $times;
-                $susunData['data'][$value['hour'] . $value['rt']]['datas'][] = $value;
 
-                $arrDataByStation[$value['station']]['rh'][$value['hour'] . $value['rt']] =  $value['average_rh'];
-                $arrDataByStation[$value['station']]['rc'][$value['hour'] . $value['rt']] =  $value['average_rc'];
+            $susunData['data'][$value['rt']]['date_time'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
+            $susunData['data'][$value['rt']]['datas'][] = $value;
+            $arrDataByStation[$value['station']]['rh'][$value['rt']] =  $value['average_rh'];
+            $arrDataByStation[$value['station']]['rc'][$value['rt']] =  $value['average_rc'];
 
-                $susunGrafik['label'][$value['hour'] .':'. $value['rt']] = $times;
-                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
-                $susunGrafik['datas'][$value['station']]['value'][] = $value['average_rc']; 
-            } else {
-                $susunData['data'][$value['rt']]['date_time'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
-                $susunData['data'][$value['rt']]['datas'][] = $value;
-                $arrDataByStation[$value['station']]['rh'][$value['rt']] =  $value['average_rh'];
-                $arrDataByStation[$value['station']]['rc'][$value['rt']] =  $value['average_rc'];
-
-                $susunGrafik['label'][$value['rt']] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
-                $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
-                $susunGrafik['datas'][$value['station']]['value'][] = $value['average_rc']; 
-            }
+            $susunGrafik['label'][$value['rt']] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
+            $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
+            $susunGrafik['datas'][$value['station']]['value'][] = $value['average_rc'];
         }
         //dd($susunData);
         $avergaeRh = [];
