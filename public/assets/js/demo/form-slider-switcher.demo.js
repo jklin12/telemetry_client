@@ -35,6 +35,7 @@ var renderSwitcher = function() {
 			option.disabled = ($(this).attr('data-disabled')) ? true : false;
 			option.disabledOpacity = ($(this).attr('data-disabled-opacity')) ? parseFloat($(this).attr('data-disabled-opacity')) : 0.5;
 			option.speed = ($(this).attr('data-speed')) ? $(this).attr('data-speed') : '0.5s';
+			option.size = 'small';
 			var switchery = new Switchery(this, option);
 		});
 	}

@@ -62,7 +62,7 @@ class WaterLevelController extends Controller
 
             $susunGrafik['label'][$value['wt']] = Carbon::parse($value['wt'])->isoFormat('HH:mm');
             $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
-            $susunGrafik['datas'][$value['station']]['value'][] = $value['average_wh'];
+            $susunGrafik['datas'][$value['station']]['value'][] = doubleval($value['average_wh']);
         }
 
         $avergae = [];

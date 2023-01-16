@@ -92,14 +92,22 @@ class RainfallController extends Controller
 
             $susunGrafik['label'][$value['rt']] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
             $susunGrafik['datas']['rc']['station'] = 'Rain Continous';
-            $susunGrafik['datas']['rc']['value'][] = $value['rain_fall_continuous'];
+            $susunGrafik['datas']['rc']['value'][] = intval($value['rain_fall_continuous']);
+            $susunGrafik['datas']['er']['station'] = 'Effective Rainfall';
+            $susunGrafik['datas']['er']['value'][] = intval($value['rain_fall_effective']);
             $susunGrafik['datas']['rh']['station'] = 'Rain Houry';
-            $susunGrafik['datas']['rh']['value'][] = $value['rain_fall_1_hour'];
+            $susunGrafik['datas']['rh']['value'][] = intval($value['rain_fall_1_hour']);
+            $susunGrafik['datas']['r6']['station'] = 'Rainfall 6 Hour';
+            $susunGrafik['datas']['r6']['value'][] = intval($value['rain_fall_6_hour']);
+            $susunGrafik['datas']['r12']['station'] = 'Rainfall 12 Hour';
+            $susunGrafik['datas']['r12']['value'][] = intval($value['rain_fall_12_hour']);
+            $susunGrafik['datas']['r24']['station'] = 'Rainfall 24 Hour';
+            $susunGrafik['datas']['r24']['value'][] = intval($value['rain_fall_24_hour']);
         }
         //dd($susunGrafik);
 
         $stationList = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
-            ->where('station_type',  'WL')
+            ->where('station_type',  'RG')
             ->groupBy('sch_data_station.station_id')
             ->get()->toArray();
 

@@ -63,7 +63,7 @@ class FlowController extends Controller
 
             $susunGrafik['label'][$value['ft']] = Carbon::parse($value['ft'])->isoFormat('HH:mm');
             $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
-            $susunGrafik['datas'][$value['station']]['value'][] = $value['average_f'];
+            $susunGrafik['datas'][$value['station']]['value'][] = doubleval($value['average_f']);
         }
 
         //dd($arrDataByStation);
