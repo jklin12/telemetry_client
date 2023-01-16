@@ -105,7 +105,11 @@
         </div>
 
     </div>
-    <div id="container_chart"></div>
+</div>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div id="container_chart"></div>
+    </div>
 </div>
 @endsection
 
@@ -166,7 +170,7 @@
             },
             {
                 extend: 'pdf',
-                className: 'btn btn-indigo '
+                className: 'btn btn-indigo ',
             },
 
         ],
@@ -177,62 +181,62 @@
     });
 
     <?php if (isset($susunGrafik['datas'])) { ?>
-    Highcharts.chart('container_chart', {
-        title: {
-            text: 'Water Level Chart',
-            align: 'center',
-        },
-        subtitle:{
-            text: '<?php echo $subTitle ?>'
-        },
-        xAxis: [{
-            categories: <?php echo json_encode(array_values($susunGrafik['label'])) ?>,
-
-        }],
-        yAxis: {
+        Highcharts.chart('container_chart', {
             title: {
-                text: 'Water Level'
-            }
-        },
+                text: 'Water Level Chart',
+                align: 'center',
+            },
+            subtitle: {
+                text: '<?php echo $subTitle ?>'
+            },
+            xAxis: [{
+                categories: <?php echo json_encode(array_values($susunGrafik['label'])) ?>,
 
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle'
-        },
-
-        plotOptions: {
-            series: {
-                label: {
-                    connectorAllowed: false
-                },
-            }
-        },
-
-        series: [
-            <?php foreach ($susunGrafik['datas'] as $key => $value) { ?> {
-                    name: '<?php echo $value['station'] ?>',
-                    data: <?php echo json_encode($value['value']) ?>
-                },
-
-            <?php } ?>
-        ],
-        tooltip: {
-            shared: true
-        },
-        responsive: {
-            rules: [{
-                chartOptions: {
-                    legend: {
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom'
-                    }
+            }],
+            yAxis: {
+                title: {
+                    text: 'Water Level'
                 }
-            }]
-        }
-    });
-    <?php }?>
+            },
+
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle'
+            },
+
+            plotOptions: {
+                series: {
+                    label: {
+                        connectorAllowed: false
+                    },
+                }
+            },
+
+            series: [
+                <?php foreach ($susunGrafik['datas'] as $key => $value) { ?> {
+                        name: '<?php echo $value['station'] ?>',
+                        data: <?php echo json_encode($value['value']) ?>
+                    },
+
+                <?php } ?>
+            ],
+            tooltip: {
+                shared: true
+            },
+            responsive: {
+                rules: [{
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
+            }
+        });
+    <?php } ?>
 </script>
 
 

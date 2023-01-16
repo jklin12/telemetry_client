@@ -172,15 +172,30 @@ class RainfallController extends Controller
             $susunData['station'][$value['station']]['station_name'] = $value['station_name'];
 
             $susunData['data'][$value['rt']]['date_time'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
-            $susunData['data'][$value['rt']]['datas'][] = $value;
+            $susunData['data'][$value['rt']]['datas'][$value['station_id']] = $value;
+
             $arrDataByStation[$value['station']]['rh'][$value['rt']] =  $value['average_rh'];
             $arrDataByStation[$value['station']]['rc'][$value['rt']] =  $value['average_rc'];
 
             $susunGrafik['label'][$value['rt']] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
             $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
-            $susunGrafik['datas'][$value['station']]['value'][] = $value['average_rc'];
+            $susunGrafik['datas'][$value['station']]['value'][] = intval($value['average_rc']);
         }
-        //dd($susunData);
+        if (isset($susunData['data'])) {
+            ksort($susunData['data']);
+            $nweDatas = [];
+            foreach ($susunData['data'] as $key => $value) {
+                $nweDatas[$key]['date_time'] = $value['date_time'];
+                foreach ($susunData['station'] as $keys => $values) {
+                    $nweDatas[$key]['datas'][$keys] = $value['datas'][$keys] ?? [];
+                }
+            }
+            unset($susunData['data']);
+            $susunData['data'] = $nweDatas;
+        }
+       
+        //dd($susunGrafik);
+
         $avergaeRh = [];
         $avergaeRc = [];
         $maxRh = [];
