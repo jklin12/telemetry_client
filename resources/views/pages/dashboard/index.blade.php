@@ -4,6 +4,7 @@
 
 @push('css')
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css" rel="stylesheet">
+<link href="/assets/plugins/switchery/switchery.min.css" rel="stylesheet" />
 <style>
     .danger-popup .mapboxgl-popup-content {
         background-color: red;
@@ -57,7 +58,7 @@
         border-radius: 20%;
         width: 10px;
         height: 10px;
-        margin-right: 5px; 
+        margin-right: 5px;
     }
 </style>
 @endpush
@@ -70,20 +71,54 @@
 
 <div class="panel panel-inverse">
     <div class="panel-body">
-        <div id="menu" class="mb-2">
-            <div class="radio radio-css radio-inline">
-                <input type="radio" name="rtoggle" id="satellite-streets-v11" value="satellite" checked="checked">
-                <label for="satellite-streets-v11">Satellite Streets</label>
+        <div id="accordion" class="accordion mb-2">
+            <!-- begin card -->
+            <div class="card ">
+                <div class="card-header  pointer-cursor d-flex align-items-center" data-toggle="collapse" data-target="#collapseOne">
+                    <i class="fa fa-layer-group  text-blue mr-2 "></i> Layer
+                </div>
+                <div id="collapseOne" class="collapse " data-parent="#accordion">
+                    <div class="card-body">
+                        <fieldset class="form-group">
+                            <div class="row" id="menu">
+                                <legend class="col-form-label col-sm-2 pt-0">Layer</legend>
+                                <div class="col-sm-10">
+                                    <div class="form-check">
+                                        <input type="radio" name="rtoggle" id="satellite-streets-v11" value="satellite" checked="checked">
+                                        <label for="satellite-streets-v11">Satellite Streets</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" name="rtoggle" id="streets-v11" value="streets">
+                                        <label for="streets-v11">Streets</label>
+                                    </div>
+                                    <div class="form-check disabled">
+                                        <input type="radio" name="rtoggle" id="outdoors-v11" value="outdoors">
+                                        <label for="outdoors-v11">Outdors</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="form-group">
+                            <div class="row">
+                                <legend class="col-form-label col-sm-2 pt-0">Shapfile</legend>
+                                <div class="col-sm-10">
+                                    @foreach($geojson as $key => $value)
+                                    <div class="form-check">
+                                        <input type="checkbox" data-render="switchery"  data-value="{{ $value->name }}-layer" data-theme="blue" class="slider " />
+                                        <label for="{{ $value->name }}-layer" class="ml-2">{{ $value->name }}</label>
+                                    </div>
+                                    @endforeach
+
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
             </div>
-            <div class="radio radio-css radio-inline">
-                <input type="radio" name="rtoggle" id="streets-v11" value="streets">
-                <label for="streets-v11">Streets</label>
-            </div>
-            <div class="radio radio-css radio-inline">
-                <input type="radio" name="rtoggle" id="outdoors-v11" value="outdoors">
-                <label for="outdoors-v11">Outdors</label>
-            </div>
+            <!-- end card -->
+
         </div>
+
         <div id='map' style='height: 500px;'></div>
         <div class='map-overlay' id='legend'>
             <div><img src="/assets/icons/circle.png" class="legend-key" alt=""><span>Rainfall</span></div>
@@ -106,6 +141,8 @@
 
 @push('scripts')
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
+<script src="/assets/plugins/switchery/switchery.min.js"></script>
+<script src="/assets/js/demo/form-slider-switcher.demo.js"></script>
 <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiZmFyaXNhaXp5IiwiYSI6ImNrd29tdWF3aDA0ZDAycXVzMWp0b2w4cWQifQ.tja8kdSB4_zpO5rOgGyYrQ';
     const map = new mapboxgl.Map({
@@ -199,6 +236,26 @@
             }
         );
 
+        <?php foreach ($geojson as $key => $value) { ?>
+            map.addSource('<?php echo strtolower($value->name) ?>', {
+                type: 'geojson',
+                // Use a URL for the value for the `data` property.
+                data: '<?php echo ($value->file) ?>'
+            });
+
+            map.addLayer({
+                'id': '<?php echo strtolower($value->name) ?>-layer',
+                'type': 'line',
+                'source': '<?php echo strtolower($value->name) ?>',
+                'paint': {
+                    'line-color': '<?php echo ($value->color) ?>',
+                    'line-width': <?php echo strtolower($value->width) ?>
+                }
+
+            });
+            map.setLayoutProperty('<?php echo strtolower($value->name) ?>-layer', 'visibility', 'none');
+        <?php } ?>
+
         map.addSource('places', {
             'type': 'geojson',
             'data': {
@@ -277,6 +334,34 @@
         map.on('mouseleave', 'places', () => {
             map.getCanvas().style.cursor = '';
         });
+
+
+        map.on('click', ['opak-layer', 'progo-layer'], (e) => {
+            // Copy coordinates array.
+            const coordinates = e.features[0].geometry.coordinates.slice();
+            const description = e.features[0].properties;
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+            var element = ''
+            $.each(description, function(key, value) {
+                element += (key + " : " + value + "<br>");
+            });
+
+
+            new mapboxgl.Popup()
+                .setLngLat(coordinates[0])
+                .setHTML(element)
+                .addTo(map);
+        });
+
+        map.on('mouseenter', ['opak-layer', 'progo-layer'], () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
     });
 
     /*setInterval(function() {
@@ -309,5 +394,14 @@
             }, 10000);
         })
     }, 15000);*/
+
+    $('.slider').on('change',  function() {
+        var value = $(this).data('value');
+        if ($(this).is(':checked')) {
+            map.setLayoutProperty(value, 'visibility', 'visible');
+        }else{
+            map.setLayoutProperty(value, 'visibility', 'none');
+        }
+    });
 </script>
 @endpush

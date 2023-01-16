@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CurentRainfallModel;
 use App\Models\FlowModel;
+use App\Models\MapJson;
 use App\Models\RainfallModel;
 use App\Models\StationModel;
 use App\Models\WaterLevelModel;
@@ -44,6 +45,7 @@ class DashboardController extends Controller
 
         //dd($susunData);
         $load['datas'] = json_encode($susunData);
+        $load['geojson'] = MapJson::get();
 
         return view('pages/dashboard/index', $load);
     }
@@ -241,6 +243,8 @@ class DashboardController extends Controller
         $load['flow'] = $flow;
         $load['flowChart'] = $flowChart;
         $load['station'] = json_encode(array_values($stationData));
+        
+
         //dd($load);
         return view('pages/dashboard/monitoring', $load);
     }

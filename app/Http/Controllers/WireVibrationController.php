@@ -63,8 +63,8 @@ class WireVibrationController extends Controller
 
             $susunGrafik['label'][$value['wvt']] = Carbon::parse($value['wvt'])->isoFormat('HH:mm');
             $susunGrafik['datas'][$value['station']]['station'] = $value['station_name'];
-            $susunGrafik['datas'][$value['station']]['value']['average_w'][] = $value['average_w'];
-            $susunGrafik['datas'][$value['station']]['value']['average_v'][] = $value['average_v'];
+            $susunGrafik['datas'][$value['station']]['value']['average_w'][] = doubleval($value['average_w']);
+            $susunGrafik['datas'][$value['station']]['value']['average_v'][] = doubleval($value['average_v']);
         }
 
         $load['title'] = $title;

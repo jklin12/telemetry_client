@@ -132,13 +132,13 @@
             }],
             yAxis: [{ // Primary yAxis
                 labels: {
-                    format: '{value} m/s',
+                    format: '{value} M',
                     style: {
                         color: Highcharts.getOptions().colors[1]
                     }
                 },
                 title: {
-                    text: 'Flow',
+                    text: 'Water Level',
                     style: {
                         color: Highcharts.getOptions().colors[1]
                     }
@@ -148,13 +148,13 @@
             }, { // Secondary yAxis
                 gridLineWidth: 0,
                 title: {
-                    text: 'Water Level',
+                    text: 'Flow',
                     style: {
                         color: Highcharts.getOptions().colors[0]
                     }
                 },
                 labels: {
-                    format: '{value} m',
+                    format: '{value} m/s',
                     style: {
                         color: Highcharts.getOptions().colors[0]
                     }
@@ -180,7 +180,7 @@
                 yAxis: 1,
                 data: <?php echo json_encode($data['flow']) ?>,
                 tooltip: {
-                    valueSuffix: ' mm'
+                    valueSuffix: ' m/s'
                 }
 
             }, {
@@ -188,7 +188,7 @@
                 type: 'spline',
                 data: <?php echo json_encode($data['water_level']) ?>,
                 tooltip: {
-                    valueSuffix: ' °C'
+                    valueSuffix: ' M'
                 }
             }],
             responsive: {
