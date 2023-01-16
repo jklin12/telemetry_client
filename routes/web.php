@@ -5,6 +5,7 @@ use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\FlowController;
 use App\Http\Controllers\GrafikController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MapJsonController;
 use App\Http\Controllers\RainfallController;
 use App\Http\Controllers\StationController;
 use App\Http\Controllers\UsersController;
@@ -63,4 +64,5 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/grafik/hydrograph', [GrafikController::class, 'hydrograph'])->name('grafik.hydrograph');
     Route::get('/grafik/hytrograph', [GrafikController::class, 'hytrograph'])->name('grafik.hytrograph');
     Route::resource('users', UsersController::class);
+    Route::resource('mapjson', MapJsonController::class);
 });

@@ -7,6 +7,7 @@ if (!function_exists('side_menu')) {
     function side_menu()
     {
         $users = [];
+        $geojson = [];
         if (Auth::user()->isAdmin) {
             $users = [
                 'icon' => 'fa fa-users',
@@ -14,6 +15,13 @@ if (!function_exists('side_menu')) {
                 'label' => '',
                 'url' => '/users',
                 'route-name' => 'users.index'
+            ];
+            $geojson = [
+                'icon' => 'fa fa-layer-group',
+                'title' => 'Gejson',
+                'label' => '',
+                'url' => '/mapjson',
+                'route-name' => 'mapjson.index'
             ];
         }
 
@@ -121,7 +129,8 @@ if (!function_exists('side_menu')) {
                 'url' => '/download/index',
                 'route-name' => 'download.index'
             ],
-            $users
+            $geojson,
+            $users,
         ];
         return $menu;
     }

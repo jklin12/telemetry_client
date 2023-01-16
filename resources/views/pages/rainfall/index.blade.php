@@ -101,7 +101,12 @@
 
         </div>
     </div>
-    <div id="container_chart"></div>
+</div>
+
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div id="container_chart"></div>
+    </div>
 </div>
 @endsection
 
@@ -167,7 +172,9 @@
             },
             {
                 extend: 'pdf',
-                className: 'btn btn-indigo '
+                className: 'btn btn-indigo ',
+                orientation: 'landscape',
+                
             },
              
         ],

@@ -71,8 +71,8 @@
                         <td>{{ $loop->iteration  }}</td>
                         <td class="text-center">{{ $value['date_time']}}</td>
                         @foreach($value['datas'] as $kdata => $vdata)
-                        <td class="text-center">{{ $vdata['average_rh']}}</td>
-                        <td class="text-center">{{ $vdata['average_rc']}}</td>
+                        <td class="text-center">{{ $vdata['average_rh'] ?? ''}}</td>
+                        <td class="text-center">{{ $vdata['average_rc'] ?? ''}}</td>
 
                         @endforeach
 
@@ -123,7 +123,13 @@
             @endif
         </div>
     </div>
-    <div id="container_chart"></div>
+
+</div>
+
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div id="container_chart"></div>
+    </div>
 </div>
 @endsection
 
@@ -187,7 +193,8 @@
             },
             {
                 extend: 'pdf',
-                className: 'btn btn-indigo '
+                className: 'btn btn-indigo ',
+                orientation: 'landscape',
             },
 
         ],
