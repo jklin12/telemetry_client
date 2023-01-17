@@ -28,21 +28,21 @@ class DataController extends BaseController
 
 
         $title = "Station List";
-        $station = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id');
 
-        if ($request->type) {
+	$station = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id');
+
+	if ($request->type) {
             foreach ($request->type as $key => $value) {
                 $station->where('station_type', $value);
             }
         }
-        
-        $station->groupBy('sch_data_station.station_id')
-            ->paginate(50);
 
+	$station->groupBy('sch_data_station.station_id');
+	//dd($station->get()->toArray());
         //$station = StationModel::paginate(50);
 
         $datas = [];
-        foreach ($station as $key => $value) {
+        foreach ($station->get() as $key => $value) {
             $datas[$key]['station_id'] = $value->station_id;
             $datas[$key]['station_name'] = $value->station_name;
             $datas[$key]['station_lat'] = doubleval('-' . $this->dms_to_dec($value->station_lat));
