@@ -11,6 +11,7 @@ use App\Http\Controllers\StationController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WaterLevelController;
 use App\Http\Controllers\WireVibrationController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,13 +26,34 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('pages/login');
+    return view('pages/home');
 });
 Route::get('login', function () {
-    return view('pages/login');
+    if (Auth::user()) {
+        return redirect(route('dashboard.index'));
+    } else {
+        return view('pages/login');
+    }
 });
-Route::post('login', [LoginController::class,'authenticate'])->name('login');
-Route::get('logout', [LoginController::class,'logout'])->name('logout');
+Route::post('login', [LoginController::class, 'authenticate'])->name('login');
+Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+ 
+
+Route::get('/rainfall/byStation', [RainfallController::class, 'byStation'])->name('rainfall.byStation');
+Route::get('/rainfall/daily', [RainfallController::class, 'daily'])->name('rainfall.daily');
+Route::get('/rainfall/current', [RainfallController::class, 'current'])->name('rainfall.current');
+
+Route::get('/water_level/daily', [WaterLevelController::class, 'daily'])->name('water_level.daily');
+
+Route::get('/wire_vibration/daily', [WireVibrationController::class, 'daily'])->name('wire_vibration.daily');
+
+Route::get('/flow/daily', [FlowController::class, 'daily'])->name('flow.daily');
+
+Route::get('/grafik/judment', [GrafikController::class, 'judment'])->name('grafik.judment');
+Route::get('/grafik/hydrograph', [GrafikController::class, 'hydrograph'])->name('grafik.hydrograph');
+Route::get('/grafik/hytrograph', [GrafikController::class, 'hytrograph'])->name('grafik.hytrograph');
+
+
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
@@ -47,22 +69,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/station/find/', [StationController::class, 'find'])->name('station.find');
     Route::post('/stationType/store/', [StationController::class, 'storeType'])->name('stationType.store');
 
-    Route::get('/rainfall/byStation', [RainfallController::class, 'byStation'])->name('rainfall.byStation');
-    Route::get('/rainfall/daily', [RainfallController::class, 'daily'])->name('rainfall.daily');
-    Route::get('/rainfall/current', [RainfallController::class, 'current'])->name('rainfall.current');
-
-    Route::get('/water_level/daily', [WaterLevelController::class, 'daily'])->name('water_level.daily');
-
-    Route::get('/wire_vibration/daily', [WireVibrationController::class, 'daily'])->name('wire_vibration.daily');
-
-    Route::get('/flow/daily', [FlowController::class, 'daily'])->name('flow.daily');
 
     Route::get('/download/index', [DownloadController::class, 'index'])->name('download.index');
     Route::post('/download/store', [DownloadController::class, 'store'])->name('download.store');
 
-    Route::get('/grafik/judment', [GrafikController::class, 'judment'])->name('grafik.judment');
-    Route::get('/grafik/hydrograph', [GrafikController::class, 'hydrograph'])->name('grafik.hydrograph');
-    Route::get('/grafik/hytrograph', [GrafikController::class, 'hytrograph'])->name('grafik.hytrograph');
     Route::resource('users', UsersController::class);
     Route::resource('mapjson', MapJsonController::class);
 });

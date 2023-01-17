@@ -8,7 +8,19 @@ if (!function_exists('side_menu')) {
     {
         $users = [];
         $geojson = [];
-        if (Auth::user()->isAdmin) {
+        $csvDownload = [];
+        $dashboard = [];
+        $portal = [];
+        $stationList = [];
+        $home = [
+            'icon' => 'fas fa-home',
+            'title' => 'Home',
+            'label' => '',
+            'url' => '/',
+            'route-name' => 'home.index'
+        ];
+
+        if (Auth::user() && Auth::user()->isAdmin) {
             $users = [
                 'icon' => 'fa fa-users',
                 'title' => 'Users',
@@ -23,30 +35,42 @@ if (!function_exists('side_menu')) {
                 'url' => '/mapjson',
                 'route-name' => 'mapjson.index'
             ];
-        }
-
-        $menu = [
-            [
+            $csvDownload = [
+                'icon' => 'fas fa-download',
+                'title' => 'CSV Download',
+                'label' => '',
+                'url' => '/download/index',
+                'route-name' => 'download.index'
+            ];
+            $dashboard = [
                 'icon' => 'fa fa-th-large',
                 'title' => 'Dashboard',
                 'label' => '',
                 'url' => '/dashboard',
                 'route-name' => 'dashboard.index'
-            ],
-            [
+            ];
+            $portal = [
                 'icon' => 'fa fa-torii-gate',
                 'title' => 'Portal Data',
                 'label' => '',
                 'url' => '/dashboard/portal',
                 'route-name' => 'dashboard.portal'
-            ],
-            [
+            ];
+            $stationList =  [
                 'icon' => 'fa fa-map-pin',
                 'title' => 'Station List',
                 'label' => '',
                 'url' => '/station',
                 'route-name' => 'station.index'
-            ],
+            ];
+            $home = [];
+        }
+
+        $menu = [
+            $home,
+            $dashboard,
+            $portal,    
+            $stationList,
             [
                 'icon' => 'fas fa-chart-line',
                 'title' => 'Grafik',
@@ -122,13 +146,7 @@ if (!function_exists('side_menu')) {
                 'url' => '/flow/daily',
                 'route-name' => 'flow.daily'
             ],
-            [
-                'icon' => 'fas fa-download',
-                'title' => 'CSV Download',
-                'label' => '',
-                'url' => '/download/index',
-                'route-name' => 'download.index'
-            ],
+            $csvDownload,
             $geojson,
             $users,
         ];

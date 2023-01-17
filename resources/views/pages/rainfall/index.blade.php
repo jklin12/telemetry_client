@@ -162,6 +162,7 @@
         },
         dom: 'Bfrtip',
         buttons: [
+            @auth
             {
                 extend: 'csv',
                 className: 'btn btn-indigo '
@@ -170,6 +171,7 @@
                 extend: 'excel',
                 className: 'btn btn-indigo '
             },
+            @endauth
             {
                 extend: 'pdf',
                 className: 'btn btn-indigo ',
