@@ -172,7 +172,8 @@ class DataController extends BaseController
         if ($interval == 60) {
             $rainfall = Rainfall60Model::select(DB::raw($select))
                 ->leftJoin('sch_data_station', 'sch_data_rainfall_60.station', '=', 'sch_data_station.station_id')
-                ->where('rain_fall_date', $filterDate);
+                ->where('rain_fall_date', $filterDate)
+		->whereRaw("MINUTE(rain_fall_time) = '00'");
         } elseif ($interval == 30) {
             $rainfall = Rainfall30Model::select(DB::raw($select))
                 ->leftJoin('sch_data_station', 'sch_data_rainfall_30.station', '=', 'sch_data_station.station_id')
