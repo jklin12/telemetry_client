@@ -83,12 +83,27 @@ class RainfallController extends Controller
 
         $susunData = [];
         $susunGrafik = [];
+        $arrDataByIndex = [];
         foreach ($rainfall->get()->toArray() as $key => $value) {
             $susunData[$key]['rain_fall_date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D MMMM YYYY');
 
 
             $susunData[$key] = $value;
             $susunData[$key]['rt'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
+
+            $arrDataByIndex['rain_fall_10_minut'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_10_minut'];
+            $arrDataByIndex['rain_fall_30_minute'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_30_minute'];
+            $arrDataByIndex['rain_fall_1_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_1_hour'];
+            $arrDataByIndex['rain_fall_3_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_3_hour'];
+            $arrDataByIndex['rain_fall_6_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_6_hour'];
+            $arrDataByIndex['rain_fall_12_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_12_hour'];
+            $arrDataByIndex['rain_fall_24_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_24_hour'];
+            $arrDataByIndex['rain_fall_continuous'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_continuous'];
+            $arrDataByIndex['rain_fall_effective'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_effective'];
+            $arrDataByIndex['rain_fall_effective_intensity'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_effective_intensity'];
+            $arrDataByIndex['rain_fall_prev_working'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_prev_working'];
+            $arrDataByIndex['rain_fall_working'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_working'];
+            $arrDataByIndex['rain_fall_working_24'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_working_24'];
 
             $susunGrafik['label'][$value['rt']] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
             $susunGrafik['datas']['rc']['station'] = 'Rain Continous';
@@ -104,8 +119,14 @@ class RainfallController extends Controller
             $susunGrafik['datas']['r24']['station'] = 'Rainfall 24 Hour';
             $susunGrafik['datas']['r24']['value'][] = intval($value['rain_fall_24_hour']);
         }
-        //dd($susunGrafik);
-
+        
+        $summaryData = [];
+        foreach ($arrDataByIndex as $key => $value) {
+            $summaryData[$key]['average'] = round(array_sum($value) / count($value), 3);
+            $summaryData[$key]['max'] = max($value);
+            $summaryData[$key]['time'] = array_search(max($value),$value);
+        }
+     
         $stationList = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
             ->where('station_type',  'RG')
             ->groupBy('sch_data_station.station_id')
@@ -117,6 +138,7 @@ class RainfallController extends Controller
         $load['susunGrafik'] = $susunGrafik;
         $load['filterDate'] = $filterDate;
         $load['filterStation'] = $filterStation;
+        $load['summaryData'] = $summaryData;
         $load['filterInterval'] = $interval;
         $load['arr_field'] = $this->arrField();
         $load['station_list'] = $stationList;

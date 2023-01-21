@@ -88,6 +88,29 @@
 
                     @endforelse
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2">Average</th>
+                        @foreach($summaryData as $key => $value)
+                        <th class="text-center">{{$value['average']}}</th>
+                        @endforeach
+                        
+                    </tr>
+                    <tr>
+                        <th colspan="2">MAX</th>
+                        @foreach($summaryData as $key => $value)
+                        <th class="text-center">{{$value['max']}}</th>
+                        @endforeach
+                        
+                    </tr>
+                    <tr>
+                        <th colspan="2">Time</th>
+                        @foreach($summaryData as $key => $value)
+                        <th class="text-center">{{$value['time']}}</th>
+                        @endforeach
+                        
+                    </tr>
+                </tfoot>
 
             </table>
             @else
@@ -162,8 +185,7 @@
         },
         dom: 'Bfrtip',
         buttons: [
-            @auth
-            {
+            @auth {
                 extend: 'csv',
                 className: 'btn btn-indigo '
             },
@@ -171,14 +193,13 @@
                 extend: 'excel',
                 className: 'btn btn-indigo '
             },
-            @endauth
-            {
+            @endauth {
                 extend: 'pdf',
                 className: 'btn btn-indigo ',
                 orientation: 'landscape',
-                
+
             },
-             
+
         ],
         paging: false,
         ordering: false,
