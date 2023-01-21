@@ -187,14 +187,31 @@ class DataController extends BaseController
             $rainfall->groupBy(DB::raw($group));
         }
 
-
-        $susunData = [];
+        //dd($request->all());
+        
+        $rainfallData = [];
         $stationData = [];
         foreach ($rainfall->get()->toArray() as $key => $value) {
             $stationData[$value['station']]['station_name'] = $value['station_name'];
             $rainfallData[$value['rt']]['date_time'] = Carbon::parse($value['rt'])->isoFormat('HH::mm');
             $rainfallData[$value['rt']]['datas'][] = $value;
         }
+
+        if (isset($rainfallData['data'])) {
+            ksort($rainfallData['data']);
+            $nweDatas = [];
+            foreach ($rainfallData['data'] as $key => $value) {
+                $nweDatas[$key]['date_time'] = $value['date_time'];
+                foreach ($rainfallData['station'] as $keys => $values) {
+                    $nweDatas[$key]['datas'][$keys] = $value['datas'][$keys] ?? [];
+                }
+            }
+            unset($rainfallData['data']);
+            $rainfallData['data'] = $nweDatas;
+        }
+
+        //dd($rainfall->get()->toArray());
+       
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
