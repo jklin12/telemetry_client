@@ -132,7 +132,7 @@
             }],
             yAxis: [{ // Primary yAxis
                 labels: {
-                    format: '{value} M',
+                    format: '{value} m',
                     style: {
                         color: Highcharts.getOptions().colors[1]
                     }
@@ -154,7 +154,7 @@
                     }
                 },
                 labels: {
-                    format: '{value} m/s',
+                    format: '{value} m<sup>3</sup>/s',
                     style: {
                         color: Highcharts.getOptions().colors[0]
                     }
@@ -180,7 +180,7 @@
                 yAxis: 1,
                 data: <?php echo json_encode($data['flow']) ?>,
                 tooltip: {
-                    valueSuffix: ' m/s'
+                    valueSuffix: ' m<sup>3</sup>/s'
                 }
 
             }, {
@@ -188,7 +188,7 @@
                 type: 'spline',
                 data: <?php echo json_encode($data['water_level']) ?>,
                 tooltip: {
-                    valueSuffix: ' M'
+                    valueSuffix: ' m'
                 }
             }],
             responsive: {

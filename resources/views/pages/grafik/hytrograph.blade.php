@@ -124,7 +124,7 @@
             }],
             yAxis: {
                 title: {
-                    text: 'Continous Rainfall'
+                    text: 'Continous Rainfall (mm/h)'
                 }
             },
 

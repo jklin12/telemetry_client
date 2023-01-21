@@ -53,7 +53,7 @@
                         <th>No.</th>
                         <th class="text-center">Date Time</th>
                         @foreach($datas['station'] as $key => $value)
-                        <th class="text-center">{{$value['station_name']}}</th>
+                        <th class="text-center">{{$value['station_name']}} <br> (m<sup>3</sup>/s)</th>
                         @endforeach
                     </tr>
 
