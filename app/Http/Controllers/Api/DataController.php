@@ -197,21 +197,6 @@ class DataController extends BaseController
             $rainfallData[$value['rt']]['datas'][] = $value;
         }
 
-        if (isset($rainfallData['data'])) {
-            ksort($rainfallData['data']);
-            $nweDatas = [];
-            foreach ($rainfallData['data'] as $key => $value) {
-                $nweDatas[$key]['date_time'] = $value['date_time'];
-                foreach ($rainfallData['station'] as $keys => $values) {
-                    $nweDatas[$key]['datas'][$keys] = $value['datas'][$keys] ?? [];
-                }
-            }
-            unset($rainfallData['data']);
-            $rainfallData['data'] = $nweDatas;
-        }
-
-        //dd($rainfall->get()->toArray());
-       
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
