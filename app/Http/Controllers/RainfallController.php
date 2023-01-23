@@ -270,10 +270,12 @@ class RainfallController extends Controller
         $group = '';
 
         $select .= 'DATE_FORMAT(rain_fall_date, "%Y-%m") as my,rain_fall_time as rt,rain_fall_1_hour';
+        
 
         $rainfall = Rainfall60Model::select(DB::raw($select))
             ->leftJoin('sch_data_station', 'sch_data_rainfall_60.station', '=', 'sch_data_station.station_id')
-            ->whereRaw("DATE_FORMAT(rain_fall_date, '%Y-%m') = '" . $filterDate . "'")
+            //->whereRaw("DATE_FORMAT(rain_fall_date, '%Y-%m') = '" . $filterDate . "'")
+            ->whereRaw("MINUTE(rain_fall_time) = '00'")
             ->where('station', $filterStation);
 
         if ($group) {
@@ -336,6 +338,7 @@ class RainfallController extends Controller
         $rainfall = Rainfall60Model::select(DB::raw($select))
             ->leftJoin('sch_data_station', 'sch_data_rainfall_60.station', '=', 'sch_data_station.station_id')
             ->whereRaw("DATE_FORMAT(rain_fall_date, '%Y') = '" . $filterDate . "'")
+            ->whereRaw("MINUTE(rain_fall_time) = '00'")
             ->where('station', $filterStation);
 
         if ($group) {
