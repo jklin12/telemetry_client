@@ -19,7 +19,8 @@ if (!function_exists('side_menu')) {
             'url' => '/',
             'route-name' => 'home.index'
         ];
-
+        $yearReport = [];
+        $monthReport = [];
         if (Auth::user() && Auth::user()->isAdmin) {
             $users = [
                 'icon' => 'fa fa-users',
@@ -62,6 +63,18 @@ if (!function_exists('side_menu')) {
                 'label' => '',
                 'url' => '/station',
                 'route-name' => 'station.index'
+            ];
+            $monthReport =   [
+                'title' => 'Rainfall Monthly Report',
+                //'label' => 'NEW',
+                'url' => '/rainfall/monthly',
+                'route-name' => 'rainfall.monthly'
+            ];
+            $yearReport =  [
+                'title' => 'Rainfall Yearly Report',
+                //'label' => 'NEW',
+                'url' => '/rainfall/yearly',
+                'route-name' => 'rainfall.yearly'
             ];
             $home = [];
         }
@@ -122,6 +135,8 @@ if (!function_exists('side_menu')) {
                         //'url' => route('rainfall.daily'),
                         'route-name' => 'rainfall.daily'
                     ],
+                    $monthReport,
+                    $yearReport
 
                 ]
             ],

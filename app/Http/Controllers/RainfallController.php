@@ -44,7 +44,7 @@ class RainfallController extends Controller
     public function byStation(Request $request)
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
-        $filterStation = $request->has('station') ? $request->get('station') : 1;
+        $filterStation = $request->has('station') ? $request->get('station') : 2;
         $interval = $request->has('interval') ? $request->get('interval') : 60;
         $title = 'Rainfall Report ';
         $subTitle = 'by station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
@@ -91,19 +91,19 @@ class RainfallController extends Controller
             $susunData[$key] = $value;
             $susunData[$key]['rt'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
 
-            $arrDataByIndex['rain_fall_10_minut'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_10_minut'];
-            $arrDataByIndex['rain_fall_30_minute'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_30_minute'];
-            $arrDataByIndex['rain_fall_1_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_1_hour'];
-            $arrDataByIndex['rain_fall_3_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_3_hour'];
-            $arrDataByIndex['rain_fall_6_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_6_hour'];
-            $arrDataByIndex['rain_fall_12_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_12_hour'];
-            $arrDataByIndex['rain_fall_24_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_24_hour'];
-            $arrDataByIndex['rain_fall_continuous'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_continuous'];
-            $arrDataByIndex['rain_fall_effective'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_effective'];
-            $arrDataByIndex['rain_fall_effective_intensity'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_effective_intensity'];
-            $arrDataByIndex['rain_fall_prev_working'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_prev_working'];
-            $arrDataByIndex['rain_fall_working'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_working'];
-            $arrDataByIndex['rain_fall_working_24'][Carbon::parse($value['rt'])->isoFormat('HH:mm')]= $value['rain_fall_working_24'];
+            $arrDataByIndex['rain_fall_10_minut'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_10_minut'];
+            $arrDataByIndex['rain_fall_30_minute'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_30_minute'];
+            $arrDataByIndex['rain_fall_1_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_1_hour'];
+            $arrDataByIndex['rain_fall_3_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_3_hour'];
+            $arrDataByIndex['rain_fall_6_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_6_hour'];
+            $arrDataByIndex['rain_fall_12_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_12_hour'];
+            $arrDataByIndex['rain_fall_24_hour'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_24_hour'];
+            $arrDataByIndex['rain_fall_continuous'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_continuous'];
+            $arrDataByIndex['rain_fall_effective'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_effective'];
+            $arrDataByIndex['rain_fall_effective_intensity'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_effective_intensity'];
+            $arrDataByIndex['rain_fall_prev_working'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_prev_working'];
+            $arrDataByIndex['rain_fall_working'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_working'];
+            $arrDataByIndex['rain_fall_working_24'][Carbon::parse($value['rt'])->isoFormat('HH:mm')] = $value['rain_fall_working_24'];
 
             $susunGrafik['label'][$value['rt']] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
             $susunGrafik['datas']['rc']['station'] = 'Rain Continous';
@@ -119,14 +119,14 @@ class RainfallController extends Controller
             $susunGrafik['datas']['r24']['station'] = 'Rainfall 24 Hour';
             $susunGrafik['datas']['r24']['value'][] = intval($value['rain_fall_24_hour']);
         }
-        
+
         $summaryData = [];
         foreach ($arrDataByIndex as $key => $value) {
             $summaryData[$key]['average'] = round(array_sum($value) / count($value), 3);
             $summaryData[$key]['max'] = max($value);
-            $summaryData[$key]['time'] = array_search(max($value),$value);
+            $summaryData[$key]['time'] = array_search(max($value), $value);
         }
-     
+
         $stationList = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
             ->where('station_type',  'RG')
             ->groupBy('sch_data_station.station_id')
@@ -215,7 +215,7 @@ class RainfallController extends Controller
             unset($susunData['data']);
             $susunData['data'] = $nweDatas;
         }
-       
+
         //dd($susunGrafik);
 
         $avergaeRh = [];
@@ -258,6 +258,131 @@ class RainfallController extends Controller
         return view('pages/rainfall/daily', $load);
     }
 
+    public function monthly(Request $request)
+    {
+        $filterDate = $request->has('date') ? $request->get('date') : date('Y-m');
+        $filterStation = $request->has('station') ? $request->get('station') : 2;
+
+        $title = 'Monthly Rainfall Report ';
+        $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('MMMM YYYY');
+
+        $select = "station_id, station, station_name,rain_fall_date, ";
+        $group = '';
+
+        $select .= 'DATE_FORMAT(rain_fall_date, "%Y-%m") as my,rain_fall_time as rt,rain_fall_1_hour';
+
+        $rainfall = Rainfall60Model::select(DB::raw($select))
+            ->leftJoin('sch_data_station', 'sch_data_rainfall_60.station', '=', 'sch_data_station.station_id')
+            ->whereRaw("DATE_FORMAT(rain_fall_date, '%Y-%m') = '" . $filterDate . "'")
+            ->where('station', $filterStation);
+
+        if ($group) {
+            $rainfall->groupBy(DB::raw($group));
+        }
+        //dd($rainfall->get()->toArray());
+
+        $susunData = [];
+        $susunSummary = [];
+        foreach ($rainfall->get()->toArray() as $key => $value) {
+            $susunData['title'][$value['rain_fall_date']] = Carbon::parse($value['rain_fall_date'])->isoFormat('D');
+            $susunData['item'][$value['rt']]['time'] = Carbon::parse($value['rt'])->isoFormat('HH:mm');
+            $susunData['item'][$value['rt']]['data'][$key] = $value['rain_fall_1_hour'];
+
+            $susunSummary[$value['rain_fall_date']][$value['rt']] = $value['rain_fall_1_hour'];
+        }
+        //dd($susunSummary);
+        $summaryData = [];
+        $susunGrafik = [];
+        foreach ($susunSummary as $key => $value) {
+            $summaryData[$key]['average'] = round(array_sum($value) / count($value), 3);
+            $summaryData[$key]['max'] = max($value);
+            $summaryData[$key]['time'] = Carbon::parse(array_search(max($value), $value))->isoFormat('HH:mm');
+
+            $susunGrafik['label'][] = Carbon::parse($key)->isoFormat('MMM D');
+            $susunGrafik['datas'][$key] = array_sum($value);
+        }
+        //dd($susunGrafik);
+
+        $stationList = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
+            ->where('station_type',  'RG')
+            ->groupBy('sch_data_station.station_id')
+            ->get()->toArray();
+
+        $load['title'] = $title;
+        $load['subTitle'] = $subTitle;
+        $load['filterDate'] = $filterDate;
+        $load['filterStation'] = $filterStation;
+        $load['station_list'] = $stationList;
+        $load['datas'] = $susunData;
+        $load['summaryData'] = $summaryData;
+        $load['susunGrafik'] = $susunGrafik;
+
+        return view('pages/rainfall/monthly', $load);
+    }
+
+    public function yearly(Request $request)
+    {
+        $filterDate = $request->has('date') ? $request->get('date') : date('Y');
+        $filterStation = $request->has('station') ? $request->get('station') : 2;
+
+        $title = 'Yearly Rainfall Report ';
+        $subTitle = 'All Station ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');
+
+        $select = "station_id, station, station_name,rain_fall_date, ";
+        $group = 'rain_fall_date';
+
+        $select .= 'DATE_FORMAT(rain_fall_date, "%Y") as tahun,MONTH(rain_fall_date) as bulan,rain_fall_time as rt,sum(rain_fall_1_hour)as sum_rh';
+
+        $rainfall = Rainfall60Model::select(DB::raw($select))
+            ->leftJoin('sch_data_station', 'sch_data_rainfall_60.station', '=', 'sch_data_station.station_id')
+            ->whereRaw("DATE_FORMAT(rain_fall_date, '%Y') = '" . $filterDate . "'")
+            ->where('station', $filterStation);
+
+        if ($group) {
+            $rainfall->groupBy(DB::raw($group));
+        }
+        //dd($rainfall->get()->toArray());
+
+        $stationList = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
+            ->where('station_type',  'RG')
+            ->groupBy('sch_data_station.station_id')
+            ->get()->toArray();
+
+        $susunData = [];
+        $susunSummary = [];
+        foreach ($rainfall->get()->toArray() as $key => $value) {
+            $susunData['title'][$value['bulan']] = Carbon::parse($value['bulan'])->isoFormat('MMM');
+
+            $susunData['item'][$value['rain_fall_date']]['date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D');
+            $susunData['item'][$value['rain_fall_date']]['data'][$key] = $value['sum_rh'];
+
+            $susunSummary[$value['bulan']][$value['rain_fall_date']] = $value['sum_rh'];
+        }
+        
+        $summaryData = [];
+        $susunGrafik = [];
+        foreach ($susunSummary as $key => $value) {
+            $summaryData[$key]['average'] = round(array_sum($value) / count($value), 3);
+            $summaryData[$key]['max'] = max($value);
+            $summaryData[$key]['date'] = Carbon::parse(array_search(max($value), $value))->isoFormat('D');
+
+            $susunGrafik['label'][] = Carbon::parse($key)->isoFormat('MMM');
+            $susunGrafik['datas'][$key] = array_sum($value);
+        }
+
+        //dd($summaryData,$susunGrafik);
+
+        $load['title'] = $title;
+        $load['subTitle'] = $subTitle;
+        $load['filterDate'] = $filterDate;
+        $load['filterStation'] = $filterStation;
+        $load['station_list'] = $stationList;
+        $load['datas'] = $susunData;
+        $load['summaryData'] = $summaryData;
+        $load['susunGrafik'] = $susunGrafik;
+
+        return view('pages/rainfall/yearly', $load);
+    }
     protected function arrField()
     {
         return [

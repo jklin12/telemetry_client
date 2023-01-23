@@ -22,6 +22,7 @@ $sidebarClass = (!empty($sidebarTransparent)) ? 'sidebar-transparent' : '';
 			$GLOBALS['active'][$GLOBALS['sub_level']] = '';
 			$currentLevel = $GLOBALS['sub_level'];
 			foreach ($value as $key => $menu) {
+			if($menu){
 			$GLOBALS['subparent_level'] = '';
 
 			$subSubMenu = '';
@@ -51,6 +52,7 @@ $sidebarClass = (!empty($sidebarTransparent)) ? 'sidebar-transparent' : '';
 				'. $subSubMenu .'
 			</li>
 			';
+			}
 			}
 			return $subMenu;
 			}

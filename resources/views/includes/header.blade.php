@@ -69,7 +69,10 @@ $headerTopMenu = (!empty($headerTopMenu)) ? $headerTopMenu : '';
 
 		@guest
 		<li class="dropdown navbar-user">
-			<a href="{{ route('login')}}" class=""><i class="fa fa-login"></i><strong>Login</strong></a>
+			<a href="{{ route('login')}}">
+				<i class="fas fa-sign-in-alt"></i>&nbsp;
+				<span>Login</span>
+			</a> 
 		</li>
 		@endguest
 

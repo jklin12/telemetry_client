@@ -41,6 +41,8 @@ Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/rainfall/byStation', [RainfallController::class, 'byStation'])->name('rainfall.byStation');
 Route::get('/rainfall/daily', [RainfallController::class, 'daily'])->name('rainfall.daily');
+Route::get('/rainfall/monthly', [RainfallController::class, 'monthly'])->name('rainfall.monthly');
+Route::get('/rainfall/yearly', [RainfallController::class, 'yearly'])->name('rainfall.yearly');
 Route::get('/rainfall/current', [RainfallController::class, 'current'])->name('rainfall.current');
 
 Route::get('/water_level/daily', [WaterLevelController::class, 'daily'])->name('water_level.daily');
