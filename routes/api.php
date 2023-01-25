@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\DataController;
 use App\Http\Controllers\Api\LoginController;
-use App\Http\Controllers\API\PublicController;
+use App\Http\Controllers\Api\PublicController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
