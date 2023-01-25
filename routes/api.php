@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\DataController;
 use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\API\PublicController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,14 @@ Route::controller(LoginController::class)->group(function(){
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('public/stationList', [PublicController::class,'stationList']);
+Route::get('public/curentRainfall', [PublicController::class,'curentRainfall']);
+Route::get('public/rainfallByStation', [PublicController::class,'rainfallByStation']);
+Route::get('public/rainfallDaily', [PublicController::class,'rainfallDaily']);
+Route::get('public/waterLevel', [PublicController::class,'waterLevel']);
+Route::get('public/wireVibration', [PublicController::class,'wireVibration']);
+Route::get('public/flow', [PublicController::class,'flow']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('stationList',[DataController::class,'stationList']);
