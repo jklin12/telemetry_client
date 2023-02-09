@@ -21,6 +21,8 @@ if (!function_exists('side_menu')) {
         ];
         $yearReport = [];
         $monthReport = [];
+        $stationnAssets = [];
+        $stationHistory = [];
         if (Auth::user() && Auth::user()->isAdmin) {
             $users = [
                 'icon' => 'fa fa-users',
@@ -76,14 +78,30 @@ if (!function_exists('side_menu')) {
                 'url' => '/rainfall/yearly',
                 'route-name' => 'rainfall.yearly'
             ];
+            $stationnAssets =  [
+                'icon' => 'fa fa-th-list',
+                'title' => 'Station Assets',
+                //'label' => 'NEW',
+                'url' => '/station_assets',
+                'route-name' => 'station_assets.index'
+            ];
+            $stationHistory =  [
+                'icon' => 'fa fa-history',
+                'title' => 'Riwayat Perawatan',
+                //'label' => 'NEW',
+                'url' => '/station_history',
+                'route-name' => 'station_history.index'
+            ];
             $home = [];
         }
 
         $menu = [
             $home,
             $dashboard,
-            $portal,    
+            $portal,
             $stationList,
+            $stationnAssets,
+            $stationHistory,
             [
                 'icon' => 'fas fa-chart-line',
                 'title' => 'Grafik',

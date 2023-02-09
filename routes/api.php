@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\DataController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\PublicController;
+use App\Http\Controllers\API\StationAssets;
+use App\Http\Controllers\API\StationHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +37,7 @@ Route::get('public/flow', [PublicController::class,'flow']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('stationList',[DataController::class,'stationList']);
+    Route::get('station/{station_id}',[DataController::class,'stationDetail']);
     Route::get('curentRainFall',[DataController::class,'curentRainFall']);
     Route::get('rainfallByStation',[DataController::class,'rainfallByStation']);
     Route::get('dailyRainFall',[DataController::class,'dailyRainFall']);
@@ -46,5 +49,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('hydrograph',[DataController::class,'hydrograph']);
     Route::post('hytrograph',[DataController::class,'hytrograph']);
     Route::get('logout',[LoginController::class,'logout']);
+    Route::resource('stationAssets', StationAssets::class); 
+    Route::resource('stationHistory', StationHistory::class);
     
 });

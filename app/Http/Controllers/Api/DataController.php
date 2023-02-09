@@ -9,6 +9,8 @@ use App\Models\FlowModel;
 use App\Models\Rainfall30Model;
 use App\Models\Rainfall60Model;
 use App\Models\RainfallModel;
+use App\Models\StationAssets;
+use App\Models\StationHistory;
 use App\Models\StationModel;
 use App\Models\WaterLevel30Model;
 use App\Models\WaterLevel60Model;
@@ -25,8 +27,6 @@ class DataController extends BaseController
 {
     public function stationList(Request $request)
     {
-
-
         $title = "Station List";
 
         $station = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id');
@@ -55,10 +55,60 @@ class DataController extends BaseController
             $datas[$key]['station_guardsman'] = $value->station_guardsman;
             $datas[$key]['station_reg_number'] = $value->station_reg_number;
         }
-
-
-
         return $this->sendResponse($datas, $title . ' data found');
+    }
+
+    public function stationDetail($id)
+    {
+        $title = 'Station Detail';
+        $subTitle = '';
+
+        $station = StationModel::selectRaw('sch_data_station.*,sch_station_types.id,sch_station_types.station_type,alert_column,alert_value')
+            ->leftJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
+            ->where(DB::raw('sch_data_station.station_id'), $id)
+            ->get();
+
+        $stationAsset = StationAssets::where('station', $id)->get();
+        $stationHistory = StationHistory::where('station', $id)->get();
+
+        $susunData = [];
+        foreach ($station as $key => $value) {
+            $susunData['station_id'] = $value->station_id;
+            $susunData['station_name'] = $value->station_name;
+            $susunData['station_lat'] = $value->station_lat;
+            $susunData['station_long'] = $value->station_long;
+            $susunData['station_river'] = $value->station_river;
+            $susunData['station_prod_year'] = $value->station_prod_year;
+            $susunData['station_instalaton_text'] = $value->station_instalaton_text;
+            $susunData['station_authority'] = $value->station_authority;
+            $susunData['station_reg_number'] = $value->station_reg_number;
+            $susunData['station_guardsman'] = $value->station_guardsman;
+            if ($value->id) {
+                $susunData['station_types'][$value->id]['id'] = $value->id;
+                $susunData['station_types'][$value->id]['station_type'] = $value->station_type;
+                $susunData['station_types'][$value->id]['alert_column'] = $value->alert_column;
+                $susunData['station_types'][$value->id]['alert_value'] = $value->alert_value;
+            }
+        }
+
+        $susunAsset = [];
+        foreach ($stationAsset as $key => $value) {
+            $susunAsset[$key] = $value; 
+            $value->stations;
+        }
+        $susunHistory = [];
+        foreach ($stationHistory as $key => $value) {
+            $susunHistory[$key] = $value;
+            $value->stations;
+            $value->asset;
+        }
+        //dd($stationAsset);
+ 
+        $load['station'] = $susunData;
+        $load['station_asset'] = $susunAsset;
+        $load['station_history'] = $stationHistory;
+
+        return $this->sendResponse($load, $title . ' data found');
     }
 
     function dms_to_dec($dms)
@@ -81,8 +131,6 @@ class DataController extends BaseController
         $dec = ($d + ($m / 60) + ($s / 3600));
         return $dec;
     }
-
-
 
     public function curentRainFall(Request $request)
     {
@@ -173,7 +221,7 @@ class DataController extends BaseController
             $rainfall = Rainfall60Model::select(DB::raw($select))
                 ->leftJoin('sch_data_station', 'sch_data_rainfall_60.station', '=', 'sch_data_station.station_id')
                 ->where('rain_fall_date', $filterDate)
-		->whereRaw("MINUTE(rain_fall_time) = '00'");
+                ->whereRaw("MINUTE(rain_fall_time) = '00'");
         } elseif ($interval == 30) {
             $rainfall = Rainfall30Model::select(DB::raw($select))
                 ->leftJoin('sch_data_station', 'sch_data_rainfall_30.station', '=', 'sch_data_station.station_id')
@@ -189,7 +237,7 @@ class DataController extends BaseController
         }
 
         //dd($request->all());
-        
+
         $rainfallData = [];
         $stationData = [];
         foreach ($rainfall->get()->toArray() as $key => $value) {

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\StationDataTable;
+use App\Models\StationAssets;
+use App\Models\StationHistory;
 use App\Models\StationModel;
 use App\Models\StationType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class StationController extends Controller
 {
@@ -52,8 +55,6 @@ class StationController extends Controller
             }
         }
 
-
-
         $load['datas'] = $susunData;
         //$load['links'] = $station->links();
         $load['arrfield'] = $this->arrfield();
@@ -61,12 +62,8 @@ class StationController extends Controller
         return view('pages/station/index', $load);
     }
 
-
-
     public function form(Request $request, $station_id = 0)
     {
-
-
         $title =  'Tambah Data';
         $subTitle = '';
         $action = 'addData';
@@ -88,10 +85,9 @@ class StationController extends Controller
 
         return view('pages/station/form', $load);
     }
+
     public function formType(Request $request, $stationId, $typeId = 0)
     {
-
-
         $title =  'Tambah Data Type';
         $subTitle = '';
         $action = 'addData';
@@ -104,14 +100,11 @@ class StationController extends Controller
             //dd($data);
         }
 
-
-
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
         $load['action'] = $action;
         $load['data'] = $data;
         $load['arrField'] = $this->arrFieldType($stationId);
-
 
         return view('pages/station/formtype', $load);
     }
@@ -188,11 +181,57 @@ class StationController extends Controller
         }
         //dd($postVal);
     }
+
+    public function show($id)
+    {
+        $title = 'Station Detail';
+        $subTitle = '';
+
+        $load['title'] = $title;
+        $load['subTitle'] = $subTitle;
+
+        $station = StationModel::selectRaw('sch_data_station.*,sch_station_types.id,sch_station_types.station_type,alert_column,alert_value')
+            ->leftJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
+            ->where(DB::raw('sch_data_station.station_id'),$id)
+            ->get();
+
+        $stationAsset = StationAssets::where('station',$id)->get();
+        $stationHistory = StationHistory::where('station',$id)->get();
+
+        $susunData = [];
+        foreach ($station as $key => $value) {
+            $susunData['station_id'] = $value->station_id;
+            $susunData['station_name'] = $value->station_name;
+            $susunData['station_lat'] = $value->station_lat;
+            $susunData['station_long'] = $value->station_long;
+            $susunData['station_river'] = $value->station_river;
+            $susunData['station_prod_year'] = $value->station_prod_year;
+            $susunData['station_instalaton_text'] = $value->station_instalaton_text;
+            $susunData['station_authority'] = $value->station_authority;
+            $susunData['station_reg_number'] = $value->station_reg_number;
+            $susunData['station_guardsman'] = $value->station_guardsman;
+            if ($value->id) {
+                $susunData['station_types'][$value->id]['id'] = $value->id;
+                $susunData['station_types'][$value->id]['station_type'] = $value->station_type;
+                $susunData['station_types'][$value->id]['alert_column'] = $value->alert_column;
+                $susunData['station_types'][$value->id]['alert_value'] = $value->alert_value;
+            }
+        }
+
+        //dd($stationAsset);
+
+        $load['station'] = $susunData;
+        $load['station_assets'] = $stationAsset;
+        $load['station_history'] = $stationHistory;
+        
+        return view('pages/station/show', $load);
+    }
+
     public function find(Request $request)
     {
 
         $type = $request->input('type') == 'WV' ? 'MF' : $request->type;
-        
+
 
         $station = StationModel::selectRaw('sch_data_station.*,sch_station_types.id,sch_station_types.station_type,alert_column,alert_value')
             ->leftJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
@@ -202,11 +241,11 @@ class StationController extends Controller
         foreach ($station as $key => $value) {
             $element .= ' <option value="' . $value->station_id . '">' . $value->station_name . '</option>';
         }
-        
+
         echo json_encode($element);
-
-
     }
+
+
 
     protected function arrField()
     {

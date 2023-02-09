@@ -7,7 +7,9 @@ use App\Http\Controllers\GrafikController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MapJsonController;
 use App\Http\Controllers\RainfallController;
+use App\Http\Controllers\StationAssetsController;
 use App\Http\Controllers\StationController;
+use App\Http\Controllers\StationHistoryController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WaterLevelController;
 use App\Http\Controllers\WireVibrationController;
@@ -64,6 +66,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard/alertData', [DashboardController::class, 'alertData'])->name('dashboard.alertData');
     Route::get('/station', [StationController::class, 'index'])->name('station.index');
     Route::get('/station/form/{station_id}', [StationController::class, 'form'])->name('station.form');
+    Route::get('/station/{station_id}', [StationController::class, 'show'])->name('station.show');
     Route::get('/station/formType/{station_id}/', [StationController::class, 'formType'])->name('station.addType');
     Route::get('/station/formType/{station_id}/{type_id}', [StationController::class, 'formType'])->name('station.formType');
     Route::get('/station/form/', [StationController::class, 'form'])->name('station.add');
@@ -77,4 +80,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::resource('users', UsersController::class);
     Route::resource('mapjson', MapJsonController::class);
+    Route::resource('station_assets', StationAssetsController::class);
+    Route::get('/station_assets/ajax/{station_id}', [StationAssetsController::class, 'ajax'])->name('station_assets.ajax');
+    Route::resource('station_history', StationHistoryController::class);
+    
 });

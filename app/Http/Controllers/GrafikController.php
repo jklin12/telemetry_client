@@ -197,14 +197,13 @@ class GrafikController extends Controller
     public function hytrograph(Request $request)
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
-        $filterStation = $request->has('station') ? $request->get('station') : 1;
         $interval = $request->has('interval') ? $request->get('interval') : '60';
 
         $title = 'Hytrograph';
         $subTitle = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');;;
 
-        $station = StationModel::find($filterStation);
-        $title .= ' ' . $station->station_name;
+        
+        $title .= ' ';
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
@@ -256,8 +255,7 @@ class GrafikController extends Controller
             ->where('station_type',  'RG')
             ->get()->toArray();
 
-        $load['filterDate'] = $filterDate;
-        $load['filterStation'] = $filterStation;
+        $load['filterDate'] = $filterDate; 
         $load['filterInterval'] = $interval;
         $load['station_list'] = $stationList;
         $load['data'] = $data;

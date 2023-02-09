@@ -24,6 +24,7 @@ class MapJsonController extends Controller
         $load['datas'] = MapJson::paginate(10);
         //$load['links'] = $station->links();
         $load['arrfield'] = $this->arrfield();
+        
 
         return view('pages/mapjson/index', $load);
     }
