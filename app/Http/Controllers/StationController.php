@@ -12,10 +12,10 @@ use Illuminate\Support\Facades\DB;
 
 class StationController extends Controller
 {
-    public function index(StationDataTable $dataTable)
+    public function index(Request $request)
     {
 
-        $title = 'Station List';
+        $title = 'Station List Controller';
         $subTitle = '';
 
 
@@ -23,8 +23,12 @@ class StationController extends Controller
         $load['subTitle'] = $subTitle;
 
         $station = StationModel::selectRaw('sch_data_station.*,sch_station_types.id,sch_station_types.station_type,alert_column,alert_value')
-            ->leftJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
-            ->get();
+            ->leftJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id');
+
+        if ($request->q) {
+            $station->where('station_name','LIKE','%'.$request->q.'%');
+        }
+             
         /*$query = "INSERT INTO `sch_station_types`(`station_id`, `station_type`, `alert_value`) VALUES";
         foreach ($station as $key => $value) {
             $explode = explode(',',$value->station_equipment);
@@ -36,11 +40,12 @@ class StationController extends Controller
         } */
         //dd($station->toArray());
         $susunData = [];
-        foreach ($station as $key => $value) {
+        foreach ($station->paginate(10) as $key => $value) {
+            
             $susunData[$value->station_id]['station_id'] = $value->station_id;
             $susunData[$value->station_id]['station_name'] = $value->station_name;
-            $susunData[$value->station_id]['station_lat'] = $value->station_lat;
-            $susunData[$value->station_id]['station_long'] = $value->station_long;
+            $susunData[$value->station_id]['station_lat'] = doubleval($value->station_lat) != 0 ? doubleval('-' . $this->dms_to_dec($value->station_lat)) : '';
+            $susunData[$value->station_id]['station_long'] = doubleval($value->station_long) != 0 ? $this->dms_to_dec($value->station_long) : '';
             $susunData[$value->station_id]['station_river'] = $value->station_river;
             $susunData[$value->station_id]['station_prod_year'] = $value->station_prod_year;
             $susunData[$value->station_id]['station_instalaton_text'] = $value->station_instalaton_text;
@@ -56,6 +61,7 @@ class StationController extends Controller
         }
 
         $load['datas'] = $susunData;
+        $load['stations'] = $station->paginate(10);
         //$load['links'] = $station->links();
         $load['arrfield'] = $this->arrfield();
 
@@ -202,8 +208,8 @@ class StationController extends Controller
         foreach ($station as $key => $value) {
             $susunData['station_id'] = $value->station_id;
             $susunData['station_name'] = $value->station_name;
-            $susunData['station_lat'] = $value->station_lat;
-            $susunData['station_long'] = $value->station_long;
+            $susunData['station_lat'] = doubleval($value->station_lat) != 0 ? doubleval('-' . $this->dms_to_dec($value->station_lat)) : '';
+            $susunData['station_long'] = doubleval($value->station_long) != 0 ? $this->dms_to_dec($value->station_long) : '';
             $susunData['station_river'] = $value->station_river;
             $susunData['station_prod_year'] = $value->station_prod_year;
             $susunData['station_instalaton_text'] = $value->station_instalaton_text;
@@ -326,6 +332,27 @@ class StationController extends Controller
                 'form_type' => 'text',
             ],*/
         ];
+    }
+
+    function dms_to_dec($dms)
+    {
+
+        $dms = stripslashes($dms);
+        $parts = explode(' ', $dms);
+        foreach ($parts as $key => $value) {
+            $parts[$key] = preg_replace('/\D/', '', $value);
+        }
+
+        // parts: 0 = degree, 1 = minutes, 2 = seconds
+        $d = isset($parts[0]) ? (float)$parts[0] : 0;
+        $m = isset($parts[1]) ? (float)$parts[1] : 0;
+        if (strpos($dms, ".") > 1 && isset($parts[2])) {
+            $m = (float)($parts[1] . '.' . $parts[2]);
+            unset($parts[2]);
+        }
+        $s = isset($parts[2]) ? (float)$parts[2] : 0;
+        $dec = ($d + ($m / 60) + ($s / 3600));
+        return $dec;
     }
 
     protected function arrFieldType($stationId)

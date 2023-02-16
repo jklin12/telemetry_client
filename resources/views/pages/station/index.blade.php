@@ -44,7 +44,7 @@
                     @foreach($arrfield as $kf=> $vf)
                     <th class="text-center">{{$vf['label']}}</th>
                     @endforeach
-                    <th class="text-center">Action</th>
+                    <th class="text-center" colspan="3">Action</th>
                 </thead>
                 <tbody>
                     @foreach($datas as $key=> $value)
@@ -60,8 +60,9 @@
                             <a href="javascript:;" class="btn btn-success btn-icon btn-circle btn-sm"><i class="fas fa-eye"></i></a>
                             @endif-->
                             <a href="{{ route('station.show', $value['station_id']) }}" class="btn btn-success btn-icon btn-circle btn-sm"><i class="fas fa-eye"></i></a>
-                            <a href="{{ route('station.form', $value['station_id']) }}" class="btn btn-indigo btn-icon btn-circle btn-sm"><i class="fa fa-edit"></i></a>
-                            <a href="{{ route('station.form', $value['station_id']) }}" class="btn btn-danger btn-icon btn-circle btn-sm"><i class="fa fa-trash"></i></a>
+                        </td>
+                        <td><a href="{{ route('station.form', $value['station_id']) }}" class="btn btn-indigo btn-icon btn-circle btn-sm"><i class="fa fa-edit"></i></a></td>
+                        <td><a href="{{ route('station.form', $value['station_id']) }}" class="btn btn-danger btn-icon btn-circle btn-sm"><i class="fa fa-trash"></i></a>
                         </td>
 
                     </tr>
@@ -103,6 +104,8 @@
                 </tbody>
             </table>
 
+            {!! $stations->links() !!}
+
         </div>
     </div>
 </div>
@@ -117,13 +120,7 @@
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.bootstrap4.min.js"></script>
 
 <script>
-    var table = $('#station-table').DataTable({
-        "paging": false,
-        "info": false,
-        "search": false,
-        "dom": 'lrtip'
 
-    })
 </script>
 
 @endpush

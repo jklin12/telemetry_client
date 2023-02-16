@@ -66,7 +66,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard/alertData', [DashboardController::class, 'alertData'])->name('dashboard.alertData');
     Route::get('/station', [StationController::class, 'index'])->name('station.index');
     Route::get('/station/form/{station_id}', [StationController::class, 'form'])->name('station.form');
-    Route::get('/station/{station_id}', [StationController::class, 'show'])->name('station.show');
+    Route::get('/station/show/{station_id}', [StationController::class, 'show'])->name('station.show');
     Route::get('/station/formType/{station_id}/', [StationController::class, 'formType'])->name('station.addType');
     Route::get('/station/formType/{station_id}/{type_id}', [StationController::class, 'formType'])->name('station.formType');
     Route::get('/station/form/', [StationController::class, 'form'])->name('station.add');

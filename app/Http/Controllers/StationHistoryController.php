@@ -18,7 +18,7 @@ class StationHistoryController extends Controller
     public function index()
     {
 
-        $title = 'Data Riwayat Perawatan';
+        $title = 'Station Maintanance Data';
         $subTitle = '';
 
 
@@ -91,7 +91,7 @@ class StationHistoryController extends Controller
 
             StationHistory::find($insert->history_id)->update($updateVal);
         }
-        return redirect()->route('station_history.index')->with('success', 'Tambah Riwayat Perawatan Suksess');
+        return redirect()->route('station_history.index')->with('success', 'Add Station Maintanance Success');
     }
 
     /**
@@ -115,7 +115,7 @@ class StationHistoryController extends Controller
     {
         $stationAsset = StationHistory::find($id);
 
-        $title =  'Edit Station Assets';
+        $title =  'Edit Station Maintanance';
         $subTitle = '';
 
         $load['title'] = $title;
@@ -170,7 +170,7 @@ class StationHistoryController extends Controller
 
             StationHistory::find($id)->update($updateVal);
         }
-        return redirect()->route('station_history.index')->with('success', 'Edit Riwayat Perawatan Suksess');
+        return redirect()->route('station_history.index')->with('success', 'Edit Station Maintanance Sucess');
     }
 
     /**

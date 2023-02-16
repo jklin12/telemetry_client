@@ -93,7 +93,7 @@ class GrafikController extends Controller
     public function hydrograph(Request $request)
     {
         $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
-        $filterStation = $request->has('station') ? $request->get('station') : 3;
+        $filterStation = $request->has('station') ? $request->get('station') : 10;
         $interval = $request->has('interval') ? $request->get('interval') : '60';
 
         $title = 'Hydrograph';
