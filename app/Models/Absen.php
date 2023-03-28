@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Blameable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Absen extends Model
 {
-    use HasFactory;
+    use Blameable;
+
     protected $primaryKey = 'absen_id';
   
     protected $fillable = [
