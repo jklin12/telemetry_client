@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AbsenController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\FlowController;
@@ -78,6 +79,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/download/index', [DownloadController::class, 'index'])->name('download.index');
     Route::post('/download/store', [DownloadController::class, 'store'])->name('download.store');
 
+    Route::resource('absen', AbsenController::class);
     Route::resource('users', UsersController::class);
     Route::resource('mapjson', MapJsonController::class);
     Route::resource('station_assets', StationAssetsController::class);

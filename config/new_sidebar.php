@@ -12,6 +12,7 @@ if (!function_exists('side_menu')) {
         $dashboard = [];
         $portal = [];
         $stationList = [];
+        $absensi = [];
         $home = [
             'icon' => 'fas fa-home',
             'title' => 'Home',
@@ -56,6 +57,13 @@ if (!function_exists('side_menu')) {
                 'label' => '',
                 'url' => '/dashboard/portal',
                 'route-name' => 'dashboard.portal'
+            ];
+            $absensi = [
+                'icon' => 'fa fa-file',
+                'title' => 'Data Absensi',
+                'label' => '',
+                'url' => '/absen',
+                'route-name' => 'absensi.index'
             ];
             $stationList = [
                 'icon' => 'fa fa-building',
@@ -180,6 +188,7 @@ if (!function_exists('side_menu')) {
                 'url' => '/flow/daily',
                 'route-name' => 'flow.daily'
             ],
+            $absensi,
             $csvDownload,
             $geojson,
             $users,

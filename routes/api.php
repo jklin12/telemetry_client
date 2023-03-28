@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AbsenController;
 use App\Http\Controllers\Api\DataController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\PublicController;
@@ -52,4 +53,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::resource('stationAssets', StationAssets::class); 
     Route::resource('stationHistory', StationHistory::class);
     
+    Route::post('absen',[AbsenController::class,'store']);
+    Route::get('absen',[AbsenController::class,'index']);
+    Route::get('absen/cek',[AbsenController::class,'cekAbsen']);    
 });
+
