@@ -69,7 +69,7 @@ class DataController extends BaseController
             ->get();
 
         $stationAsset = StationAssets::where('station', $id)->get();
-        $stationHistory = StationHistory::where('station', $id)->get();
+        $stationHistory = StationHistory::where('station', $id)->orderByDesc('created_at')->get();
 
         $susunData = [];
         foreach ($station as $key => $value) {
@@ -91,9 +91,22 @@ class DataController extends BaseController
             }
         }
 
+        $susunData2 = [];
+        $susunData2['station_id'] = $susunData['station_id'];
+        $susunData2['station_name'] = $susunData['station_name'];
+        $susunData2['station_lat'] = $susunData['station_lat'];
+        $susunData2['station_long'] = $susunData['station_long'];
+        $susunData2['station_river'] = $susunData['station_river'];
+        $susunData2['station_prod_year'] = $susunData['station_prod_year'];
+        $susunData2['station_instalaton_text'] = $susunData['station_instalaton_text'];
+        $susunData2['station_authority'] = $susunData['station_authority'];
+        $susunData2['station_reg_number'] = $susunData['station_reg_number'];
+        $susunData2['station_guardsman'] = $susunData['station_guardsman'];
+        $susunData2['station_types'] = array_values($susunData['station_types']);
+
         $susunAsset = [];
         foreach ($stationAsset as $key => $value) {
-            $susunAsset[$key] = $value; 
+            $susunAsset[$key] = $value;
             $value->stations;
         }
         $susunHistory = [];
@@ -103,8 +116,8 @@ class DataController extends BaseController
             $value->asset;
         }
         //dd($stationAsset);
- 
-        $load['station'] = $susunData;
+
+        $load['station'] = $susunData2;
         $load['station_asset'] = $susunAsset;
         $load['station_history'] = $stationHistory;
 

@@ -18,8 +18,8 @@ class StationHistory extends BaseController
     public function index()
     {
         $title = 'Riwayat Perawatan';
-
-        $stationHistory = ModelsStationHistory::get();
+	//dd(auth()->user()->id);
+        $stationHistory = ModelsStationHistory::where('created_by',auth()->user()->id)->orderByDesc('created_at')->get();
 
         foreach ($stationHistory as $key => $value) {
             $value->stations;

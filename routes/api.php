@@ -3,8 +3,8 @@
 use App\Http\Controllers\Api\DataController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\PublicController;
-use App\Http\Controllers\API\StationAssets;
-use App\Http\Controllers\API\StationHistory;
+use App\Http\Controllers\Api\StationAssets;
+use App\Http\Controllers\Api\StationHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
