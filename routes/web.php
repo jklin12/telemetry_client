@@ -66,6 +66,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard/portalData', [DashboardController::class, 'portalData'])->name('dashboard.portal_data');
     Route::get('/dashboard/alertData', [DashboardController::class, 'alertData'])->name('dashboard.alertData');
     Route::get('/station', [StationController::class, 'index'])->name('station.index');
+    Route::delete('/station/{station_id}', [StationController::class, 'destroy'])->name('station.destroy');
     Route::get('/station/form/{station_id}', [StationController::class, 'form'])->name('station.form');
     Route::get('/station/show/{station_id}', [StationController::class, 'show'])->name('station.show');
     Route::get('/station/formType/{station_id}/', [StationController::class, 'formType'])->name('station.addType');

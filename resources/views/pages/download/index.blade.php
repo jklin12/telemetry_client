@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            <button type="sumbit" class="btn btn-indigo ">Vreate CSV</button>
+            <button type="sumbit" class="btn btn-indigo ">Write CSV</button>
 
 
         </form>

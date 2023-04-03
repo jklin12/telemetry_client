@@ -231,12 +231,7 @@ class StationHistoryController extends Controller
                 'searchable' => false,
                 'form_type' => 'area',
             ],
-            'asset_serial_number' => [
-                'label' => 'Serial Number',
-                'orderable' => false,
-                'searchable' => false,
-                'form_type' => 'text',
-            ],
+            
             'file' => [
                 'label' => 'Foto',
                 'orderable' => false,

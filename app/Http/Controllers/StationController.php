@@ -252,6 +252,13 @@ class StationController extends Controller
     }
 
 
+    public function destroy(Request $request,$id)
+    {
+        $delete = StationModel::where('station_id',$id)->delete();
+        $request->session()->flash('success', 'Hapus Station Suksess');
+        return redirect()->route('station.index');
+    }
+
 
     protected function arrField()
     {

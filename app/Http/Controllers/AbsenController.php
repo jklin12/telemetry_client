@@ -88,6 +88,8 @@ class AbsenController extends Controller
      */
     public function destroy(Absen $absen)
     {
-        //
+        $absen->delete();
+        session()->flash('success', 'Hapus Absen Suksess');
+        return redirect()->route('absen.index');
     }
 }

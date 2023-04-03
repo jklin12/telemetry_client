@@ -62,7 +62,13 @@
                             <a href="{{ route('station.show', $value['station_id']) }}" class="btn btn-success btn-icon btn-circle btn-sm"><i class="fas fa-eye"></i></a>
                         </td>
                         <td><a href="{{ route('station.form', $value['station_id']) }}" class="btn btn-indigo btn-icon btn-circle btn-sm"><i class="fa fa-edit"></i></a></td>
-                        <td><a href="{{ route('station.form', $value['station_id']) }}" class="btn btn-danger btn-icon btn-circle btn-sm"><i class="fa fa-trash"></i></a>
+                        <td>
+                            <form action="{{ route('station.destroy', $value['station_id']) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-icon btn-circle btn-sm"><i class="fa fa-trash"></i></button>
+                            </form>
+                            </a>
                         </td>
 
                     </tr>
