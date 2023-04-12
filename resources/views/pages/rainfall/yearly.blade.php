@@ -62,9 +62,9 @@
                     @foreach($datas['item'] as $key => $value)
                     <tr>
                         <td>{{ $value['date']}} th</td>
-                        @foreach($value['data'] as $keys => $values)
-                        <td>{{ $values }}</td>
-                        @endforeach
+                        @foreach($datas['title'] as $keys => $values)
+                        <td>{{ isset($value['data'][$keys]) ? $value['data'][$keys] : ''}}</td>
+                        @endforeach 
                     </tr>
                     @endforeach
 

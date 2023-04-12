@@ -21,7 +21,7 @@ class Absen extends Model
         'absen_file',
     ];
     public function user(){
-        return $this->hasOne('App\Models\User','id','user_id');
+        return $this->hasOne('App\Models\User','id','created_by');
     }
 
     public function getAbsenTimeAttribute($value)

@@ -274,7 +274,7 @@ class RainfallController extends Controller
 
         $rainfall = Rainfall60Model::select(DB::raw($select))
             ->leftJoin('sch_data_station', 'sch_data_rainfall_60.station', '=', 'sch_data_station.station_id')
-            //->whereRaw("DATE_FORMAT(rain_fall_date, '%Y-%m') = '" . $filterDate . "'")
+            ->whereRaw("DATE_FORMAT(rain_fall_date, '%Y-%m') = '" . $filterDate . "'")
             ->whereRaw("MINUTE(rain_fall_time) = '00'")
             ->where('station', $filterStation);
 
@@ -303,7 +303,7 @@ class RainfallController extends Controller
             $susunGrafik['label'][] = Carbon::parse($key)->isoFormat('MMM D');
             $susunGrafik['datas'][$key] = array_sum($value);
         }
-        //dd($susunGrafik);
+        //dd($summaryData);
 
         $stationList = StationModel::rightJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
             ->where('station_type',  'RG')
@@ -354,10 +354,11 @@ class RainfallController extends Controller
         $susunData = [];
         $susunSummary = [];
         foreach ($rainfall->get()->toArray() as $key => $value) {
-            $susunData['title'][$value['bulan']] = Carbon::parse($value['bulan'])->isoFormat('MMM');
+            $susunData['title'][$value['bulan']] = Carbon::parse($value['rain_fall_date'])->isoFormat('MMM'); 
 
-            $susunData['item'][$value['rain_fall_date']]['date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D');
-            $susunData['item'][$value['rain_fall_date']]['data'][$key] = $value['sum_rh'];
+            $datex = Carbon::parse($value['rain_fall_date'])->isoFormat('D');
+            $susunData['item'][$datex]['date'] = Carbon::parse($value['rain_fall_date'])->isoFormat('D');
+            $susunData['item'][$datex]['data'][$value['bulan']] = $value['sum_rh'];
 
             $susunSummary[$value['bulan']][$value['rain_fall_date']] = $value['sum_rh'];
         }
@@ -372,8 +373,10 @@ class RainfallController extends Controller
             $susunGrafik['label'][] = Carbon::parse($key)->isoFormat('MMM');
             $susunGrafik['datas'][$key] = array_sum($value);
         }
-
-        //dd($summaryData,$susunGrafik);
+ 
+        ksort($susunData['item']);
+        //dd($susunData['item']);
+        
 
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;

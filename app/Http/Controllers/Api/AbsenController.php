@@ -16,7 +16,7 @@ class AbsenController extends BaseController
         $subTitle = '';
 
 
-        $absen = Absen::where('user_id', $request->user_id)->get();
+        $absen = Absen::get();
 
         foreach ($absen as $key => $value) {
             $value->user;
@@ -33,8 +33,7 @@ class AbsenController extends BaseController
         $subTitle = '';
         $status = false;
 
-        $absen = Absen::where('user_id', $request->user_id)
-            ->where(DB::raw('DATE_FORMAT(absen_time, "%Y-%m-%d")'), date('Y-m-d'))
+        $absen = Absen::where(DB::raw('DATE_FORMAT(absen_time, "%Y-%m-%d")'), date('Y-m-d'))
             ->first();
 
         if (isset($absen->absen_id)) {
