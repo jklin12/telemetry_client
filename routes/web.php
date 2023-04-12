@@ -38,9 +38,17 @@ Route::get('login', function () {
         return view('pages/login');
     }
 });
+
+Route::get('privacy', function () {
+    return view('pages/privacy');
+});
+Route::get('term_cond', function () {
+    return view('pages/term_cond');
+});
+
 Route::post('login', [LoginController::class, 'authenticate'])->name('login');
 Route::get('logout', [LoginController::class, 'logout'])->name('logout');
- 
+
 
 Route::get('/rainfall/byStation', [RainfallController::class, 'byStation'])->name('rainfall.byStation');
 Route::get('/rainfall/daily', [RainfallController::class, 'daily'])->name('rainfall.daily');
@@ -86,5 +94,4 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('station_assets', StationAssetsController::class);
     Route::get('/station_assets/ajax/{station_id}', [StationAssetsController::class, 'ajax'])->name('station_assets.ajax');
     Route::resource('station_history', StationHistoryController::class);
-    
 });
