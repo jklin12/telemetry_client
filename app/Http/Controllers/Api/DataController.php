@@ -310,7 +310,8 @@ class DataController extends BaseController
 
         //dd($waterlevel->get()->toArray());
         $susunData = [];
-
+        $datasss = [];
+        $station = [];
         $arrDataByStation = [];
         foreach ($waterlevel->get()->toArray() as $key => $value) {
             $station[$value['station']]['station_id'] = $value['station_id'];
@@ -382,6 +383,7 @@ class DataController extends BaseController
         }
         //dd($wireVibration->get()->toArray(),$select,$filterDate);
         $susunData = [];
+       
         foreach ($wireVibration->get()->toArray() as $key => $value) {
             //$susunData[$value['date_time']]['date_time'] = Carbon::parse($value['rain_fall_time'])->isoFormat('HH::mm');
             //$susunData[$value['date_time']]['station_name'] = $value['station_name'];

@@ -63,15 +63,45 @@ class PublicController extends BaseController
     }
 
 
-    public function curentRainfall()
+    public function curentRainfall(Request $request)
     {
+        $filterDate = $request->has('date') ? $request->get('date') : date('Y-m-d');
 
+        
         $title = "Curent Rainfall";
-        $curetnRainfall = CurentRainfallModel::get();
 
-        if (!$curetnRainfall->isEmpty()) {
+        $stationList = StationModel::get();
+
+        $susunStation = [];
+        foreach ($stationList as $key => $value) {
+            $susunStation[$value->station_name] = $value;
+        }
+        $curetnRainfall = CurentRainfallModel::where('rain_fall_date', $filterDate)
+            ->get();
+        
+
+        if (!$curetnRainfall->isEmpty()) { 
+            
             $title =  $title . ' data found';
-            return $this->sendResponse($curetnRainfall, $title);
+
+            $susunData = [];
+            foreach ($curetnRainfall as $key => $value) {
+                //$susunData[$value->station]['station_name'] = $value->station;
+              
+                foreach ($susunStation as $keys => $values) {
+                    if (str_contains($keys,$value->station)) {
+                        $susunData[$value->station]['station_id'] = $values->station_id; 
+                        $susunData[$value->station]['station_name'] = $values->station_name; 
+                    }    
+                }
+                $susunData[$value->station]['date'] = $value->rain_fall_date;
+                $susunData[$value->station]['datas'] = $value; 
+            } 
+          
+            //$load['station'] = $stationList; 
+            $load['curent_rainfall'] = array_values($susunData);
+
+            return $this->sendResponse($load, $title);
         } else {
             $title =  $title . ' data not found';
             return $this->sendError($title);
@@ -142,15 +172,16 @@ class PublicController extends BaseController
 
             $summaryData = [];
             foreach ($arrDataByIndex as $key => $value) {
-                $summaryData[$key]['average'] = round(array_sum($value) / count($value), 3);
-                $summaryData[$key]['max'] = max($value);
-                $summaryData[$key]['time'] = array_search(max($value), $value);
+                $summaryData['average'][$key] = round(array_sum($value) / count($value), 3);
+                $summaryData['max'][$key] = max($value);
+                $summaryData['time'][$key] = array_search(max($value), $value);
             }
-            # code...
+
+            $station = StationModel::find($filterStation);
             $title = $title . ' ' . $susunData[0]['station_name'] . ' ' . Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');
             $load['interval'] = $interval . ' Minutes';
             $load['date'] = Carbon::parse($filterDate)->isoFormat('D MMMM YYYY');
-            $load['station'] = StationModel::find($filterStation);
+            $load['station'] = $station->station_name;
             $load['rainfall'] = $susunData;
             $load['summray'] = $summaryData;
             return $this->sendResponse($load, $title);
