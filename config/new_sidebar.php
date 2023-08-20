@@ -111,18 +111,13 @@ if (!function_exists('side_menu')) {
             $dashboard,
             $portal,
             $stationList,
-            [
+            /*[
                 'icon' => 'fas fa-chart-line',
                 'title' => 'Chart',
                 'url' => 'javascript:;',
                 'caret' => true,
                 'sub_menu' => [
-                    /*[
-                        'title' => 'Judment Graph',
-                        //'label' => 'NEW',
-                        'url' => '/grafik/judment',
-                        'route-name' => 'grafik.judment'
-                    ],*/
+                    
                     [
                         'title' => 'Hydrograph',
                         //'label' => 'NEW',
@@ -167,13 +162,7 @@ if (!function_exists('side_menu')) {
 
                 ]
             ],
-            [
-                'icon' => 'fas fa-water',
-                'title' => 'Water Level',
-                'label' => '',
-                'url' => '/water_level/daily',
-                'route-name' => 'water_level.daily'
-            ],
+            
             [
                 'icon' => 'fas fa-map-signs',
                 'title' => 'Wire Vibration',
@@ -187,6 +176,13 @@ if (!function_exists('side_menu')) {
                 'label' => '',
                 'url' => '/flow/daily',
                 'route-name' => 'flow.daily'
+            ],*/
+            [
+                'icon' => 'fas fa-water',
+                'title' => 'Water Level',
+                'label' => '',
+                'url' => '/water_level/daily',
+                'route-name' => 'water_level.daily'
             ],
             $absensi,
             $csvDownload,

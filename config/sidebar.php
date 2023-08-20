@@ -107,12 +107,6 @@ return [
       'url' => '/wire_vibration/daily',
       'route-name' => 'wire_vibration.daily'
     ],
-    [
-      'icon' => 'fas fa-wifi',
-      'title' => 'Flow Daily Report',
-      'label' => '',
-      'url' => '/flow/daily',
-      'route-name' => 'flow.daily'
-    ],
+   
   ]
 ];

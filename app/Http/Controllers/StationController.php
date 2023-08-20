@@ -22,7 +22,7 @@ class StationController extends Controller
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
 
-        $station = StationModel::selectRaw('sch_data_station.*,sch_station_types.id,sch_station_types.station_type,alert_column,alert_value')
+        $station = StationModel::selectRaw('sch_data_station.*,sch_station_types.id,sch_station_types.station_type,alert_column,alert_value,level_siaga_1,level_siaga_2,level_siaga_3')
             ->leftJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id');
 
         if ($request->q) {
@@ -52,6 +52,9 @@ class StationController extends Controller
             $susunData[$value->station_id]['station_authority'] = $value->station_authority;
             $susunData[$value->station_id]['station_reg_number'] = $value->station_reg_number;
             $susunData[$value->station_id]['station_guardsman'] = $value->station_guardsman;
+            $susunData[$value->station_id]['level_siaga_1'] = $value->level_siaga_1;
+            $susunData[$value->station_id]['level_siaga_2'] = $value->level_siaga_2;
+            $susunData[$value->station_id]['level_siaga_3'] = $value->level_siaga_3;
             if ($value->id) {
                 $susunData[$value->station_id]['station_types'][$value->id]['id'] = $value->id;
                 $susunData[$value->station_id]['station_types'][$value->id]['station_type'] = $value->station_type;
@@ -196,7 +199,7 @@ class StationController extends Controller
         $load['title'] = $title;
         $load['subTitle'] = $subTitle;
 
-        $station = StationModel::selectRaw('sch_data_station.*,sch_station_types.id,sch_station_types.station_type,alert_column,alert_value')
+        $station = StationModel::selectRaw('sch_data_station.*,sch_station_types.id,sch_station_types.station_type,alert_column,alert_value,level_siaga_1,level_siaga_2,level_siaga_3')
             ->leftJoin('sch_station_types', 'sch_data_station.station_id', '=', 'sch_station_types.station_id')
             ->where(DB::raw('sch_data_station.station_id'),$id)
             ->get();
@@ -216,6 +219,9 @@ class StationController extends Controller
             $susunData['station_authority'] = $value->station_authority;
             $susunData['station_reg_number'] = $value->station_reg_number;
             $susunData['station_guardsman'] = $value->station_guardsman;
+            $susunData['level_siaga_1'] = $value->level_siaga_1;
+            $susunData['level_siaga_2'] = $value->level_siaga_2;
+            $susunData['level_siaga_3'] = $value->level_siaga_3;
             if ($value->id) {
                 $susunData['station_types'][$value->id]['id'] = $value->id;
                 $susunData['station_types'][$value->id]['station_type'] = $value->station_type;
@@ -322,6 +328,24 @@ class StationController extends Controller
             ],
             'station_reg_number' => [
                 'label' => 'Register Number',
+                'orderable' => true,
+                'searchable' => false,
+                'form_type' => 'text',
+            ],
+            'level_siaga_1' => [
+                'label' => 'Level Siaga 1',
+                'orderable' => true,
+                'searchable' => false,
+                'form_type' => 'text',
+            ],
+            'level_siaga_2' => [
+                'label' => 'Level Siaga 2',
+                'orderable' => true,
+                'searchable' => false,
+                'form_type' => 'text',
+            ],
+            'level_siaga_3' => [
+                'label' => 'Level Siaga 3',
                 'orderable' => true,
                 'searchable' => false,
                 'form_type' => 'text',

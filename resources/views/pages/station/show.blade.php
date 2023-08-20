@@ -72,6 +72,21 @@
                                 <td></td>
                                 <td> {{ $station['station_reg_number']}}</td>
                             </tr>
+                            <tr>
+                                <td><strong>Level Siaga 1</strong></td>
+                                <td></td>
+                                <td> {{ $station['level_siaga_1']}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Level Siaga 2</strong></td>
+                                <td></td>
+                                <td> {{ $station['level_siaga_2']}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Level Siaga 3</strong></td>
+                                <td></td>
+                                <td> {{ $station['level_siaga_3']}}</td>
+                            </tr>
 
 
 
@@ -86,16 +101,14 @@
                         <thead>
                             <tr>
                                 <th><strong>No.</strong></th>
-                                <th><strong>Equipment</strong></th>
-                                <th><strong>Alert Value</strong></th>
+                                <th><strong>Equipment</strong></th> 
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($station['station_types'] as $key => $value)
                             <tr>
                                 <td>{{ $loop->iteration}}</td>
-                                <td>{{ $value['station_type']}}</td>
-                                <td>{{ $value['alert_value']}}</td>
+                                <td>{{ $value['station_type']}}</td> 
                             </tr>
                             @endforeach
                         </tbody>

@@ -14,11 +14,16 @@
 <!-- begin page-header -->
 <h1 class="page-header">{{ $title }} <small>{{ $subTitle }}</small></h1>
 <!-- end page-header -->
-
 <div class="panel panel-inverse">
     <div class="panel-body">
         <form action="" method="get" id="filter-form">
             <div class="row">
+                @if(auth()->user())
+                <div class="col-md-2">
+                    <a href="{{ route('water_level.create')}}" class="btn btn-search btn-indigo"><i class="fa fa-plus"></i>&nbsp;Tambah Data</a>
+                </div>
+                @endif
+
                 <div class="col-md-4">
                     <div class="form-group row">
                         <label class="col-form-label col-md-4">Display Interval :</label>
@@ -52,7 +57,7 @@
                         <th>No.</th>
                         <th class="text-center">Date Time</th>
                         @foreach($datas['station'] as $key => $value)
-                        <th class="text-center">{{$value['station_name']}} <br>(m) </th>
+                        <th class="text-center">{{$value['station_name']}} <br>(m)  @if(auth()->user())  <a href="{{ route('water_level.edit', 'station='.$key.'&date='.$filterDate)  }}" class="btn btn-indigo btn-icon btn-circle btn-sm"><i class="fa fa-edit"></i></a> @endif</th>
                         @endforeach
                     </tr>
 
@@ -161,8 +166,7 @@
         },
         dom: 'Bfrtip',
         buttons: [
-            @auth
-            {
+            @auth {
                 extend: 'csv',
                 className: 'btn btn-indigo '
             },
@@ -170,8 +174,7 @@
                 extend: 'excel',
                 className: 'btn btn-indigo '
             },
-            @endauth
-            {
+            @endauth {
                 extend: 'pdf',
                 className: 'btn btn-indigo ',
             },

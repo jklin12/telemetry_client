@@ -57,6 +57,7 @@ Route::get('/rainfall/yearly', [RainfallController::class, 'yearly'])->name('rai
 Route::get('/rainfall/current', [RainfallController::class, 'current'])->name('rainfall.current');
 
 Route::get('/water_level/daily', [WaterLevelController::class, 'daily'])->name('water_level.daily');
+Route::get('/water_level/notification', [WaterLevelController::class, 'notification'])->name('water_level.notification');
 
 Route::get('/wire_vibration/daily', [WireVibrationController::class, 'daily'])->name('wire_vibration.daily');
 
@@ -94,4 +95,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('station_assets', StationAssetsController::class);
     Route::get('/station_assets/ajax/{station_id}', [StationAssetsController::class, 'ajax'])->name('station_assets.ajax');
     Route::resource('station_history', StationHistoryController::class);
+
+
+    Route::get('/water_level/create', [WaterLevelController::class, 'create'])->name('water_level.create');
+    Route::post('/water_level', [WaterLevelController::class, 'store'])->name('water_level.store');
+    Route::get('/water_level/edit', [WaterLevelController::class, 'edit'])->name('water_level.edit');
+    Route::put('/water_level', [WaterLevelController::class, 'update'])->name('water_level.update');
 });
