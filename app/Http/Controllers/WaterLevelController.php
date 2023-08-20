@@ -13,9 +13,76 @@ use Illuminate\Support\Facades\DB;
 
 class WaterLevelController extends Controller
 {
-    public function notification(){
+    public function notification()
+    {
+        $datas = WaterLevel60Model::where('water_level_date', date('Y-m-d'))
+            ->where('read', 0)
+            ->where('water_level_time', '<=', date("H:m"))
 
+            ->leftJoin('sch_data_station', 'sch_data_waterlevel_60.station', '=', 'sch_data_station.station_id')
+            ->get();
+
+        $dataId = [];
+        foreach ($datas as $key => $value) {
+            $dataId[] = $value->water_level_id;
+
+            if ($value->water_level_hight > $value->level_siaga_3) {
+                $title = "Status Station " . $value->station_name . " : SIAGA 3";
+                $subtitle = "Tinggi Air Saat Ini : " . $value->water_level_hight . ", Tinggi Air Normal : <" . $value->level_siaga_3;
+
+                $this->send($title, $subtitle);
+                echo 'notifikasi siaga 3';
+            } else  if ($value->water_level_hight > $value->level_siaga_3) {
+                $title = "Status Station " . $value->station_name . " : SIAGA 2";
+                $subtitle = "Tinggi Air Saat Ini : " . $value->water_level_hight . ", Tinggi Air Normal : <" . $value->level_siaga_2;
+
+                $this->send($title, $subtitle);
+                echo 'notifikasi siaga 2';
+            } elseif ($value->water_level_hight > $value->level_siaga_1) {
+                $title = "Status Station " . $value->station_name . " : SIAGA 1";
+                $subtitle = "Tinggi Air Saat Ini : " . $value->water_level_hight . ", Tinggi Air Normal : <" . $value->level_siaga_1;
+
+                $this->send($title, $subtitle);
+                echo 'notifikasi siaga 1';
+            }
+        }
+        WaterLevel60Model::whereIn('water_level_id', $dataId)->update(['read' => 1]);
+        //dd($dataId);
     }
+
+    public function send($title, $body)
+    {
+
+        $customData = [];
+        $fields =
+            [
+                "to" => '/topics/all_user',
+                //"to" => 'dvaF11RNS-u-mMGVsU-I7A:APA91bGTZBao-HeDdTVxJelJqqb8FIGF2Mm6cGV3GHb4ckD1MVHBxRr1rgOFK4BbAiqFIYxwjJKiFGoNj80nug6VWnHthAO4qY1sZwJSmEjC0VFTgbpXx92XZYwnkj78iMnGuYDWVFgF',
+                "notification" => [
+                    "title" => $title,
+                    "body" => $body,
+                ],
+                //"data" => $customData
+            ];
+
+
+
+        $headers = array(
+            'Authorization: key=AAAA5SGqijE:APA91bHOxeFlii3Fi1XFxeicb-n5BHKi7ab9euTUSW-eu7OpZemcYggLVAcccECJES6WF6iYgrrkuN1t2c6V0rq7hy15tPZekhXHA6Z4j2CkgRL5w7CMiX4jB_WvkiuzyoRRnneMpAw4',
+            'Content-Type: application/json'
+        );
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return $result;
+    }
+
     public function daily(Request $request)
     {
 
@@ -157,7 +224,7 @@ class WaterLevelController extends Controller
         //dd($postval);
         WaterLevel60Model::insert($postval);
         $request->session()->flash('success', 'Tambah Users Suksess');
-        return redirect()->route('water_level.daily','interval=60&date='.$request->water_level_date);
+        return redirect()->route('water_level.daily', 'interval=60&date=' . $request->water_level_date);
     }
 
     public function store(Request $request)
